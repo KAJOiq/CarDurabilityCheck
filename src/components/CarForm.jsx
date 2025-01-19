@@ -2,47 +2,51 @@ import React, { useRef, useState, useEffect } from "react";
 import logo from "../assets/logo.jpg";
 import imgStatic from "../assets/car1.png";
 import imgStatic2 from "../assets/car2.png";
-import { QRCode } from "react-qr-code"; // Import QRCode component
+import QRCode from "qrcode"; // Import QRCode component
+
 
 const CarForm = ({ formData, photo1, photo2 }) => {
   const [apiData, setApiData] = useState({
-    inspectionFormNumber: "",
-    date: "",
-  });
-
-  useEffect(() => {
-    const currentDate = new Date().toLocaleDateString("ar-IQ", {
+    inspectionFormNumber: "12345", // Replace with actual form number if necessary
+    date: new Date().toLocaleDateString("ar-IQ", {
       weekday: "long",
       year: "numeric",
       month: "long",
       day: "numeric",
-    });
-
-    setApiData({
-      inspectionFormNumber: "12345", // Replace with actual form number if necessary
-      date: currentDate, // Setting current date
-    });
-  }, []);
-
-  // Generate QR code data
-  const qrCodeData = JSON.stringify({
-    customerName: formData.customerName,
-    vehicleModel: formData.vehicleModel,
-    vehicleType: formData.vehicleType,
-    vehicleColor: formData.vehicleColor,
-    vehicleNumber: formData.vehicleNumber,
-    isGovernment: formData.isGovernment,
-    chassisNumber: formData.chassisNumber,
-    repeatReason: formData.repeatReason,
-    model: formData.model,
-    cylinderCount: formData.cylinderCount,
-    receiptNumber: formData.receiptNumber,
-    trafficFormNumber: formData.trafficFormNumber,
-    formType: formData.formType,
-    inspectionFormNumber: apiData.inspectionFormNumber,
-    date: apiData.date,
+    }),
   });
+  
+  const [qrCodeDataUrl, setQrCodeDataUrl] = useState("");
 
+    useEffect(() => {
+      const qrData = JSON.stringify({
+        customerName: formData.customerName,
+        vehicleModel: formData.vehicleModel,
+        vehicleType: formData.vehicleType,
+        vehicleColor: formData.vehicleColor,
+        vehicleNumber: formData.vehicleNumber,
+        isGovernment: formData.isGovernment,
+        chassisNumber: formData.chassisNumber,
+        repeatReason: formData.repeatReason,
+        model: formData.model,
+        cylinderCount: formData.cylinderCount,
+        receiptNumber: formData.receiptNumber,
+        trafficFormNumber: formData.trafficFormNumber,
+        formType: formData.formType,
+        inspectionFormNumber: apiData.inspectionFormNumber,
+        date: apiData.date,
+      });
+  
+      QRCode.toDataURL(qrData)
+        .then((url) => {
+          if (url !== qrCodeDataUrl) {
+            setQrCodeDataUrl(url); // Set the QR code URL only if it has changed
+          }
+        })
+        .catch((error) => console.error("Error generating QR code:", error));
+    }, [formData, apiData.inspectionFormNumber, apiData.date]); // Keep dependencies minimal and specific
+  
+  
   const handlePrint = () => {
     const logoBase64 = logo;
     const imgStaticBase64 = imgStatic;
@@ -88,6 +92,9 @@ const CarForm = ({ formData, photo1, photo2 }) => {
               position: relative;
               width: 100%;
               height: 140px;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
             }
             .logo-container {
               position: absolute;
@@ -202,8 +209,13 @@ const CarForm = ({ formData, photo1, photo2 }) => {
               width: 23%;
             }
             .qr-code-container {
-              flex: 0 0 120px; /* Set width to leave space for the QR code */
-              margin-left: 10px;
+              position: absolute;
+              left: 15px;
+              top: 10px;
+            }
+            .qr-code-container img {
+              max-width: 100px;
+              height: auto;
             }
             @media print {
               body {
@@ -244,10 +256,10 @@ const CarForm = ({ formData, photo1, photo2 }) => {
             </div>
             <div class="logo-container">
               <img src="${logoBase64}" alt="Logo" />
-              <div class="qr-code-container">
-                <img src=${qrCodeData} size={128} />
-              </div>
             </div>
+            <div class="qr-code-container">
+              <img src="${qrCodeDataUrl}" alt="QR Code" width="120" />
+              </div>
           </div>
           <hr />
           <div class="grid">
@@ -294,21 +306,22 @@ const CarForm = ({ formData, photo1, photo2 }) => {
           </div>
         </body>
       </html>
-    `);    
+    `);
     printWindow.document.close();
     printWindow.print();
+  };
 
- 
-};  
 
   return (
     <div>
       <button
+ 
         className="bg-blue-500 text-white px-6 py-3 rounded hover:bg-blue-600"
         onClick={handlePrint}
       >
         طباعة الاستمارة
       </button>
+
     </div>
   );
 };
