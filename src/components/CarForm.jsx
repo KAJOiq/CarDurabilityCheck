@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import logo from "../assets/logo.jpg";
 import imgStatic from "../assets/car1.png";
 import imgStatic2 from "../assets/car2.png";
+import { QRCode } from "react-qr-code"; // Import QRCode component
 
 const CarForm = ({ formData, photo1, photo2 }) => {
   const [apiData, setApiData] = useState({
@@ -22,6 +23,25 @@ const CarForm = ({ formData, photo1, photo2 }) => {
       date: currentDate, // Setting current date
     });
   }, []);
+
+  // Generate QR code data
+  const qrCodeData = JSON.stringify({
+    customerName: formData.customerName,
+    vehicleModel: formData.vehicleModel,
+    vehicleType: formData.vehicleType,
+    vehicleColor: formData.vehicleColor,
+    vehicleNumber: formData.vehicleNumber,
+    isGovernment: formData.isGovernment,
+    chassisNumber: formData.chassisNumber,
+    repeatReason: formData.repeatReason,
+    model: formData.model,
+    cylinderCount: formData.cylinderCount,
+    receiptNumber: formData.receiptNumber,
+    trafficFormNumber: formData.trafficFormNumber,
+    formType: formData.formType,
+    inspectionFormNumber: apiData.inspectionFormNumber,
+    date: apiData.date,
+  });
 
   const handlePrint = () => {
     const logoBase64 = logo;
@@ -181,6 +201,10 @@ const CarForm = ({ formData, photo1, photo2 }) => {
             .footer-text div {
               width: 23%;
             }
+            .qr-code-container {
+              flex: 0 0 120px; /* Set width to leave space for the QR code */
+              margin-left: 10px;
+            }
             @media print {
               body {
                 -webkit-print-color-adjust: exact;
@@ -220,6 +244,9 @@ const CarForm = ({ formData, photo1, photo2 }) => {
             </div>
             <div class="logo-container">
               <img src="${logoBase64}" alt="Logo" />
+              <div class="qr-code-container">
+                <img src=${qrCodeData} size={128} />
+              </div>
             </div>
           </div>
           <hr />
@@ -270,7 +297,9 @@ const CarForm = ({ formData, photo1, photo2 }) => {
     `);    
     printWindow.document.close();
     printWindow.print();
-  };
+
+ 
+};  
 
   return (
     <div>
