@@ -61,9 +61,9 @@ const Form = ({ formType, setFormType }) => {
                 required
               >
                 <option value="">اختر نوع الاستمارة</option>
-                <option value="type1">سيارة</option>
-                <option value="type2">دراجة</option>
-                <option value="type3">شاحنة</option>
+                <option value="سيارة">سيارة</option>
+                <option value="دراجة">دراجة</option>
+                <option value="شاحنة">شاحنة</option>
               </select>
             </div>
             <div className="bg-green-200 p-4 rounded">
@@ -165,7 +165,7 @@ const Form = ({ formType, setFormType }) => {
             </div>
 
             {isRepeated && (
-              <div className="bg-gray-200 p-4 rounded">
+              <div className="col-span-2 bg-gray-200 p-4 rounded">
                 <InputField
                   label={<><i className="fas fa-exclamation-triangle mr-2"></i> سبب التكرار</>}
                   name="repeatReason"
@@ -176,14 +176,26 @@ const Form = ({ formType, setFormType }) => {
               </div>
             )}
 
-            <div className="bg-blue-200 p-4 rounded">
-              <InputField
-                label={<><i className="fas fa-cogs mr-2"></i> الموديل</>}
+            <div className="bg-purple-200 p-4 rounded">
+              <label className="block text-right font-medium mb-1">
+                <i className="fas fa-palette mr-2"></i> الموديل
+              </label>
+              <select
                 name="model"
                 value={formData.model}
                 onChange={handleChange}
+                className="w-full p-2 border rounded"
                 required
-              />
+              >
+                <option value="">اختر موديل السيارة</option>
+                <option value="2025">2025</option>
+                <option value="2024">2024</option>
+                <option value="2023">2023</option>
+                <option value="2022">2022</option>
+                <option value="2021">2021</option>
+                <option value="2020">2020</option>
+                <option value="2019">2019</option>
+              </select>
             </div>
             <div className="bg-green-200 p-4 rounded">
               <InputField
