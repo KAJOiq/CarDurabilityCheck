@@ -3,7 +3,7 @@ import logo from "../assets/logo.jpg";
 import imgStatic from "../assets/car1.png";
 import imgStatic2 from "../assets/car2.png";
 
-const PrintForm = ({ formData, photo1, photo2 }) => {
+const CarForm = ({ formData, photo1, photo2 }) => {
   const [apiData, setApiData] = useState({
     inspectionFormNumber: "",
     date: "",
@@ -284,4 +284,4 @@ const PrintForm = ({ formData, photo1, photo2 }) => {
   );
 };
 
-export default PrintForm;
+export default CarForm;

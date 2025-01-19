@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import InputField from "./InputField";
 import CheckboxField from "./CheckboxField";
 import CameraComponent from "./CameraComponent";
-import PrintForm from "./PrintForm";
+import CarForm from "./CarForm";
+import TruckForm from "./TruckForm";
 
 const Form = ({ formType, setFormType }) => {
   const [photo1, setPhoto1] = useState(null);
@@ -42,7 +43,7 @@ const Form = ({ formType, setFormType }) => {
         >
           <i className="fas fa-plus mr-2"></i> إضافة استمارة
         </button>
-        <PrintForm formData={formData} photo1={photo1} photo2={photo2} />
+        <CarForm formData={formData} photo1={photo1} photo2={photo2} />
       </div>
 
       <form className="grid grid-cols-2 gap-4">
@@ -60,9 +61,9 @@ const Form = ({ formType, setFormType }) => {
                 required
               >
                 <option value="">اختر نوع الاستمارة</option>
-                <option value="type1">نوع 1</option>
-                <option value="type2">نوع 2</option>
-                <option value="type3">نوع 3</option>
+                <option value="type1">سيارة</option>
+                <option value="type2">دراجة</option>
+                <option value="type3">شاحنة</option>
               </select>
             </div>
             <div className="col-span-2 bg-green-200 p-4 rounded">
