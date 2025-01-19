@@ -66,7 +66,7 @@ const Form = ({ formType, setFormType }) => {
                 <option value="type3">شاحنة</option>
               </select>
             </div>
-            <div className="col-span-2 bg-green-200 p-4 rounded">
+            <div className="bg-green-200 p-4 rounded">
               <label className="block text-right font-medium mb-1">
                 <i className="fas fa-car mr-2"></i> نوع المركبة
               </label>
@@ -92,16 +92,25 @@ const Form = ({ formType, setFormType }) => {
                 required
               />
             </div>
-            <div className="bg-red-200 p-4 rounded">
-              <InputField
-                label={<><i className="fas fa-car-side mr-2"></i> طراز المركبة</>}
+            <div className="bg-green-200 p-4 rounded">
+              <label className="block text-right font-medium mb-1">
+                <i className="fas fa-car mr-2"></i> طراز المركبة
+              </label>
+              <select
                 name="vehicleModel"
                 value={formData.vehicleModel}
                 onChange={handleChange}
+                className="w-full p-2 border rounded"
                 required
-              />
+              >
+                <option value="">اختر طراز المركبة</option>
+                <option value="model1">طراز 1</option>
+                <option value="model2">طراز 2</option>
+                <option value="model3">طراز 3</option>
+                <option value="model4">طراز 4</option>
+              </select>
             </div>
-            <div className="col-span-2 bg-purple-200 p-4 rounded">
+            <div className="bg-purple-200 p-4 rounded">
               <label className="block text-right font-medium mb-1">
                 <i className="fas fa-palette mr-2"></i> لون المركبة
               </label>
@@ -156,7 +165,7 @@ const Form = ({ formType, setFormType }) => {
             </div>
 
             {isRepeated && (
-              <div className="col-span-2 bg-gray-200 p-4 rounded">
+              <div className="bg-gray-200 p-4 rounded">
                 <InputField
                   label={<><i className="fas fa-exclamation-triangle mr-2"></i> سبب التكرار</>}
                   name="repeatReason"
