@@ -23,6 +23,12 @@ const Form = ({ formType, setFormType }) => {
     receiptNumber: "",
     trafficFormNumber: "",
     formType: "",
+    numberOfPassengers: "", // Specific for Car
+    load: "", // Specific for Truck
+    attachedLoadType: "", // Specific for Truck
+    attachedChassis: "", // Specific for Truck
+    numberOfAttachedVehicles: "", // Specific for Truck
+    numberOfAxes: "",
   });
 
   const handleChange = (e) => {
@@ -45,9 +51,8 @@ const Form = ({ formType, setFormType }) => {
         </button>
         <CarForm formData={formData} photo1={photo1} photo2={photo2} />
       </div>
-
       <form className="grid grid-cols-2 gap-4">
-        {formType === "entry" && (
+      {formType === "entry" && (
           <>
             <div className="col-span-2 bg-blue-200 p-4 rounded">
               <label className="block text-right font-medium mb-1">
@@ -66,6 +71,8 @@ const Form = ({ formType, setFormType }) => {
                 <option value="شاحنة">شاحنة</option>
               </select>
             </div>
+            {formData.formType && (
+            <>
             <div className="bg-green-200 p-4 rounded">
               <label className="block text-right font-medium mb-1">
                 <i className="fas fa-car mr-2"></i> نوع المركبة
@@ -128,6 +135,15 @@ const Form = ({ formType, setFormType }) => {
                 <option value="black">أسود</option>
                 <option value="white">أبيض</option>
               </select>
+            </div>
+            <div className="bg-green-200 p-4 rounded">
+              <InputField
+                label={<><i className="fas fa-users mr-2"></i> عدد الركاب</>}
+                name="numberOfPassengers"
+                value={formData.numberOfPassengers}
+                onChange={handleChange}
+                required
+              />
             </div>
             <div className="bg-indigo-200 p-4 rounded">
               <InputField
@@ -206,15 +222,70 @@ const Form = ({ formType, setFormType }) => {
                 required
               />
             </div>
-            <div className="bg-yellow-200 p-4 rounded">
+            <div className="bg-green-200 p-4 rounded">
               <InputField
-                label={<><i className="fas fa-receipt mr-2"></i> رقم وصل القبض</>}
-                name="receiptNumber"
-                value={formData.receiptNumber}
+                label={<><i className="fas fa-users mr-2"></i> عدد المحاور</>}
+                name="numberOfAxes"
+                value={formData.numberOfAxes}
                 onChange={handleChange}
                 required
               />
             </div>
+            {formData.formType === "شاحنة" && (
+              <>
+                <div className="bg-yellow-200 p-4 rounded">
+                  <InputField
+                    label={<><i className="fas fa-weight-hanging mr-2"></i> الحمولة</>}
+                    name="load"
+                    value={formData.load}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div className="bg-teal-200 p-4 rounded">
+                  <InputField
+                    label={<><i className="fas fa-tags mr-2"></i> نوع الحمولة المرفقة</>}
+                    name="attachedLoadType"
+                    value={formData.attachedLoadType}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div className="bg-purple-200 p-4 rounded">
+                  <InputField
+                    label={<><i className="fas fa-barcode mr-2"></i> شاصي الحمولة المرفقة</>}
+                    name="attachedChassis"
+                    value={formData.attachedChassis}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div className="bg-orange-200 p-4 rounded">
+                  <InputField
+                    label={<><i className="fas fa-trailer mr-2"></i> عدد المركبات المرفقة</>}
+                    name="numberOfAttachedVehicles"
+                    value={formData.numberOfAttachedVehicles}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+              </>
+            )}
+            {!formData.isGovernment && (
+              <div className="bg-yellow-200 p-4 rounded">
+                <InputField
+                  label={
+                    <>
+                      <i className="fas fa-receipt mr-2"></i> رقم وصل القبض
+                    </>
+                  }
+                  name="receiptNumber"
+                  value={formData.receiptNumber}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            )}
             <div className="bg-red-200 p-4 rounded">
               <InputField
                 label={<><i className="fas fa-file-alt mr-2"></i> رقم استمارة المرور</>}
@@ -283,8 +354,11 @@ const Form = ({ formType, setFormType }) => {
             </div>
           </>
         )}
+        </>
+      )}
       </form>
     </div>
+    
   );
 };
 
