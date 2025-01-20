@@ -49,7 +49,6 @@ const Form = ({ formType, setFormType }) => {
         >
           <i className="fas fa-plus mr-2"></i> إضافة استمارة
         </button>
-        <CarForm formData={formData} photo1={photo1} photo2={photo2} />
       </div>
       <form className="grid grid-cols-2 gap-4">
       {formType === "entry" && (
@@ -66,9 +65,9 @@ const Form = ({ formType, setFormType }) => {
                 required
               >
                 <option value="">اختر نوع الاستمارة</option>
-                <option value="سيارة">سيارة</option>
-                <option value="دراجة">دراجة</option>
-                <option value="شاحنة">شاحنة</option>
+                <option value="Car">سيارة</option>
+                <option value="Bike">دراجة</option>
+                <option value="Truck">شاحنة</option>
               </select>
             </div>
             {formData.formType && (
@@ -329,6 +328,12 @@ const Form = ({ formType, setFormType }) => {
                 </div>
               )}
             </div>
+            {formData.formType === "Car" && (
+              <CarForm formData={formData} photo1={photo1} photo2={photo2} />
+            )}
+            {formData.formType === "Truck" && (
+              <TruckForm formData={formData} photo1={photo1} photo2={photo2} />
+            )}
           </>
         )}
 
