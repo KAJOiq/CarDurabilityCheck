@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import logo from "../assets/logo.jpg";
-import imgStatic from "../assets/car1.png";
-import imgStatic2 from "../assets/car2.png";
+import imgStatic from "../assets/car.png";
+// import imgStatic2 from "../assets/car2.png";
 import QRCode from "qrcode"; // Import QRCode component
 
 
@@ -50,7 +50,7 @@ const CarForm = ({ formData, photo1, photo2 }) => {
   const handlePrint = () => {
     const logoBase64 = logo;
     const imgStaticBase64 = imgStatic;
-    const imgStaticBase64_2 = imgStatic2;
+    // const imgStaticBase64_2 = imgStatic2;
     const printWindow = window.open("_blank");
     printWindow.document.open();
     printWindow.document.write(`
@@ -189,12 +189,13 @@ const CarForm = ({ formData, photo1, photo2 }) => {
               display: flex;
               flex-direction: column;
               gap: 20px;
+              transform: translateX(240px);
             }
             .bottom-image {
               max-width: 160px;
               height: auto;
               margin-top: 15px;
-              transform: translateY(-30px);
+              transform: translateY(75px);
             }
             .footer-text {
               display: flex;
@@ -224,7 +225,7 @@ const CarForm = ({ formData, photo1, photo2 }) => {
                 font-size: 9px;
               }
               .header {
-                height: 150px;
+                height: 120px;
               }
               .logo-container img {
                 max-width: 100px;
@@ -243,7 +244,7 @@ const CarForm = ({ formData, photo1, photo2 }) => {
                 max-width: 200px;
               }
               .main-image {
-                max-width: 55%;
+                max-width: 85%;
               }
             }
           </style>
@@ -290,8 +291,6 @@ const CarForm = ({ formData, photo1, photo2 }) => {
           </div>
           <div class="footer-photo-container">
             <img src="${imgStaticBase64}" alt="Car Image" class="main-image" />
-            <div class="right-images">
-              <img src="${imgStaticBase64_2}" alt="Car Image Top" class="top-image" />
               <div class="bottom-images">
                 <img src="${photo1}" alt="Captured Chassis" class="bottom-image" />
                 <img src="${photo2}" alt="Captured Front" class="bottom-image" />
