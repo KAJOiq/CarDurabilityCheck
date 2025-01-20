@@ -230,7 +230,7 @@ const Form = ({ formType, setFormType }) => {
                 required
               />
             </div>
-            {formData.formType === "شاحنة" && (
+            {formData.formType === "Truck" && (
               <>
                 <div className="bg-yellow-200 p-4 rounded">
                   <InputField
@@ -252,11 +252,10 @@ const Form = ({ formType, setFormType }) => {
                 </div>
                 <div className="bg-purple-200 p-4 rounded">
                   <InputField
-                    label={<><i className="fas fa-barcode mr-2"></i> شاصي الحمولة المرفقة</>}
+                    label={<><i className="fas fa-barcode mr-2"></i> شاصي الحمولة المرفقة (إن وجد)</>}
                     name="attachedChassis"
                     value={formData.attachedChassis}
                     onChange={handleChange}
-                    required
                   />
                 </div>
                 <div className="bg-orange-200 p-4 rounded">

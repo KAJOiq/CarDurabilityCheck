@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import logo from "../assets/logo.jpg";
-import imgStatic from "../assets/car1.png";
-import imgStatic2 from "../assets/car2.png";
+import imgStatic from "../assets/Truck.png";
+// import imgStatic2 from "../assets/car2.png";
 import QRCode from "qrcode"; // Import QRCode component
 
 
@@ -35,6 +35,11 @@ const TruckForm = ({ formData, photo1, photo2 }) => {
         formType: formData.formType,
         inspectionFormNumber: apiData.inspectionFormNumber,
         date: apiData.date,
+        load: formData.load, // Truck-specific
+        attachedLoadType: formData.attachedLoadType, // Truck-specific
+        attachedChassis: formData.attachedChassis, // Truck-specific
+        numberOfAttachedVehicles: formData.numberOfAttachedVehicles, // Truck-specific
+        numberOfAxes: formData.numberOfAxes, // Truck-specific
       });
   
       QRCode.toDataURL(qrData)
@@ -50,7 +55,7 @@ const TruckForm = ({ formData, photo1, photo2 }) => {
   const handlePrint = () => {
     const logoBase64 = logo;
     const imgStaticBase64 = imgStatic;
-    const imgStaticBase64_2 = imgStatic2;
+    // const imgStaticBase64_2 = imgStatic2;
     const printWindow = window.open("_blank");
     printWindow.document.open();
     printWindow.document.write(`
@@ -62,9 +67,8 @@ const TruckForm = ({ formData, photo1, photo2 }) => {
               font-family: Arial, sans-serif;
               direction: rtl;
               text-align: right;
-              margin: 0;
               font-size: 9px;
-              padding: 0 20px;
+              padding: 0 5px;
             }
             h2 {
               text-align: center;
@@ -76,12 +80,12 @@ const TruckForm = ({ formData, photo1, photo2 }) => {
               gap: 10px;
             }
             .field {
-              margin-bottom: 6px;
+              margin-bottom: 1px;
               padding: 6px;
               border-radius: 6px;
             }
             img {
-              max-width: 90%;
+              max-width: 100%;
               height: auto;
               margin-top: 10px;
               display: block;
@@ -163,16 +167,15 @@ const TruckForm = ({ formData, photo1, photo2 }) => {
               display: flex;
               justify-content: center;
               align-items: center;
-              margin-top: 30px;
             }
             .footer-photo-container img {
-              margin: 0 15px;
+              margin: 1 30px;
             }
             .main-image {
-              max-width: 65%;
+              max-width: 50%;
               height: auto;
-              margin-top: 15px;
-              transform: translateY(-30px);
+              margin-top: 30px;
+              transform: translateX(-175px);
             }
             .right-images {
               display: flex;
@@ -187,20 +190,19 @@ const TruckForm = ({ formData, photo1, photo2 }) => {
             }
             .bottom-images {
               display: flex;
-              flex-direction: column;
-              gap: 20px;
+              height: auto;
+              flex-direction: Row;
+              transform: translateX(250px);
             }
             .bottom-image {
               max-width: 160px;
-              height: auto;
-              margin-top: 15px;
-              transform: translateY(-30px);
+              transform: translateY(237px);
             }
             .footer-text {
               display: flex;
               justify-content: space-between;
               width: 100%;
-              margin-top: 20px;
+              margin-top: 65px;
               text-align: center;
               font-size: 12px;
               font-weight: bold;
@@ -224,7 +226,7 @@ const TruckForm = ({ formData, photo1, photo2 }) => {
                 font-size: 9px;
               }
               .header {
-                height: 150px;
+                height: 120px;
               }
               .logo-container img {
                 max-width: 100px;
@@ -240,10 +242,10 @@ const TruckForm = ({ formData, photo1, photo2 }) => {
                 color:rgb(0, 0, 0);
               }
               .top-image, .bottom-image {
-                max-width: 200px;
+                max-width: 120px;
               }
               .main-image {
-                max-width: 55%;
+                max-width: 90%;
               }
             }
           </style>
@@ -259,7 +261,7 @@ const TruckForm = ({ formData, photo1, photo2 }) => {
             </div>
             <div class="qr-code-container">
               <img src="${qrCodeDataUrl}" alt="QR Code" width="120" />
-              </div>
+            </div>
           </div>
           <hr />
           <div class="grid">
@@ -285,13 +287,16 @@ const TruckForm = ({ formData, photo1, photo2 }) => {
                 ${formData.isRepeated ? `<div class="info"><strong>سبب التكرار:</strong> <div>${formData.repeatReason}</div></div>` : ''}
                 <div class="info"><strong>الموديل:</strong> <div>${formData.model}</div></div>
                 <div class="info"><strong>عدد السلندر:</strong> <div>${formData.cylinderCount}</div></div>
+                <div class="info"><strong>الحمولة:</strong> <div>${formData.load}</div></div>
+                <div class="info"><strong>نوع الحمولة المرفقة:</strong> <div>${formData.attachedLoadType}</div></div>
+                <div class="info"><strong>الشاصي المرفق:</strong> <div>${formData.attachedChassis}</div></div>
+                <div class="info"><strong>عدد المركبات المرفقة:</strong> <div>${formData.numberOfAttachedVehicles}</div></div>
+                <div class="info"><strong>عدد المحاور:</strong> <div>${formData.numberOfAxes}</div></div>
               </div>
             </div>
           </div>
           <div class="footer-photo-container">
             <img src="${imgStaticBase64}" alt="Car Image" class="main-image" />
-            <div class="right-images">
-              <img src="${imgStaticBase64_2}" alt="Car Image Top" class="top-image" />
               <div class="bottom-images">
                 <img src="${photo1}" alt="Captured Chassis" class="bottom-image" />
                 <img src="${photo2}" alt="Captured Front" class="bottom-image" />
