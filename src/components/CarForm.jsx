@@ -32,6 +32,7 @@ const CarForm = ({ formData, photo1, photo2 }) => {
         receiptNumber: formData.receiptNumber,
         trafficFormNumber: formData.trafficFormNumber,
         formType: formData.formType,
+        numberOfAxes: formData.numberOfAxes,
         inspectionFormNumber: apiData.inspectionFormNumber,
         date: apiData.date,
       });
@@ -53,8 +54,11 @@ const CarForm = ({ formData, photo1, photo2 }) => {
     const printWindow = window.open("_blank");
     printWindow.document.open();
     printWindow.document.write(`
-      <html>
+      <!DOCTYPE html>
+      <html lang="ar">
         <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <title>طباعة الاستمارة</title>
           <style>
             body {
@@ -252,16 +256,6 @@ const CarForm = ({ formData, photo1, photo2 }) => {
           </div>
           <hr />
           <div class="grid">
-            <div class="form-data">
-              <h3><strong>بيانات الاستمارة</strong></h3>
-              <div class="info-container">
-                <div class="info"><strong>رقم استمارة الفحص:</strong> <div>${apiData.inspectionFormNumber}</div></div>
-                <div class="info"><strong>رقم استمارة المرور:</strong> <div>${formData.trafficFormNumber}</div></div>
-                <div class="info"><strong>رقم وصل القبض:</strong> <div>${formData.receiptNumber}</div></div>
-                <div class="info"><strong>نوع الاستمارة:</strong> <div>${formData.formType}</div></div>
-                <div class="info"><strong>التاريخ:</strong> <div>${apiData.date}</div></div>
-              </div>
-            </div>
             <div class="vehicle-data">
               <h3><strong>بيانات المركبة</strong></h3>
               <div class="info-container">
@@ -274,6 +268,17 @@ const CarForm = ({ formData, photo1, photo2 }) => {
                 ${formData.isRepeated ? `<div class="info"><strong>سبب التكرار:</strong> <div>${formData.repeatReason}</div></div>` : ''}
                 <div class="info"><strong>الموديل:</strong> <div>${formData.model}</div></div>
                 <div class="info"><strong>عدد السلندر:</strong> <div>${formData.cylinderCount}</div></div>
+                <div class="info"><strong>عدد المحاور:</strong> <div>${formData.numberOfAxes}</div></div>
+              </div>
+            </div>
+            <div class="form-data">
+              <h3><strong>بيانات الاستمارة</strong></h3>
+              <div class="info-container">
+                <div class="info"><strong>رقم استمارة الفحص:</strong> <div>${apiData.inspectionFormNumber}</div></div>
+                <div class="info"><strong>رقم استمارة المرور:</strong> <div>${formData.trafficFormNumber}</div></div>
+                <div class="info"><strong>رقم وصل القبض:</strong> <div>${formData.receiptNumber}</div></div>
+                <div class="info"><strong>نوع الاستمارة:</strong> <div>${formData.formType}</div></div>
+                <div class="info"><strong>التاريخ:</strong> <div>${apiData.date}</div></div>
               </div>
             </div>
           </div>

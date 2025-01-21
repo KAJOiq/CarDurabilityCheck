@@ -58,8 +58,11 @@ const TruckForm = ({ formData, photo1, photo2 }) => {
     const printWindow = window.open("_blank");
     printWindow.document.open();
     printWindow.document.write(`
-      <html>
+      <!DOCTYPE html>
+      <html lang="ar">
         <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <title>طباعة الاستمارة</title>
           <style>
             body {
@@ -257,16 +260,6 @@ const TruckForm = ({ formData, photo1, photo2 }) => {
           </div>
           <hr />
           <div class="grid">
-            <div class="form-data">
-              <h3><strong>بيانات الاستمارة</strong></h3>
-              <div class="info-container">
-                <div class="info"><strong>رقم استمارة الفحص:</strong> <div>${apiData.inspectionFormNumber}</div></div>
-                <div class="info"><strong>رقم استمارة المرور:</strong> <div>${formData.trafficFormNumber}</div></div>
-                <div class="info"><strong>رقم وصل القبض:</strong> <div>${formData.receiptNumber}</div></div>
-                <div class="info"><strong>نوع الاستمارة:</strong> <div>${formData.formType}</div></div>
-                <div class="info"><strong>التاريخ:</strong> <div>${apiData.date}</div></div>
-              </div>
-            </div>
             <div class="vehicle-data">
               <h3><strong>بيانات المركبة</strong></h3>
               <div class="info-container">
@@ -284,6 +277,16 @@ const TruckForm = ({ formData, photo1, photo2 }) => {
                 <div class="info"><strong>الشاصي المرفق:</strong> <div>${formData.attachedChassis}</div></div>
                 <div class="info"><strong>عدد المركبات المرفقة:</strong> <div>${formData.numberOfAttachedVehicles}</div></div>
                 <div class="info"><strong>عدد المحاور:</strong> <div>${formData.numberOfAxes}</div></div>
+              </div>
+            </div>
+            <div class="form-data">
+              <h3><strong>بيانات الاستمارة</strong></h3>
+              <div class="info-container">
+                <div class="info"><strong>رقم استمارة الفحص:</strong> <div>${apiData.inspectionFormNumber}</div></div>
+                <div class="info"><strong>رقم استمارة المرور:</strong> <div>${formData.trafficFormNumber}</div></div>
+                <div class="info"><strong>رقم وصل القبض:</strong> <div>${formData.receiptNumber}</div></div>
+                <div class="info"><strong>نوع الاستمارة:</strong> <div>${formData.formType}</div></div>
+                <div class="info"><strong>التاريخ:</strong> <div>${apiData.date}</div></div>
               </div>
             </div>
           </div>
