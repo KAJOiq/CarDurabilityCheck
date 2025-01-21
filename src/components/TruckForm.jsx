@@ -1,7 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import logo from "../assets/logo.jpg";
-import imgStatic from "../assets/Truck.png";
-// import imgStatic2 from "../assets/car2.png";
+import imgStatic from "../assets/truck.png";
 import QRCode from "qrcode"; // Import QRCode component
 
 
@@ -67,6 +66,7 @@ const TruckForm = ({ formData, photo1, photo2 }) => {
               font-family: Arial, sans-serif;
               direction: rtl;
               text-align: right;
+              margin: 0;
               font-size: 9px;
               padding: 0 5px;
             }
@@ -80,12 +80,12 @@ const TruckForm = ({ formData, photo1, photo2 }) => {
               gap: 10px;
             }
             .field {
-              margin-bottom: 1px;
+              margin-bottom: 6px;
               padding: 6px;
               border-radius: 6px;
             }
-            img {
-              max-width: 100%;
+            .img {
+              max-width: 90%;
               height: auto;
               margin-top: 10px;
               display: block;
@@ -167,42 +167,34 @@ const TruckForm = ({ formData, photo1, photo2 }) => {
               display: flex;
               justify-content: center;
               align-items: center;
+              margin-top: 8px;
             }
             .footer-photo-container img {
-              margin: 1 30px;
+              margin: 0 10px;
             }
             .main-image {
-              max-width: 50%;
+              max-width: 65%;
               height: auto;
-              margin-top: 30px;
-              transform: translateX(-175px);
-            }
-            .right-images {
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-              gap: 20px;
-            }
-            .top-image {
-              max-width: 200px;
               margin-top: 15px;
-              transform: translateY(-40px);
+              transform: translateX(-160px);
             }
             .bottom-images {
               display: flex;
-              height: auto;
               flex-direction: Row;
-              transform: translateX(250px);
+              gap: 20px;
+              transform: translateX(300px);
             }
             .bottom-image {
               max-width: 160px;
-              transform: translateY(237px);
+              height: auto;
+              margin-top: 15px;
+              transform: translateY(255px);
             }
             .footer-text {
               display: flex;
               justify-content: space-between;
               width: 100%;
-              margin-top: 65px;
+              margin-top: 20px;
               text-align: center;
               font-size: 12px;
               font-weight: bold;
@@ -226,7 +218,7 @@ const TruckForm = ({ formData, photo1, photo2 }) => {
                 font-size: 9px;
               }
               .header {
-                height: 120px;
+                height: 110px;
               }
               .logo-container img {
                 max-width: 100px;
@@ -241,11 +233,11 @@ const TruckForm = ({ formData, photo1, photo2 }) => {
                 font-size: 12px;
                 color:rgb(0, 0, 0);
               }
-              .top-image, .bottom-image {
-                max-width: 120px;
+              .bottom-image {
+                max-width: 130px;
               }
               .main-image {
-                max-width: 90%;
+                max-width: 95%;
               }
             }
           </style>

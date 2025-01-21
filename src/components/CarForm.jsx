@@ -1,7 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import logo from "../assets/logo.jpg";
 import imgStatic from "../assets/car.png";
-// import imgStatic2 from "../assets/car2.png";
 import QRCode from "qrcode"; // Import QRCode component
 
 
