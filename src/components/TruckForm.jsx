@@ -54,7 +54,6 @@ const TruckForm = ({ formData, photo1, photo2 }) => {
   const handlePrint = () => {
     const logoBase64 = logo;
     const imgStaticBase64 = imgStatic;
-    // const imgStaticBase64_2 = imgStatic2;
     const printWindow = window.open("_blank");
     printWindow.document.open();
     printWindow.document.write(`
@@ -263,30 +262,30 @@ const TruckForm = ({ formData, photo1, photo2 }) => {
             <div class="vehicle-data">
               <h3><strong>بيانات المركبة</strong></h3>
               <div class="info-container">
-                <div class="info"><strong>اسم المواطن:</strong> <div>${formData.customerName}</div></div>
-                <div class="info"><strong>نوع المركبة:</strong> <div>${formData.vehicleType}</div></div>
-                <div class="info"><strong>طراز المركبة:</strong> <div>${formData.vehicleModel}</div></div>
-                <div class="info"><strong>لون المركبة:</strong> <div>${formData.vehicleColor}</div></div>
-                <div class="info"><strong>رقم المركبة:</strong> <div>${formData.vehicleNumber}</div></div>
-                <div class="info"><strong>رقم الشاصي:</strong> <div>${formData.chassisNumber}</div></div>
-                ${formData.isRepeated ? `<div class="info"><strong>سبب التكرار:</strong> <div>${formData.repeatReason}</div></div>` : ''}
-                <div class="info"><strong>الموديل:</strong> <div>${formData.model}</div></div>
-                <div class="info"><strong>عدد السلندر:</strong> <div>${formData.cylinderCount}</div></div>
-                <div class="info"><strong>الحمولة:</strong> <div>${formData.load}</div></div>
-                <div class="info"><strong>نوع الحمولة المرفقة:</strong> <div>${formData.attachedLoadType}</div></div>
-                <div class="info"><strong>الشاصي المرفق:</strong> <div>${formData.attachedChassis}</div></div>
-                <div class="info"><strong>عدد المركبات المرفقة:</strong> <div>${formData.numberOfAttachedVehicles}</div></div>
-                <div class="info"><strong>عدد المحاور:</strong> <div>${formData.numberOfAxes}</div></div>
+                <div class="info"><strong>اسم المواطن:</strong> <div><strong>${formData.customerName}</strong></div></div>
+                <div class="info"><strong>نوع المركبة:</strong> <div><strong>${formData.vehicleType}</strong></div></div>
+                <div class="info"><strong>طراز المركبة:</strong> <div><strong>${formData.vehicleModel}</strong></div></div>
+                <div class="info"><strong>لون المركبة:</strong> <div><strong>${formData.vehicleColor}</strong></div></div>
+                <div class="info"><strong>رقم المركبة:</strong> <div><strong>${formData.vehicleNumber}</strong></div></div>
+                <div class="info"><strong>رقم الشاصي:</strong> <div><strong>${formData.chassisNumber}</strong></div></div>
+                <div class="info"><strong>الموديل:</strong> <div><strong>${formData.model}</strong></div></div>
+                <div class="info"><strong>عدد السلندر:</strong> <div><strong>${formData.cylinderCount}</strong></div></div>
+                <div class="info"><strong>الحمولة:</strong> <div><strong>${formData.load}</strong></div></div>
+                <div class="info"><strong>نوع الحمولة المرفقة:</strong> <div><strong>${formData.attachedLoadType}</strong></div></div>
+                <div class="info"><strong>الشاصي المرفق:</strong> <div><strong>${formData.attachedChassis}</strong></div></div>
+                <div class="info"><strong>عدد المركبات المرفقة:</strong> <div><strong>${formData.numberOfAttachedVehicles}</strong></div></div>
+                <div class="info"><strong>عدد المحاور:</strong> <div><strong>${formData.numberOfAxes}</strong></div></div>
               </div>
             </div>
             <div class="form-data">
               <h3><strong>بيانات الاستمارة</strong></h3>
               <div class="info-container">
-                <div class="info"><strong>رقم استمارة الفحص:</strong> <div>${apiData.inspectionFormNumber}</div></div>
-                <div class="info"><strong>رقم استمارة المرور:</strong> <div>${formData.trafficFormNumber}</div></div>
-                <div class="info"><strong>رقم وصل القبض:</strong> <div>${formData.receiptNumber}</div></div>
-                <div class="info"><strong>نوع الاستمارة:</strong> <div>${formData.formType}</div></div>
-                <div class="info"><strong>التاريخ:</strong> <div>${apiData.date}</div></div>
+                <div class="info"><strong>رقم استمارة الفحص:</strong> <div><strong>${apiData.inspectionFormNumber}</strong></div></div>
+                <div class="info"><strong>رقم استمارة المرور:</strong> <div><strong>${formData.trafficFormNumber}</strong></div></div>
+                <div class="info"><strong>رقم وصل القبض:</strong> <div><strong>${formData.receiptNumber}</strong></div></div>
+                <div class="info"><strong>نوع الاستمارة:</strong> <div><strong>${formData.formType}</strong></div></div>
+                <div class="info"><strong>التاريخ:</strong> <div><strong>${apiData.date}</strong></div></div>
+                ${formData.isRepeated ? `<div class="info"><strong>سبب التكرار:</strong> <div><strong>${formData.repeatReason}</strong></div></div>` : ''}
               </div>
             </div>
           </div>

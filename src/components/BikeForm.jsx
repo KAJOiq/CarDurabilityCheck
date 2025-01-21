@@ -1,10 +1,10 @@
 import React, { useRef, useState, useEffect } from "react";
 import logo from "../assets/logo.jpg";
-import imgStatic from "../assets/car.png";
+import imgStatic from "../assets/bike.jpg";
 import QRCode from "qrcode"; // Import QRCode component
 
 
-const CarForm = ({ formData, photo1, photo2 }) => {
+const BikeForm = ({ formData, photo1, photo2 }) => {
   const [apiData, setApiData] = useState({
     inspectionFormNumber: "12345", // Replace with actual form number if necessary
     date: new Date().toLocaleDateString("ar-IQ", {
@@ -32,9 +32,9 @@ const CarForm = ({ formData, photo1, photo2 }) => {
         receiptNumber: formData.receiptNumber,
         trafficFormNumber: formData.trafficFormNumber,
         formType: formData.formType,
-        numberOfAxes: formData.numberOfAxes,
         inspectionFormNumber: apiData.inspectionFormNumber,
         date: apiData.date,
+        numberOfAxes: formData.numberOfAxes,
       });
   
       QRCode.toDataURL(qrData)
@@ -66,7 +66,7 @@ const CarForm = ({ formData, photo1, photo2 }) => {
               text-align: right;
               margin: 0;
               font-size: 9px;
-              padding: 0 20px;
+              padding: 0 5px;
             }
             h2 {
               text-align: center;
@@ -174,25 +174,25 @@ const CarForm = ({ formData, photo1, photo2 }) => {
               max-width: 65%;
               height: auto;
               margin-top: 15px;
-              transform: translateX(-130px);
+              transform: translateX(-85px);
             }
             .bottom-images {
               display: flex;
               flex-direction: column;
               gap: 20px;
-              transform: translateX(135px);
+              transform: translateX(150px);
             }
             .bottom-image {
               max-width: 160px;
               height: auto;
               margin-top: 15px;
-              transform: translateY(120px);
+              transform: translateY(215px);
             }
             .footer-text {
               display: flex;
               justify-content: space-between;
               width: 100%;
-              margin-top: 50px;
+              margin-top: 20px;
               text-align: center;
               font-size: 12px;
               font-weight: bold;
@@ -216,7 +216,7 @@ const CarForm = ({ formData, photo1, photo2 }) => {
                 font-size: 9px;
               }
               .header {
-                height: 120px;
+                height: 110px;
               }
               .logo-container img {
                 max-width: 100px;
@@ -232,10 +232,10 @@ const CarForm = ({ formData, photo1, photo2 }) => {
                 color:rgb(0, 0, 0);
               }
               .bottom-image {
-                max-width: 240px;
+                max-width: 150px;
               }
               .main-image {
-                max-width: 100%;
+                max-width: 75%;
               }
             }
           </style>
@@ -251,7 +251,7 @@ const CarForm = ({ formData, photo1, photo2 }) => {
             </div>
             <div class="qr-code-container">
               <img src="${qrCodeDataUrl}" alt="QR Code" width="120" />
-              </div>
+            </div>
           </div>
           <hr />
           <div class="grid">
@@ -317,4 +317,4 @@ const CarForm = ({ formData, photo1, photo2 }) => {
   );
 };
 
-export default CarForm;
+export default BikeForm;

@@ -4,6 +4,7 @@ import CheckboxField from "./CheckboxField";
 import CameraComponent from "./CameraComponent";
 import CarForm from "./CarForm";
 import TruckForm from "./TruckForm";
+import BikeForm from "./BikeForm";
 
 const Form = ({ formType, setFormType }) => {
   const [photo1, setPhoto1] = useState(null);
@@ -332,6 +333,9 @@ const Form = ({ formType, setFormType }) => {
             )}
             {formData.formType === "Truck" && (
               <TruckForm formData={formData} photo1={photo1} photo2={photo2} />
+            )}
+            {formData.formType === "Bike" && (
+              <BikeForm formData={formData} photo1={photo1} photo2={photo2} />
             )}
           </>
         )}
