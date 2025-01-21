@@ -16,6 +16,7 @@ const Form = ({ formType, setFormType }) => {
     vehicleType: "",
     vehicleColor: "",
     vehicleNumber: "",
+    vehicleCategory: "",
     isGovernment: false,
     chassisNumber: "",
     repeatReason: "",
@@ -66,9 +67,9 @@ const Form = ({ formType, setFormType }) => {
                 required
               >
                 <option value="">اختر نوع الاستمارة</option>
-                <option value="Car">سيارة</option>
-                <option value="Bike">دراجة</option>
-                <option value="Truck">شاحنة</option>
+                <option value="سيارة">سيارة</option>
+                <option value="دراجة">دراجة</option>
+                <option value="شاحنة">شاحنة</option>
               </select>
             </div>
             {formData.formType && (
@@ -136,6 +137,26 @@ const Form = ({ formType, setFormType }) => {
                 <option value="white">أبيض</option>
               </select>
             </div>
+            {formData.formType === "سيارة" && (
+            <>
+            <div className="bg-purple-200 p-4 rounded">
+              <label className="block text-right font-medium mb-1">
+                <i className="fas fa-palette mr-2"></i> فئة المركبة
+              </label>
+              <select
+                name="vehicleCategory"
+                value={formData.vehicleCategory}
+                onChange={handleChange}
+                className="w-full p-2 border rounded"
+                required
+              >
+                <option value="">اختر فئة المركبة</option>
+                <option value="خصوصي">خصوصي</option>
+                <option value="اجرة">اجرة</option>
+              </select>
+            </div>
+            </>
+            )}
             <div className="bg-green-200 p-4 rounded">
               <InputField
                 label={<><i className="fas fa-users mr-2"></i> عدد الركاب</>}
@@ -231,7 +252,7 @@ const Form = ({ formType, setFormType }) => {
                 required
               />
             </div>
-            {formData.formType === "Truck" && (
+            {formData.formType === "شاحنة" && (
               <>
                 <div className="bg-yellow-200 p-4 rounded">
                   <InputField
@@ -328,13 +349,13 @@ const Form = ({ formType, setFormType }) => {
                 </div>
               )}
             </div>
-            {formData.formType === "Car" && (
+            {formData.formType === "سيارة" && (
               <CarForm formData={formData} photo1={photo1} photo2={photo2} />
             )}
-            {formData.formType === "Truck" && (
+            {formData.formType === "شاحنة" && (
               <TruckForm formData={formData} photo1={photo1} photo2={photo2} />
             )}
-            {formData.formType === "Bike" && (
+            {formData.formType === "دراجة" && (
               <BikeForm formData={formData} photo1={photo1} photo2={photo2} />
             )}
           </>

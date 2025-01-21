@@ -23,6 +23,7 @@ const CarForm = ({ formData, photo1, photo2 }) => {
         vehicleModel: formData.vehicleModel,
         vehicleType: formData.vehicleType,
         vehicleColor: formData.vehicleColor,
+        vehicleCategory: formData.vehicleCategory,
         vehicleNumber: formData.vehicleNumber,
         isGovernment: formData.isGovernment,
         chassisNumber: formData.chassisNumber,
@@ -277,6 +278,7 @@ const CarForm = ({ formData, photo1, photo2 }) => {
                 <div class="info"><strong>رقم وصل القبض:</strong> <div><strong>${formData.receiptNumber}</strong></div></div>
                 <div class="info"><strong>نوع الاستمارة:</strong> <div><strong>${formData.formType}</strong></div></div>
                 <div class="info"><strong>التاريخ:</strong> <div><strong>${apiData.date}</strong></div></div>
+                <div class="info"><strong>فئة المركبة:</strong> <div><strong>${formData.vehicleCategory}</strong></div></div>
                 ${formData.isRepeated ? `<div class="info"><strong>سبب التكرار:</strong> <div><strong>${formData.repeatReason}</strong></div></div>` : ''}
               </div>
             </div>
