@@ -13,9 +13,7 @@ const Header = ({ userName, setFormType }) => {
           الاستمارات
         </button>
         <a href="#" className="hover:underline">المستخدمون</a>
-        <a href="#" className="hover:underline">الاعدادت</a>
-        <a href="#" className="hover:underline">أماكن التخزين</a>
-        <a href="#" className="hover:underline">المزامنة</a>
+        <a href="#" className="hover:underline">منشئ شهادة الفحص</a>
         <div className="relative group">
           <button className="hover:underline">التقارير</button>
           <div className="absolute hidden group-hover:block bg-white text-black mt-2 rounded shadow-lg">
