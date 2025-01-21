@@ -80,7 +80,7 @@ const CarForm = ({ formData, photo1, photo2 }) => {
               padding: 6px;
               border-radius: 6px;
             }
-            img {
+            .img {
               max-width: 90%;
               height: auto;
               margin-top: 10px;
@@ -163,45 +163,34 @@ const CarForm = ({ formData, photo1, photo2 }) => {
               display: flex;
               justify-content: center;
               align-items: center;
-              margin-top: 30px;
+              margin-top: 8px;
             }
             .footer-photo-container img {
-              margin: 0 15px;
+              margin: 0 10px;
             }
             .main-image {
               max-width: 65%;
               height: auto;
               margin-top: 15px;
-              transform: translateY(-30px);
-            }
-            .right-images {
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-              gap: 20px;
-            }
-            .top-image {
-              max-width: 200px;
-              margin-top: 15px;
-              transform: translateY(-40px);
+              transform: translateX(-130px);
             }
             .bottom-images {
               display: flex;
               flex-direction: column;
               gap: 20px;
-              transform: translateX(240px);
+              transform: translateX(135px);
             }
             .bottom-image {
               max-width: 160px;
               height: auto;
               margin-top: 15px;
-              transform: translateY(75px);
+              transform: translateY(120px);
             }
             .footer-text {
               display: flex;
               justify-content: space-between;
               width: 100%;
-              margin-top: 20px;
+              margin-top: 50px;
               text-align: center;
               font-size: 12px;
               font-weight: bold;
@@ -240,11 +229,11 @@ const CarForm = ({ formData, photo1, photo2 }) => {
                 font-size: 12px;
                 color:rgb(0, 0, 0);
               }
-              .top-image, .bottom-image {
-                max-width: 200px;
+              .bottom-image {
+                max-width: 240px;
               }
               .main-image {
-                max-width: 85%;
+                max-width: 100%;
               }
             }
           </style>
