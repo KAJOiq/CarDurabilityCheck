@@ -6,14 +6,13 @@ const Header = ({ userName, setFormType }) => {
     <header className="bg-gray-800 text-white w-full p-4 flex justify-between items-center">
       <h1 className="text-2xl font-bold text-right">نظام ادارة طلبات فحص المتانة</h1>
       <nav className="flex items-center space-x-4">
-        <button
-          className="hover:underline"
-          onClick={() => setFormType("inquiry")}
-        >
-          الاستمارات
-        </button>
+        <Link to="/inquiry" className="hover:underline">
+        الاستمارات
+        </Link>
         <a href="#" className="hover:underline">المستخدمون</a>
-        <a href="#" className="hover:underline"> شهادات الفحص</a>
+        <Link to="/certificates" className="hover:underline">
+          شهادات الفحص
+        </Link>
         <div className="relative group">
           <button className="hover:underline">التقارير</button>
           <div className="absolute hidden group-hover:block bg-white text-black mt-2 rounded shadow-lg">

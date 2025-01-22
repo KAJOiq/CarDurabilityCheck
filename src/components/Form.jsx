@@ -3,6 +3,7 @@ import InputField from "./InputField";
 import CheckboxField from "./CheckboxField";
 import CameraComponent from "./CameraComponent";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { Link } from "react-router-dom";
 
 import CarForm from "./CarForm";
 import TruckForm from "./TruckForm";
@@ -81,12 +82,15 @@ const Form = ({ formType, setFormType }) => {
     <div className="bg-slate-200 p-8 rounded-2xl shadow-md w-full h-full mt-10">
       <h1 className="text-2xl font-bold mb-6 text-right">الاستمارات</h1>
       <div className="flex justify-end mb-4 space-x-4">
-        <button
+{/*         <button
           className="bg-blue-500 text-white px-4 py-2 rounded-2xl hover:bg-blue-600 flex items-center"
           onClick={() => setFormType("entry")}
         >
           <i className="fas fa-plus mr-2"></i> إضافة استمارة
-        </button>
+        </button> */}
+        <Link to="/entry" className="bg-blue-500 text-white px-4 py-2 rounded-2xl hover:bg-blue-600 flex items-center">
+        اضافة استمارة
+        </Link>
       </div>
       <form className="grid grid-cols-2 gap-4">
       {formType === "entry" && (
