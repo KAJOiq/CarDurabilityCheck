@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import InputField from "./InputField";
 import CheckboxField from "./CheckboxField";
 import CameraComponent from "./CameraComponent";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
+
 import CarForm from "./CarForm";
 import TruckForm from "./TruckForm";
 import BikeForm from "./BikeForm";
@@ -19,6 +21,7 @@ const Form = ({ formType, setFormType }) => {
     vehicleCategory: "",
     isGovernment: false,
     chassisNumber: "",
+    isRepeated: false,
     repeatReason: "",
     model: "",
     cylinderCount: "",
@@ -30,16 +33,49 @@ const Form = ({ formType, setFormType }) => {
     attachedLoadType: "", // Specific for Truck
     attachedChassis: "", // Specific for Truck
     numberOfAttachedVehicles: "", // Specific for Truck
-    numberOfAxes: "",
+    numberOfAxes: ""
   });
 
+  const navigate = useNavigate(); // For navigation
+  const handlePhoto1Change = (photoData) => {
+    setPhoto1(photoData); // Update photo1 with the captured image
+  };
+
+  const handlePhoto2Change = (photoData) => {
+    setPhoto2(photoData); // Update photo2 with the captured image
+  };
+  useEffect(() => {
+    const savedData = localStorage.getItem("formData");
+    if (savedData) {
+      try {
+        setFormData(JSON.parse(savedData));
+      } catch (error) {
+        console.error("Error parsing saved data", error);
+      }
+    }
+  }, []);
+  
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       [name]: type === "checkbox" ? checked : value,
-    });
+    }));
   };
+
+  const handleSave = () => {
+    // Add photo1 and photo2 to formData if they exist
+    const updatedFormData = {
+      ...formData,
+      photo1: photo1, 
+      photo2: photo2  
+    };
+  
+    localStorage.setItem("formData", JSON.stringify(updatedFormData));
+    alert("Form data has been saved!");
+    navigate("/view-data"); // Navigate to the view data page
+  };
+  
 
   return (
     <div className="bg-slate-200 p-8 rounded-2xl shadow-md w-full h-full mt-10">
@@ -196,12 +232,12 @@ const Form = ({ formType, setFormType }) => {
               <CheckboxField
                 label={<><i className="fas fa-exclamation-circle mr-2"></i> مكرر؟</>}
                 name="isRepeated"
-                checked={isRepeated}
-                onChange={(e) => setIsRepeated(e.target.checked)}
+                checked={formData.isRepeated}
+                onChange={handleChange}
               />
             </div>
 
-            {isRepeated && (
+            {formData.isRepeated && (
               <div className="col-span-2 bg-gray-200 p-4 rounded-2xl">
                 <InputField
                   label={<><i className="fas fa-exclamation-triangle mr-2"></i> سبب التكرار</>}
@@ -320,7 +356,7 @@ const Form = ({ formType, setFormType }) => {
               <label className="text-right font-medium mb-1 block">
                 <i className="fas fa-camera mr-2"></i> صورة الشاصي
               </label>
-              <CameraComponent setPhoto={setPhoto1} />
+              <CameraComponent setPhoto={handlePhoto1Change} />
               {photo1 && (
                 <div className="mt-4">
                   <h2 className="text-right font-medium mb-2">الصورة الملتقطة:</h2>
@@ -337,7 +373,7 @@ const Form = ({ formType, setFormType }) => {
               <label className="text-right font-medium mb-1 block">
                 <i className="fas fa-camera mr-2"></i> صورة مقدّمة السيارة
               </label>
-              <CameraComponent setPhoto={setPhoto2} />
+              <CameraComponent setPhoto={handlePhoto2Change} />
               {photo2 && (
                 <div className="mt-4">
                   <h2 className="text-right font-medium mb-2">الصورة الملتقطة:</h2>
@@ -349,7 +385,16 @@ const Form = ({ formType, setFormType }) => {
                 </div>
               )}
             </div>
-            {formData.formType === "سيارة" && (
+            <div className="col-span-2 text-center mt-4">
+              <button
+                type="button"
+                className="bg-green-500 text-white px-6 py-3 rounded-2xl hover:bg-green-600"
+                onClick={handleSave}
+              >
+                حفظ الاستمارة
+              </button>
+            </div>
+{/*             {formData.formType === "سيارة" && (
               <CarForm formData={formData} photo1={photo1} photo2={photo2} />
             )}
             {formData.formType === "شاحنة" && (
@@ -357,7 +402,7 @@ const Form = ({ formType, setFormType }) => {
             )}
             {formData.formType === "دراجة" && (
               <BikeForm formData={formData} photo1={photo1} photo2={photo2} />
-            )}
+            )} */}
           </>
         )}
 

@@ -286,8 +286,8 @@ const CarForm = ({ formData, photo1, photo2 }) => {
           <div class="footer-photo-container">
             <img src="${imgStaticBase64}" alt="Car Image" class="main-image" />
               <div class="bottom-images">
-                <img src="${photo1}" alt="Captured Chassis" class="bottom-image" />
-                <img src="${photo2}" alt="Captured Front" class="bottom-image" />
+                <img src="${formData.photo1}" alt="Captured Chassis" class="bottom-image" />
+                <img src="${formData.photo2}" alt="Captured Front" class="bottom-image" />
               </div>
             </div>
           </div>
@@ -309,7 +309,7 @@ const CarForm = ({ formData, photo1, photo2 }) => {
     <div>
       <button
  
-        className="bg-blue-500 text-white px-6 py-3 rounded hover:bg-blue-600"
+        className="bg-blue-500 text-white px-6 py-3 rounded-2xl hover:bg-blue-600"
         onClick={handlePrint}
       >
         طباعة الاستمارة

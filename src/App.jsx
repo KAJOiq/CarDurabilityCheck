@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Form from "./components/Form";
 import Header from "./components/Header";
+import ViewData from "./components/ViewData";
 import './index.css';
 
 const App = () => {
@@ -40,6 +41,7 @@ const App = () => {
                 <Route path="/entry" element={<Form formType="entry" setFormType={setFormType} />} />
                 <Route path="/inquiry" element={<Form formType="inquiry" setFormType={setFormType} />} />
                 <Route path="/" element={<Form formType={formType} setFormType={setFormType} />} />
+                <Route path="/view-data" element={<ViewData />} />
               </Routes>
             </main>
           </>
