@@ -5,6 +5,7 @@ import CameraComponent from "./CameraComponent";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import { Link } from "react-router-dom";
 
+import CertificatesForm from "./CertificatesForm";
 import CarForm from "./CarForm";
 import TruckForm from "./TruckForm";
 import BikeForm from "./BikeForm";

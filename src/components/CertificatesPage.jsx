@@ -34,19 +34,19 @@ const CertificatesPage = () => {
       <table className="min-w-full border-collapse border border-gray-300">
         <thead>
           <tr>
-            <th className="border border-gray-300 px-4 py-2">#</th>
+{/*             <th className="border border-gray-300 px-4 py-2">#</th>
             <th className="border border-gray-300 px-4 py-2">الاسم</th>
             <th className="border border-gray-300 px-4 py-2">التاريخ</th>
-            <th className="border border-gray-300 px-4 py-2">الحالة</th>
+            <th className="border border-gray-300 px-4 py-2">الحالة</th> */}
           </tr>
         </thead>
         <tbody>
           {certificates.map((certificate, index) => (
             <tr key={certificate.id} className="text-center">
-              <td className="border border-gray-300 px-4 py-2">{index + 1}</td>
+{/*               <td className="border border-gray-300 px-4 py-2">{index + 1}</td>
               <td className="border border-gray-300 px-4 py-2">{certificate.name}</td>
               <td className="border border-gray-300 px-4 py-2">{certificate.date}</td>
-              <td className="border border-gray-300 px-4 py-2">{certificate.status}</td>
+              <td className="border border-gray-300 px-4 py-2">{certificate.status}</td> */}
             </tr>
           ))}
         </tbody>

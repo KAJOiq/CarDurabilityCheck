@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import CarForm from "./CarForm";
 import TruckForm from "./TruckForm";
 import BikeForm from "./BikeForm";
+import CertificatesForm from "./CertificatesForm";
 
 const ViewData = () => {
   const [formData, setFormData] = useState(null);
@@ -36,6 +37,9 @@ const ViewData = () => {
       {formData.formType === "دراجة" && (
         <BikeForm formData={formData} />
       )}
+                  {formData.formType === "شاحنة" && (
+              <CertificatesForm formData={formData} />
+            )}
       <hr className="my-6" />
       <dl className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <div className="flex justify-end">
