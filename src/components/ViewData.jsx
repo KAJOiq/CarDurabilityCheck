@@ -23,6 +23,7 @@ const ViewData = () => {
 
   return (
     <div className="bg-white p-10 rounded-lg shadow-lg w-full max-w-5xl mx-auto mt-10" dir="rtl">
+      
       <h1 className="text-3xl font-extrabold text-center text-gray-800 mb-8">
         عرض بيانات الاستمارة
       </h1>
@@ -35,7 +36,7 @@ const ViewData = () => {
       {formData.formType === "دراجة" && (
         <BikeForm formData={formData} />
       )}
-
+      <hr className="my-6" />
       <dl className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <div className="flex justify-end">
           <dt className="font-bold w-1/2 text-right">نوع الاستمارة:</dt>
@@ -133,7 +134,7 @@ const ViewData = () => {
           <dt className="font-bold w-1/2 text-right">صورة الشاصي:</dt>
           <dd className="w-1/2">
             {formData.photo1 && (
-              <img src={formData.photo1} alt="Photo 1" className="w-32 h-32 object-cover" />
+              <img src={formData.photo1} alt="صورة الشاصي" className="w-32 h-32 object-cover" />
             )}
           </dd>
         </div>
@@ -141,7 +142,7 @@ const ViewData = () => {
           <dt className="font-bold w-1/2 text-right">صورة مقدمة السيارة:</dt>
           <dd className="w-1/2">
             {formData.photo2 && (
-              <img src={formData.photo2} alt="Photo 2" className="w-32 h-32 object-cover" />
+              <img src={formData.photo2} alt="صورة مقدمة السيارة" className="w-32 h-32 object-cover" />
             )}
           </dd>
         </div>
