@@ -9,7 +9,9 @@ const Header = ({ userName, setFormType }) => {
         <Link to="/inquiry" className="hover:underline">
         الاستمارات
         </Link>
-        <a href="#" className="hover:underline">المستخدمون</a>
+        <Link to="/users" className="hover:underline">
+        المستخدمون
+        </Link>
         <Link to="/certificates" className="hover:underline">
           شهادات الفحص
         </Link>

@@ -4,7 +4,7 @@ import Form from "./components/Form";
 import Header from "./components/Header";
 import ViewData from "./components/ViewData";
 import CertificatesPage from "./components/CertificatesPage";
-
+import FetchUsers from "./components/FetchUsers";
 import './index.css';
 
 const App = () => {
@@ -44,6 +44,7 @@ const App = () => {
                 <Route path="/inquiry" element={<Form formType="inquiry" setFormType={setFormType} />} />
                 <Route path="/view-data" element={<ViewData />} />
                 <Route path="/certificates" element={<CertificatesPage />} />
+                <Route path="/users" element={<FetchUsers />} />
               </Routes>
             </main>
           </>
