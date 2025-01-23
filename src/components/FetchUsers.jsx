@@ -39,17 +39,17 @@ const FetchUsers = () => {
         <table className="w-full border-collapse border border-gray-300">
           <thead>
             <tr>
-              <th className="border border-gray-300 p-2">ID</th>
+{/*               <th className="border border-gray-300 p-2">ID</th>
               <th className="border border-gray-300 p-2">Name</th>
-              <th className="border border-gray-300 p-2">Email</th>
+              <th className="border border-gray-300 p-2">Email</th> */}
             </tr>
           </thead>
           <tbody>
             {users.map((user) => (
               <tr key={user.id}>
-                <td className="border border-gray-300 p-2">{user.id}</td>
+{/*                 <td className="border border-gray-300 p-2">{user.id}</td>
                 <td className="border border-gray-300 p-2">{user.name}</td>
-                <td className="border border-gray-300 p-2">{user.email}</td>
+                <td className="border border-gray-300 p-2">{user.email}</td> */}
               </tr>
             ))}
           </tbody>

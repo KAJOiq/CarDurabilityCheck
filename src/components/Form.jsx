@@ -13,6 +13,7 @@ import BikeForm from "./BikeForm";
 const Form = ({ formType, setFormType }) => {
   const [photo1, setPhoto1] = useState(null);
   const [photo2, setPhoto2] = useState(null);
+  const [photo3, setPhoto3] = useState(null);
   const [isRepeated, setIsRepeated] = useState(false);
   const [formData, setFormData] = useState({
     customerName: "",
@@ -46,6 +47,11 @@ const Form = ({ formType, setFormType }) => {
   const handlePhoto2Change = (photoData) => {
     setPhoto2(photoData); // Update photo2 with the captured image
   };
+
+  const handlePhoto3Change = (photoData) => {
+    setPhoto3(photoData); // Update photo3 with the captured image
+  };
+
   useEffect(() => {
     const savedData = localStorage.getItem("formData");
     if (savedData) {
@@ -70,7 +76,8 @@ const Form = ({ formType, setFormType }) => {
     const updatedFormData = {
       ...formData,
       photo1: photo1, 
-      photo2: photo2  
+      photo2: photo2,
+      photo3: photo3  
     };
   
     localStorage.setItem("formData", JSON.stringify(updatedFormData));
@@ -368,13 +375,13 @@ const Form = ({ formType, setFormType }) => {
                   <img
                     src={photo1}
                     alt="Captured Chassis"
-                    className="w-full h-auto border rounded"
+                    className="w-full h-auto border rounded-2xl"
                   />
                 </div>
               )}
             </div>
 
-            <div className="col-span-2 bg-indigo-200 p-4 rounded">
+            <div className="col-span-2 bg-indigo-200 p-4 rounded-2xl">
               <label className="text-right font-medium mb-1 block">
                 <i className="fas fa-camera mr-2"></i> صورة مقدّمة السيارة
               </label>
@@ -390,6 +397,24 @@ const Form = ({ formType, setFormType }) => {
                 </div>
               )}
             </div>
+            {!formData.isGovernment && (
+            <div className="col-span-2 bg-purple-200 p-4 rounded-2xl">
+              <label className="text-right font-medium mb-1 block">
+                <i className="fas fa-camera mr-2"></i> صورة وصل القبض
+              </label>
+              <CameraComponent setPhoto={handlePhoto3Change} />
+              {photo3 && (
+                <div className="mt-4">
+                  <h2 className="text-right font-medium mb-2">الصورة الملتقطة:</h2>
+                  <img
+                    src={photo3}
+                    alt="Captured receiptNumber"
+                    className="w-full h-auto border rounded-2xl"
+                  />
+                </div>
+              )}
+            </div>
+            )}
             <div className="col-span-2 text-center mt-4">
               <button
                 type="button"

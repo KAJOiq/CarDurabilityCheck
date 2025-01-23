@@ -136,7 +136,7 @@ const ViewData = () => {
           <dt className="font-bold w-1/2 text-right">صورة الشاصي:</dt>
           <dd className="w-1/2">
             {formData.photo1 && (
-              <img src={formData.photo1} alt="صورة الشاصي" className="w-32 h-32 object-cover" />
+              <img src={formData.photo1} alt="صورة الشاصي" className="w-full h-auto border rounded-2xl" />
             )}
           </dd>
         </div>
@@ -144,7 +144,15 @@ const ViewData = () => {
           <dt className="font-bold w-1/2 text-right">صورة مقدمة السيارة:</dt>
           <dd className="w-1/2">
             {formData.photo2 && (
-              <img src={formData.photo2} alt="صورة مقدمة السيارة" className="w-32 h-32 object-cover" />
+              <img src={formData.photo2} alt="صورة مقدمة السيارة" className="w-full h-auto border rounded-2xl" />
+            )}
+          </dd>
+        </div>
+        <div className="flex justify-end mt-4">
+          <dt className="font-bold w-1/2 text-right">صورة وصل القبض:</dt>
+          <dd className="w-1/2">
+            {formData.photo3 && (
+              <img src={formData.photo3} alt="صورة مقدمة السيارة" className="w-full h-auto border rounded-2xl" />
             )}
           </dd>
         </div>
