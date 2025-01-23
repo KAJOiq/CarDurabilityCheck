@@ -259,10 +259,6 @@ const CertificatesForm = ({ formData, photo1, photo2 }) => {
                 <div class="info"><strong>رقم الشاصي:</strong> <div><strong>${formData.chassisNumber}</strong></div></div>
                 <div class="info"><strong>الموديل:</strong> <div><strong>${formData.model}</strong></div></div>
                 <div class="info"><strong>عدد السلندر:</strong> <div><strong>${formData.cylinderCount}</strong></div></div>
-                <div class="info"><strong>الحمولة:</strong> <div><strong>${formData.load}</strong></div></div>
-                <div class="info"><strong>نوع الحمولة المرفقة:</strong> <div><strong>${formData.attachedLoadType}</strong></div></div>
-                <div class="info"><strong>الشاصي المرفق:</strong> <div><strong>${formData.attachedChassis}</strong></div></div>
-                <div class="info"><strong>عدد المركبات المرفقة:</strong> <div><strong>${formData.numberOfAttachedVehicles}</strong></div></div>
                 <div class="info"><strong>عدد المحاور:</strong> <div><strong>${formData.numberOfAxes}</strong></div></div>
               </div>
             </div>
