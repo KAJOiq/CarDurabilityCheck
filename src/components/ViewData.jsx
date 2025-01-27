@@ -12,6 +12,7 @@ const ViewData = () => {
     if (savedData) {
       setFormData(JSON.parse(savedData));
     }
+    localStorage.removeItem("formData");
   }, []);
 
   if (!formData) {

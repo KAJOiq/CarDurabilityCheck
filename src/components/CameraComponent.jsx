@@ -222,7 +222,7 @@ const CameraComponent = ({ setPhoto }) => {
         ref={videoRef}
         autoPlay
         playsInline
-        className="border rounded w-full h-64 mt-4"
+        className="border rounded w-full h-80 mt-4"
       ></video>
 
       <canvas ref={canvasRef} style={{ display: "none" }}></canvas>
@@ -297,7 +297,7 @@ const CameraComponent = ({ setPhoto }) => {
           <div className="relative w-full h-64 mt-4">
             <Cropper
               src={imageSrc}
-              style={{ height: 250, width: "100%" }}
+              style={{ height: "120%", width: "100%" }}
               aspectRatio={NaN}
               guides={false}
               ref={cropperRef}
@@ -306,10 +306,10 @@ const CameraComponent = ({ setPhoto }) => {
           </div>
           <button
             type="button"
-            className="px-6 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 mt-4"
+            className="px-6 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 mt-20"
             onClick={saveCroppedPhoto}
           >
-            حفظ الصورة
+            حفظ الصورة الملتقطة
           </button>
         </>
       )}

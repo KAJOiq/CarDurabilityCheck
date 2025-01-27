@@ -297,7 +297,11 @@ const BikeForm = ({ formData, photo1, photo2 }) => {
       </html>
     `);
     printWindow.document.close();
-    printWindow.print();
+
+    // Add a delay of 500 milliseconds (0.5 seconds) before calling print()
+    setTimeout(() => {
+      printWindow.print();
+    }, 500);  // Adjust the 500 milliseconds as needed
   };
 
 

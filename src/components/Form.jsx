@@ -80,11 +80,9 @@ const Form = ({ formType, setFormType }) => {
     };
   
     localStorage.setItem("formData", JSON.stringify(updatedFormData));
-    alert("Form data has been saved!");
     navigate("/view-data"); // Navigate to the view data page
   };
   
-
   return (
     <div className="bg-slate-200 p-8 rounded-2xl shadow-md w-full h-full mt-10">
       <h1 className="text-2xl font-bold mb-6 text-right">الاستمارات</h1>
