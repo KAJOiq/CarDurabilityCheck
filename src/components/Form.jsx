@@ -5,11 +5,6 @@ import CameraComponent from "./CameraComponent";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import { Link } from "react-router-dom";
 
-import CertificatesForm from "./CertificatesForm";
-import CarForm from "./CarForm";
-import TruckForm from "./TruckForm";
-import BikeForm from "./BikeForm";
-
 const Form = ({ formType, setFormType }) => {
   const [photo1, setPhoto1] = useState(null);
   const [photo2, setPhoto2] = useState(null);
@@ -83,20 +78,52 @@ const Form = ({ formType, setFormType }) => {
     navigate("/view-data"); // Navigate to the view data page
   };
   
+  // Fetch the form data when the component mounts
+  useEffect(() => {
+    if (formType === "inquiry") {
+      const fetchForms = async () => {
+        try {
+          const response = await fetch("https://api.example.com/inquery"); // Replace with your API endpoint
+          const data = await response.json();
+          setFormData(data); // Update the state with the fetched form data
+        } catch (error) {
+          console.error("Error fetching form data:", error);
+        }
+      };
+
+      fetchForms();
+    }
+  }, [formType]);
+
   return (
     <div className="bg-slate-200 p-8 rounded-2xl shadow-md w-full h-full mt-10">
       <h1 className="text-2xl font-bold mb-6 text-right">الاستمارات</h1>
       <div className="flex justify-end mb-4 space-x-4">
-{/*         <button
-          className="bg-blue-500 text-white px-4 py-2 rounded-2xl hover:bg-blue-600 flex items-center"
-          onClick={() => setFormType("entry")}
-        >
-          <i className="fas fa-plus mr-2"></i> إضافة استمارة
-        </button> */}
         <Link to="/entry" className="bg-blue-500 text-white px-4 py-2 rounded-2xl hover:bg-blue-600 flex items-center">
         اضافة استمارة
         </Link>
       </div>
+      {formType === "inquiry" && (
+        <>
+        {/* Display forms from the API */}
+        {formData.length > 0 ? (
+        <div className="grid grid-cols-2 gap-4">
+          {formData.map((form, index) => (
+            <div key={index} className="p-4 bg-gray-200 rounded-2xl">
+              <h3 className="text-lg font-semibold">{form.customerName}</h3>
+              <p><strong>نوع المركبة:</strong> {form.vehicleType}</p>
+              <p><strong>طراز المركبة:</strong> {form.vehicleModel}</p>
+              <p><strong>رقم المركبة:</strong> {form.vehicleNumber}</p>
+              {/* Display more form fields as needed */}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p>لا توجد استمارات حالياً.</p>
+      )}
+      </>
+      )}
+      
       <form className="grid grid-cols-2 gap-4">
       {formType === "entry" && (
           <>
@@ -237,27 +264,6 @@ const Form = ({ formType, setFormType }) => {
                 required
               />
             </div>
-{/*             <div className="bg-orange-200 p-4 rounded-2xl">
-              <CheckboxField
-                label={<><i className="fas fa-exclamation-circle mr-2"></i> مكرر؟</>}
-                name="isRepeated"
-                checked={formData.isRepeated}
-                onChange={handleChange}
-              />
-            </div>
-
-            {formData.isRepeated && (
-              <div className="col-span-2 bg-gray-200 p-4 rounded-2xl">
-                <InputField
-                  label={<><i className="fas fa-exclamation-triangle mr-2"></i> سبب التكرار</>}
-                  name="repeatReason"
-                  value={formData.repeatReason}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-            )}
- */}
             <div className="bg-purple-200 p-4 rounded-2xl">
               <label className="block text-right font-medium mb-1">
                 <i className="fas fa-palette mr-2"></i> الموديل
@@ -421,15 +427,6 @@ const Form = ({ formType, setFormType }) => {
                 حفظ الاستمارة
               </button>
             </div>
-{/*             {formData.formType === "سيارة" && (
-              <CarForm formData={formData} photo1={photo1} photo2={photo2} />
-            )}
-            {formData.formType === "شاحنة" && (
-              <TruckForm formData={formData} photo1={photo1} photo2={photo2} />
-            )}
-            {formData.formType === "دراجة" && (
-              <BikeForm formData={formData} photo1={photo1} photo2={photo2} />
-            )} */}
           </>
         )}
 
