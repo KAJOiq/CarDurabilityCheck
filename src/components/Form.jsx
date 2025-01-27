@@ -24,7 +24,7 @@ const Form = ({ formType, setFormType }) => {
     isGovernment: false,
     chassisNumber: "",
     //isRepeated: false,
-    repeatReason: "",
+    // repeatReason: "",
     model: "",
     cylinderCount: "",
     receiptNumber: "",

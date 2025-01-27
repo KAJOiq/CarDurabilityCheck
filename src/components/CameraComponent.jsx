@@ -30,20 +30,22 @@ const CameraComponent = ({ setPhoto }) => {
 
         const track = stream.getVideoTracks()[0];
         const capabilities = track.getCapabilities();
-        console.log("Camera capabilities:", capabilities);
 
         // Check if focus is supported
         if (capabilities.focusDistance) {
           setFocusSupported(true);
           setFocusRange({ min: capabilities.focusDistance.min, max: capabilities.focusDistance.max });
           // Set initial focus to auto
-          track.applyConstraints({
-            advanced: [{ focusMode: "continuous" }],
-          }).then(() => {
-            console.log("Auto-focus enabled");
-          }).catch((error) => {
-            console.error("Error enabling auto-focus:", error);
-          });
+          track
+            .applyConstraints({
+              advanced: [{ focusMode: "continuous" }],
+            })
+            .then(() => {
+              console.log("Auto-focus enabled");
+            })
+            .catch((error) => {
+              console.error("Error enabling auto-focus:", error);
+            });
         }
 
         // Check if brightness is supported
@@ -52,13 +54,16 @@ const CameraComponent = ({ setPhoto }) => {
           // Set initial brightness to the middle of the supported range
           const initialBrightness = (capabilities.brightness.min + capabilities.brightness.max) / 2;
           setBrightness(initialBrightness);
-          track.applyConstraints({
-            advanced: [{ brightness: initialBrightness }],
-          }).then(() => {
-            console.log("Brightness constraints applied:", initialBrightness);
-          }).catch((error) => {
-            console.error("Error applying brightness constraints:", error);
-          });
+          track
+            .applyConstraints({
+              advanced: [{ brightness: initialBrightness }],
+            })
+            .then(() => {
+              console.log("Brightness constraints applied:", initialBrightness);
+            })
+            .catch((error) => {
+              console.error("Error applying brightness constraints:", error);
+            });
         }
       }
       setCameraEnabled(true);
@@ -82,18 +87,25 @@ const CameraComponent = ({ setPhoto }) => {
     if (stream) {
       const track = stream.getVideoTracks()[0];
       const capabilities = track.getCapabilities();
-      const focusValue = capabilities.focusDistance.min + (capabilities.focusDistance.max - capabilities.focusDistance.min) * (percentage / 100);
+      const focusValue =
+        capabilities.focusDistance.min +
+        (capabilities.focusDistance.max - capabilities.focusDistance.min) * (percentage / 100);
       if (focusValue < capabilities.focusDistance.min || focusValue > capabilities.focusDistance.max) {
-        console.error(`Focus distance value ${focusValue} is out of range (${capabilities.focusDistance.min} - ${capabilities.focusDistance.max})`);
+        console.error(
+          `Focus distance value ${focusValue} is out of range (${capabilities.focusDistance.min} - ${capabilities.focusDistance.max})`
+        );
         return;
       }
-      track.applyConstraints({
-        advanced: [{ focusMode: "manual", focusDistance: focusValue }],
-      }).then(() => {
-        console.log("Focus constraints applied:", focusValue);
-      }).catch((error) => {
-        console.error("Error applying focus constraints:", error);
-      });
+      track
+        .applyConstraints({
+          advanced: [{ focusMode: "manual", focusDistance: focusValue }],
+        })
+        .then(() => {
+          console.log("Focus constraints applied:", focusValue);
+        })
+        .catch((error) => {
+          console.error("Error applying focus constraints:", error);
+        });
       setFocusDistance(percentage);
     }
   };
@@ -103,18 +115,21 @@ const CameraComponent = ({ setPhoto }) => {
     const stream = mediaStreamRef.current;
     if (stream) {
       const track = stream.getVideoTracks()[0];
-      track.applyConstraints({
-        advanced: [{ brightness: value }],
-      }).then(() => {
-        console.log("Brightness constraints applied:", value);
-      }).catch((error) => {
-        console.error("Error applying brightness constraints:", error);
-      });
+      track
+        .applyConstraints({
+          advanced: [{ brightness: value }],
+        })
+        .then(() => {
+          console.log("Brightness constraints applied:", value);
+        })
+        .catch((error) => {
+          console.error("Error applying brightness constraints:", error);
+        });
       setBrightness(value);
     }
   };
 
-  // Capture image
+  // Capture image and save it to localStorage
   const captureImage = () => {
     const canvas = canvasRef.current;
     const video = videoRef.current;
@@ -130,6 +145,13 @@ const CameraComponent = ({ setPhoto }) => {
       const imageUrl = canvas.toDataURL("image/png");
       setImageSrc(imageUrl);
       setIsEditing(true);
+
+      // Save the full image to localStorage
+      const savedImages = JSON.parse(localStorage.getItem("fullImages")) || [];
+      savedImages.push(imageUrl);
+      localStorage.setItem("fullImages", JSON.stringify(savedImages));
+
+      console.log("Image saved to localStorage");
     }
   };
 
@@ -139,6 +161,13 @@ const CameraComponent = ({ setPhoto }) => {
     const croppedImage = await getCroppedImg(imageSrc, cropper);
     setPhoto(croppedImage);
     setIsEditing(false);
+
+    // Save cropped image to localStorage
+    const savedCroppedImages = JSON.parse(localStorage.getItem("croppedImages")) || [];
+    savedCroppedImages.push(croppedImage);
+    localStorage.setItem("croppedImages", JSON.stringify(savedCroppedImages));
+
+    console.log("Cropped image saved to localStorage");
   };
 
   useEffect(() => {
@@ -167,13 +196,16 @@ const CameraComponent = ({ setPhoto }) => {
       const stream = mediaStreamRef.current;
       if (stream) {
         const track = stream.getVideoTracks()[0];
-        track.applyConstraints({
-          advanced: [{ focusMode: "continuous" }],
-        }).then(() => {
-          console.log("Auto-focus enabled");
-        }).catch((error) => {
-          console.error("Error enabling auto-focus:", error);
-        });
+        track
+          .applyConstraints({
+            advanced: [{ focusMode: "continuous" }],
+          })
+          .then(() => {
+            console.log("Auto-focus enabled");
+          })
+          .catch((error) => {
+            console.error("Error enabling auto-focus:", error);
+          });
       }
     }
   }, [manualFocusEnabled]);
@@ -274,10 +306,10 @@ const CameraComponent = ({ setPhoto }) => {
           </div>
           <button
             type="button"
-            className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 mt-4"
+            className="px-6 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 mt-4"
             onClick={saveCroppedPhoto}
           >
-            حفظ الصورة المعدلة
+            حفظ الصورة
           </button>
         </>
       )}
