@@ -14,7 +14,6 @@ const Form = ({ formType, setFormType }) => {
   const [photo1, setPhoto1] = useState(null);
   const [photo2, setPhoto2] = useState(null);
   const [photo3, setPhoto3] = useState(null);
-  const [isRepeated, setIsRepeated] = useState(false);
   const [formData, setFormData] = useState({
     customerName: "",
     vehicleModel: "",
@@ -24,7 +23,7 @@ const Form = ({ formType, setFormType }) => {
     vehicleCategory: "",
     isGovernment: false,
     chassisNumber: "",
-    isRepeated: false,
+    //isRepeated: false,
     repeatReason: "",
     model: "",
     cylinderCount: "",
@@ -240,7 +239,7 @@ const Form = ({ formType, setFormType }) => {
                 required
               />
             </div>
-            <div className="bg-orange-200 p-4 rounded-2xl">
+{/*             <div className="bg-orange-200 p-4 rounded-2xl">
               <CheckboxField
                 label={<><i className="fas fa-exclamation-circle mr-2"></i> مكرر؟</>}
                 name="isRepeated"
@@ -260,7 +259,7 @@ const Form = ({ formType, setFormType }) => {
                 />
               </div>
             )}
-
+ */}
             <div className="bg-purple-200 p-4 rounded-2xl">
               <label className="block text-right font-medium mb-1">
                 <i className="fas fa-palette mr-2"></i> الموديل

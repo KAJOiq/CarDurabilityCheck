@@ -34,11 +34,11 @@ const App = () => {
 
   return (
     <Router>
-      <div className="min-h-screen bg-gray-100 flex flex-col items-center py-8">
+      <div className="min-h-screen flex flex-col items-center">
         {isLoggedIn ? (
           <>
             <Header userName={userName} setFormType={setFormType} />
-            <main className="w-full max-w-4xl p-4">
+            <main className="w-full max-w-7xl p-4">
               <Routes>
                 <Route path="/entry" element={<Form formType="entry" setFormType={setFormType} />} />
                 <Route path="/inquiry" element={<Form formType="inquiry" setFormType={setFormType} />} />

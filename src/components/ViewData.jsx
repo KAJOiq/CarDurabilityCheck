@@ -23,7 +23,7 @@ const ViewData = () => {
   }
 
   return (
-    <div className="bg-gradient-to-br from-gray-100 to-gray-300 p-10 rounded-lg shadow-xl w-full max-w-5xl mx-auto mt-10" dir="rtl">
+    <div className="bg-gradient-to-br from-gray-100 to-gray-300 p-10 rounded-lg shadow-xl w-full max-w-7xl mx-auto mt-10" dir="rtl">
       
       <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-8">
         عرض بيانات الاستمارة
@@ -122,7 +122,7 @@ const ViewData = () => {
           <dt className="font-bold w-1/2 text-right">حكومي؟:</dt>
           <dd className="w-1/2">{formData.isGovernment ? "نعم" : "لا"}</dd>
         </div>
-        <div className="bg-white rounded-lg shadow-md p-4 flex justify-between items-center">
+{/*         <div className="bg-white rounded-lg shadow-md p-4 flex justify-between items-center">
           <dt className="font-bold w-1/2 text-right">مكرر:</dt>
           <dd className="w-1/2">{formData.isRepeated ? "نعم" : "لا"}</dd>
         </div>
@@ -131,7 +131,7 @@ const ViewData = () => {
             <dt className="font-bold w-1/2 text-right">سبب التكرار:</dt>
             <dd className="w-1/2">{formData.repeatReason}</dd>
           </div>
-        )}
+        )} */}
         <div className="row-span-1 lg:col-span-3 flex justify-center">
           <dt className="font-bold w-1/2 text-right">صورة الشاصي:</dt>
           <dd className="w-1/2">
