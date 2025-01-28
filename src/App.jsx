@@ -5,8 +5,8 @@ import Header from "./components/Header";
 import ViewData from "./components/ViewData";
 import CertificatesPage from "./components/CertificatesPage";
 import FetchUsers from "./components/FetchUsers";
-import Login from "./components/Login"; 
-import ProjectStatus from "./components/ProjectStatus"
+import Login from "./components/Login";
+import ProjectStatus from "./components/ProjectStatus";
 import './index.css';
 
 const App = () => {
@@ -32,7 +32,7 @@ const App = () => {
                 <Route path="/view-data" element={<ViewData />} />
                 <Route path="/certificates" element={<CertificatesPage />} />
                 <Route path="/users" element={<FetchUsers />} />
-                <Route path="/" element={<ProjectStatus/>} />
+                <Route path="/" element={<ProjectStatus />} />
               </Routes>
             </main>
           </>
