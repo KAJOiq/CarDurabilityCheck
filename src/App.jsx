@@ -1,36 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Login from "./components/Login"; 
 import Form from "./components/Form";
 import Header from "./components/Header";
 import ViewData from "./components/ViewData";
 import CertificatesPage from "./components/CertificatesPage";
 import FetchUsers from "./components/FetchUsers";
+import Login from "./components/Login"; // Import Login component
 import './index.css';
 
 const App = () => {
-  const [userName, setUserName] = useState("اسم المستخدم"); // Temporarily set a default username
-  const [isLoggedIn, setIsLoggedIn] = useState(true); // Temporarily set the user as logged in
+  const [userName, setUserName] = useState(""); // Store logged-in username
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login state
   const [formType, setFormType] = useState("inquiry"); // Default form type
-
-  useEffect(() => {
-    // Function to fetch the username from the API
-    const fetchUserName = async () => {
-      try {
-        const response = await fetch("https://api.example.com/username"); // Replace with your API endpoint
-        const data = await response.json();
-        setUserName(data.userName); // Adjust according to the structure of your API response
-      } catch (error) {
-        console.error("Error fetching username:", error);
-      }
-    };
-
-    fetchUserName();
-  }, []);
 
   const handleLogin = (userName) => {
     setUserName(userName);
-    setIsLoggedIn(true);
+    setIsLoggedIn(true); // Set logged-in state to true after login
   };
 
   return (
@@ -50,7 +35,7 @@ const App = () => {
             </main>
           </>
         ) : (
-          <Login onLogin={handleLogin} />
+          <Login onLogin={handleLogin} /> // Pass handleLogin function to Login component
         )}
       </div>
     </Router>

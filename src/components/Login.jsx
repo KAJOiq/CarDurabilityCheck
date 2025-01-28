@@ -40,7 +40,7 @@ const Login = ({ onLogin }) => { // Accept onLogin as a prop
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 w-full">
       <div className="bg-white p-8 rounded shadow-md w-full max-w-sm">
         <h1 className="text-2xl font-bold mb-6 text-center">تسجيل الدخول</h1>
         <form onSubmit={handleLogin} className="space-y-4">
