@@ -1,27 +1,41 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import FetchData from "../utils/fetchData";
 
-const Login = ({ onLogin }) => {
+const Login = ({ onLogin }) => { // Accept onLogin as a prop
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleLogin = async (e) => {
+    e.preventDefault(); // Prevent page refresh on form submit
+    setLoading(true);
+    setErrorMessage("");
     try {
-      const response = await fetch("https://api.example.com/login", { // Replace with your API endpoint
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, password }),
-      });
-      const data = await response.json();
-      if (data.success) {
-        onLogin(data.userName); // Pass the username to the parent component
-      } else {
-        alert("Login failed. Please check your username and password.");
-      }
+        const data = await FetchData(
+            'auth/login',
+            {
+                method: 'POST',
+                body: JSON.stringify({ username, password }),
+            },
+            { 'Content-Type': 'application/json' }
+        );
+
+        const { accessToken, userDetails } = data.results;
+        const { id, role } = userDetails;
+
+        // Save sensitive data securely
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('id', id);
+        
+        onLogin(username); // Trigger onLogin after successful login
+        navigate('/'); // Redirect to home after login
     } catch (error) {
-      console.error("Error logging in:", error);
+        setErrorMessage(error.message || 'Login failed. Please try again.');
+    } finally {
+        setLoading(false);
     }
   };
 
@@ -29,7 +43,7 @@ const Login = ({ onLogin }) => {
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded shadow-md w-full max-w-sm">
         <h1 className="text-2xl font-bold mb-6 text-center">تسجيل الدخول</h1>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleLogin} className="space-y-4">
           <div>
             <label className="block text-right font-medium mb-1">اسم المستخدم</label>
             <input
@@ -37,7 +51,7 @@ const Login = ({ onLogin }) => {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
-              className="border rounded px-3 py-2 w-full"
+              className="border rounded px-3 py-2 w-full" 
             />
           </div>
           <div>
@@ -56,6 +70,7 @@ const Login = ({ onLogin }) => {
           >
             تسجيل الدخول
           </button>
+          {errorMessage && <p className="text-red-500 text-center mt-4">{errorMessage}</p>}
         </form>
       </div>
     </div>
