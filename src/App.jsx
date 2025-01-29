@@ -6,7 +6,7 @@ import ViewData from "./components/ViewData";
 import CertificatesPage from "./components/CertificatesPage";
 import FetchUsers from "./components/FetchUsers";
 import Login from "./components/Login";
-import ProjectStatus from "./components/ProjectStatus";
+import ReportStatus from "./components/Reports";
 import './index.css';
 
 const App = () => {
@@ -32,7 +32,7 @@ const App = () => {
                 <Route path="/view-data" element={<ViewData />} />
                 <Route path="/certificates" element={<CertificatesPage />} />
                 <Route path="/users" element={<FetchUsers />} />
-                <Route path="/" element={<ProjectStatus />} />
+                <Route path="/reports" element={<ReportStatus />} />
               </Routes>
             </main>
           </>

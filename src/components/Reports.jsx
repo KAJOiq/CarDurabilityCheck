@@ -6,7 +6,7 @@ import {
   CheckCircleIcon
 } from '@heroicons/react/24/outline';
 
-const TaskStatus = () => {
+const ReportStatus = () => {
   const statusItems = [
     { 
       title: 'Total Tasks',
@@ -78,4 +78,4 @@ const TaskStatus = () => {
   );
 };
 
-export default TaskStatus;
+export default ReportStatus;

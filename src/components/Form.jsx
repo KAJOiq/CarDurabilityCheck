@@ -4,11 +4,14 @@ import CheckboxField from "./CheckboxField";
 import CameraComponent from "./CameraComponent";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import { Link } from "react-router-dom";
+import SearchModal from "./SearchModal";
 
 const Form = ({ formType, setFormType }) => {
   const [photo1, setPhoto1] = useState(null);
   const [photo2, setPhoto2] = useState(null);
   const [photo3, setPhoto3] = useState(null);
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false); // State for modal visibility
+
   const [formData, setFormData] = useState({
     customerName: "",
     vehicleModel: "",
@@ -77,55 +80,33 @@ const Form = ({ formType, setFormType }) => {
     localStorage.setItem("formData", JSON.stringify(updatedFormData));
     navigate("/view-data"); // Navigate to the view data page
   };
-  
-  // Fetch the form data when the component mounts
-  useEffect(() => {
-    if (formType === "inquiry") {
-      const fetchForms = async () => {
-        try {
-          const response = await fetch("https://api.example.com/inquery"); // Replace with your API endpoint
-          const data = await response.json();
-          setFormData(data); // Update the state with the fetched form data
-        } catch (error) {
-          console.error("Error fetching form data:", error);
-        }
-      };
 
-      fetchForms();
-    }
-  }, [formType]);
+  const handleSearch = (searchTerm) => {
+    console.log(searchTerm);
+    // Add your API call or search logic here
+  };
 
   return (
     <div className="bg-slate-200 p-8 rounded-2xl shadow-md w-full h-full mt-10">
       <h1 className="text-2xl font-bold mb-6 text-right">الاستمارات</h1>
       <div className="flex justify-end mb-4 space-x-4">
-        <Link to="/entry" className="bg-blue-500 text-white px-4 py-2 rounded-2xl hover:bg-blue-600 flex items-center">
-        اضافة استمارة
-        </Link>
+        <button 
+          className="bg-blue-500 text-white px-4 py-2 rounded-2xl hover:bg-blue-600 flex items-center"
+          onClick={() => setIsSearchModalOpen(true)}
+        >
+          البحث عن استمارة لطباعتها
+        </button>
+      <SearchModal 
+        isOpen={isSearchModalOpen} 
+        onClose={() => setIsSearchModalOpen(false)} 
+        onSearch={handleSearch} 
+      />
+      <Link to="/entry" className="bg-blue-500 text-white px-4 py-2 rounded-2xl hover:bg-blue-600 flex items-center">
+          انشاء استمارة
+      </Link>
       </div>
-      {formType === "inquiry" && (
-        <>
-        {/* Display forms from the API */}
-        {formData.length > 0 ? (
-        <div className="grid grid-cols-2 gap-4">
-          {formData.map((form, index) => (
-            <div key={index} className="p-4 bg-gray-200 rounded-2xl">
-              <h3 className="text-lg font-semibold">{form.customerName}</h3>
-              <p><strong>نوع المركبة:</strong> {form.vehicleType}</p>
-              <p><strong>طراز المركبة:</strong> {form.vehicleModel}</p>
-              <p><strong>رقم المركبة:</strong> {form.vehicleNumber}</p>
-              {/* Display more form fields as needed */}
-            </div>
-          ))}
-        </div>
-      ) : (
-        <p>لا توجد استمارات حالياً.</p>
-      )}
-      </>
-      )}
       
       <form className="grid grid-cols-2 gap-4">
-      {formType === "entry" && (
           <>
             <div className="col-span-2 bg-blue-200 p-4 rounded-2xl">
               <label className="block text-right font-medium mb-1">
@@ -453,7 +434,7 @@ const Form = ({ formType, setFormType }) => {
           </>
         )}
         </>
-      )}
+      
       </form>
     </div>
     
