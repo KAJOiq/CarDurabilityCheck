@@ -10,15 +10,16 @@ const SearchModalForPrint = ({ isOpen, onClose, onSearch }) => {
   if (!isOpen) return null;
 
   const searchTypes = {
-    form: {
-        label: "بحث برقم الاستمارة",
-        placeholder: "أدخل رقم الاستمارة",
-        endpoint: "forms/search"
-      },
     chassis: {
       label: "بحث برقم الشاصي",
       placeholder: "أدخل رقم الشاصي",
       endpoint: "vehicles/search"
+    },
+
+    form: {
+      label: "بحث برقم الاستمارة",
+      placeholder: "أدخل رقم الاستمارة",
+      endpoint: "forms/search"
     },
     citizen: {
       label: "بحث بإسم المواطن",
