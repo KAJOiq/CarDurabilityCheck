@@ -30,7 +30,9 @@ const CreateForm = ({ formType, setFormType }) => {
     attachedLoadType: "", // Specific for Truck
     attachedChassis: "", // Specific for Truck
     numberOfAttachedVehicles: "", // Specific for Truck
-    numberOfAxes: ""
+    numberOfAxes: "",
+    engineType: "",
+    // isElectrical : false
   });
 
   const navigate = useNavigate();
@@ -248,6 +250,24 @@ const CreateForm = ({ formType, setFormType }) => {
               </select>
             </div>
             <div className="bg-green-200 p-4 rounded-2xl">
+              <label className="block text-right font-medium mb-1">
+                <i className="fas fa-car mr-2"></i> نوع المحرك
+              </label>
+              <select
+                name="engineType"
+                value={formData.engineType}
+                onChange={handleChange}
+                className="w-full p-2 border rounded-2xl"
+                required
+              >
+                <option value="">اختر نوع المحرك</option>
+                <option value="fuel">وقود</option>
+                <option value="hybrid">هجين</option>
+                <option value="electrical">كهربائي</option>
+              </select>
+            </div>
+            {formData.engineType !== "electrical" && (
+            <div className="bg-green-200 p-4 rounded-2xl">
               <InputField
                 label={<><i className="fas fa-cogs mr-2"></i> عدد السلندر</>}
                 name="cylinderCount"
@@ -256,6 +276,7 @@ const CreateForm = ({ formType, setFormType }) => {
                 required
               />
             </div>
+            )}
             <div className="bg-green-200 p-4 rounded-2xl">
               <InputField
                 label={<><i className="fas fa-users mr-2"></i> عدد المحاور</>}
@@ -339,12 +360,12 @@ const CreateForm = ({ formType, setFormType }) => {
           <button
             type="button"
             onClick={() => setShowChassisModal(true)}
-            className="w-full py-2 bg-purple-500 text-white rounded-xl hover:bg-purple-600"
+            className="w-full py-2 bg-indigo-500 text-white rounded-xl hover:bg-indigo-600"
           >
             إضافة صورة
           </button>
           {showChassisModal && (
-            <div className="fixed -inset-full bg-black/30 backdrop-blur-lg flex items-center justify-center p-4">
+            <div className=" -inset-full bg-black/30 backdrop-blur-lg flex items-center justify-center p-4">
               <div className="bg-white p-6 rounded-xl w-full max-w-2xl">
                 <CameraComponent setPhoto={handlePhoto1Change} />
                 <button
@@ -380,7 +401,7 @@ const CreateForm = ({ formType, setFormType }) => {
             إضافة صورة
           </button>
           {showFrontModal && (
-            <div className="fixed inset-0 bg-black/30 backdrop-blur-lg flex items-center justify-center p-4">
+            <div className="-inset-full bg-black/30 backdrop-blur-lg flex items-center justify-center p-4">
               <div className="bg-white p-6 rounded-xl w-full max-w-2xl">
                 <CameraComponent setPhoto={handlePhoto2Change} />
                 <button
@@ -413,12 +434,12 @@ const CreateForm = ({ formType, setFormType }) => {
             <button
               type="button"
               onClick={() => setShowReceiptModal(true)}
-              className="w-full py-2 bg-purple-500 text-white rounded-xl hover:bg-purple-600"
+              className="w-full py-2 bg-indigo-500 text-white rounded-xl hover:bg-indigo-600"
             >
               إضافة صورة
             </button>
             {showReceiptModal && (
-              <div className="fixed inset-0 bg-black/30 backdrop-blur-lg flex items-center justify-center p-4">
+              <div className="-inset-full bg-black/30 backdrop-blur-lg flex items-center justify-center p-4">
                 <div className="bg-white p-6 rounded-xl w-full max-w-2xl">
                   <CameraComponent setPhoto={handlePhoto3Change} />
                   <button

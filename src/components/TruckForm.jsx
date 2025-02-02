@@ -27,6 +27,7 @@ const TruckForm = ({ formData, photo1, photo2 }) => {
         isGovernment: formData.isGovernment,
         chassisNumber: formData.chassisNumber,
         model: formData.model,
+        engineType: formData.engineType,
         cylinderCount: formData.cylinderCount,
         receiptNumber: formData.receiptNumber,
         trafficFormNumber: formData.trafficFormNumber,
@@ -268,6 +269,7 @@ const TruckForm = ({ formData, photo1, photo2 }) => {
                 <div class="info"><strong>رقم المركبة:</strong> <div><strong>${formData.vehicleNumber}</strong></div></div>
                 <div class="info"><strong>رقم الشاصي:</strong> <div><strong>${formData.chassisNumber}</strong></div></div>
                 <div class="info"><strong>الموديل:</strong> <div><strong>${formData.model}</strong></div></div>
+                <div class="info"><strong>نوع المحرك:</strong> <div><strong>${formData.engineType }</strong></div></div>
                 <div class="info"><strong>عدد السلندر:</strong> <div><strong>${formData.cylinderCount}</strong></div></div>
                 <div class="info"><strong>الحمولة:</strong> <div><strong>${formData.load}</strong></div></div>
                 <div class="info"><strong>نوع الحمولة المرفقة:</strong> <div><strong>${formData.attachedLoadType}</strong></div></div>

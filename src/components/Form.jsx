@@ -30,7 +30,8 @@ const Form = ({ formType, setFormType }) => {
     attachedLoadType: "", // Specific for Truck
     attachedChassis: "", // Specific for Truck
     numberOfAttachedVehicles: "", // Specific for Truck
-    numberOfAxes: ""
+    numberOfAxes: "",
+    nameOfLocation: ""
   });
 
   const navigate = useNavigate(); // For navigation
