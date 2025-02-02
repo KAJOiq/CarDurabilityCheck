@@ -27,6 +27,7 @@ const CertificatesForm = ({ formData, photo1, photo2 }) => {
         isGovernment: formData.isGovernment,
         chassisNumber: formData.chassisNumber,
         model: formData.model,
+        engineType: formData.engineType,
         cylinderCount: formData.cylinderCount,
         receiptNumber: formData.receiptNumber,
         trafficFormNumber: formData.trafficFormNumber,
@@ -38,6 +39,7 @@ const CertificatesForm = ({ formData, photo1, photo2 }) => {
         attachedChassis: formData.attachedChassis, // Truck-specific
         numberOfAttachedVehicles: formData.numberOfAttachedVehicles, // Truck-specific
         numberOfAxes: formData.numberOfAxes, // Truck-specific
+        nameOfLocation: formData.nameOfLocation, // Truck-specific
       });
   
       QRCode.toDataURL(qrData)
@@ -257,6 +259,7 @@ const CertificatesForm = ({ formData, photo1, photo2 }) => {
                 <div class="info"><strong>رقم المركبة:</strong> <div><strong>${formData.vehicleNumber}</strong></div></div>
                 <div class="info"><strong>رقم الشاصي:</strong> <div><strong>${formData.chassisNumber}</strong></div></div>
                 <div class="info"><strong>الموديل:</strong> <div><strong>${formData.model}</strong></div></div>
+                <div class="info"><strong>نوع المحرك:</strong> <div><strong>${formData.engineType}</strong></div></div>
                 <div class="info"><strong>عدد السلندر:</strong> <div><strong>${formData.cylinderCount}</strong></div></div>
                 <div class="info"><strong>عدد المحاور:</strong> <div><strong>${formData.numberOfAxes}</strong></div></div>
               </div>
@@ -268,6 +271,7 @@ const CertificatesForm = ({ formData, photo1, photo2 }) => {
                 <div class="info"><strong>رقم استمارة المرور:</strong> <div><strong>${formData.trafficFormNumber}</strong></div></div>
                 <div class="info"><strong>رقم وصل القبض:</strong> <div><strong>${formData.receiptNumber}</strong></div></div>
                 <div class="info"><strong>نوع الاستمارة:</strong> <div><strong>${formData.formType}</strong></div></div>
+                <div class="info"><strong>اسم الموقع:</strong> <div><strong>${formData.nameOfLocation}</strong></div></div>
                 <div class="info"><strong>التاريخ:</strong> <div><strong>${apiData.date}</strong></div></div>
               </div>
             </div>
