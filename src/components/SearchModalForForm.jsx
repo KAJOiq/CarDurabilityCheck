@@ -1,5 +1,6 @@
 import React from "react";
 import fetchData from "../utils/fetchData";
+import { MagnifyingGlassIcon, XMarkIcon, ArrowPathIcon } from "@heroicons/react/24/outline";
 
 const SearchModalForForm = ({ isOpen, onClose, onSearch }) => {
   const [searchTerm, setSearchTerm] = React.useState("");
