@@ -43,12 +43,18 @@ const SearchModalForForm = ({ isOpen, onClose, onSearch }) => {
   };
 
   return (
-    <div className="fixed -inset-full bg-black/30 backdrop-blur-lg flex items-center justify-center p-4">
-      <div className="bg-white p-6 rounded-xl w-full max-w-md shadow-xl">
-        <div className="border-b pb-4 mb-4">
+    <div className="fixed inset-0 bg-black/30 backdrop-blur-lg flex items-center justify-center p-4">
+      <div className="bg-white p-6 rounded-xl w-full max-w-md shadow-lg">
+        <div className="flex justify-between items-center border-b pb-4 mb-4">
           <h2 className="text-xl font-semibold text-right text-gray-800">
             البحث برقم الشاصي
           </h2>
+          <button 
+            onClick={onClose}
+            className="p-2 rounded-full text-gray-600 hover:bg-gray-100"
+          >
+            <XMarkIcon className="w-6 h-6" />
+          </button>
         </div>
 
         <form onSubmit={handleSearch}>
