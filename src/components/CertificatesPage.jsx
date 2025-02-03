@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+
 
 const CertificatesPage = () => {
   const [searchInput, setSearchInput] = useState("");
@@ -39,55 +41,97 @@ const CertificatesPage = () => {
   }, [applicationId]);
 
   return (
-    <div className="p-4 relative">
-      <form onSubmit={handleSearch} className="mb-6">
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            placeholder="ادخل رقم الاستمارة"
-            className="flex-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <button
-            type="submit"
-            className="bg-blue-500 backdrop-blur-lg flex items-center justify-center p-4 rounded-lg text-white hover:bg-blue-600 transition-colors gap-2"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-            بحث عن استمارة
-          </button>
-        </div>
-      </form>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-6">
+      <div className="max-w-4xl mx-auto space-y-8">
+        {/* Search Section */}
+        <form onSubmit={handleSearch} className="group">
+          <div className="flex gap-2 shadow-lg rounded-xl overflow-hidden">
+            <input
+              type="text"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              placeholder="رقم الاستمارة"
+              className="flex-1 p-4 text-lg border-0 focus:ring-2 focus:ring-blue-500 rounded-l-xl bg-white/95"
+            />
+            <button
+              type="submit"
+              className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 
+                        px-8 py-4 text-white font-semibold transition-all flex items-center gap-3"
+            >
+              <MagnifyingGlassIcon className="h-6 w-6 transform group-hover:scale-110 transition-transform" />
+              بحث
+            </button>
+          </div>
+        </form>
 
-      {loading && (
-        <div className="text-center p-8">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-        </div>
-      )}
+        {/* Loading State */}
+        {loading && (
+          <div className="text-center p-8 space-y-4">
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent mx-auto"></div>
+            <p className="text-gray-600 font-medium">جاري تحميل البيانات...</p>
+          </div>
+        )}
 
-      {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+        {/* Error State */}
+        {error && (
+          <div className="bg-red-50 p-6 rounded-xl border border-red-100">
+            <p className="text-red-600 font-semibold text-center flex items-center justify-center gap-2">
+              <MagnifyingGlassIcon className="h-5 w-5" />
+              {error}
+            </p>
+          </div>
+        )}
 
-      {formData && (
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h2 className="text-2xl font-bold mb-4 text-right">شهادة الفحص</h2>
-          <table className="min-w-full border-collapse border border-gray-300">
-            <tbody>
-              {/* Table rows remain the same as before */}
-              <tr><td className="border px-4 py-2">الاسم</td><td className="border px-4 py-2">{formData.customerName}</td></tr>
-              <tr><td className="border px-4 py-2">نوع المركبة</td><td className="border px-4 py-2">{formData.vehicleType}</td></tr>
-              {/* ... rest of the table rows ... */}
-            </tbody>
-          </table>
-        </div>
-      )}
+        {/* Data Display */}
+        {formData && (
+          <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+            <div className="bg-blue-50 p-6 border-b">
+              <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-3 justify-end">
+                <MagnifyingGlassIcon className="h-8 w-8 text-blue-600" />
+                شهادة الفحص
+              </h2>
+            </div>
+            
+            <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-right">
+              {/* البيانات الأساسية */}
+              <div className="space-y-2">
+                <InfoItem label="👤 الاسم" value={formData.customerName} />
+                <InfoItem label="🚗 نوع المركبة" value={formData.vehicleType} />
+                <InfoItem label="🎨 لون المركبة" value={formData.vehicleColor} />
+                <InfoItem label="🔢 رقم المركبة" value={formData.vehicleNumber} />
+              </div>
 
-      {!formData && applicationId && !loading && !error && (
-        <p className="text-center text-gray-500 mt-4">لا توجد نتائج للرقم المطلوب</p>
-      )}
+              {/* البيانات الفنية */}
+              <div className="space-y-2">
+                <InfoItem label="🛠️ نوع المحرك" value={formData.engineType} />
+                <InfoItem label="⚙️ عدد الأسطوانات" value={formData.cylinderCount} />
+                <InfoItem label="📅 التاريخ" value={formData.date} />
+                <InfoItem label="📍 الموقع" value={formData.nameOfLocation} />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* No Results */}
+        {!formData && applicationId && !loading && !error && (
+          <div className="bg-yellow-50 p-6 rounded-xl border border-yellow-100">
+            <p className="text-yellow-700 font-medium text-center flex items-center justify-center gap-2">
+              <MagnifyingGlassIcon className="h-5 w-5" />
+              لا توجد نتائج للرقم المطلوب
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
+
+// Component for reusable info items
+const InfoItem = ({ label, value }) => (
+  <div className="flex justify-between items-center bg-gray-50 p-3 rounded-lg">
+    <span className="font-semibold text-gray-600">{label}</span>
+    <span className="text-gray-800">{value || '---'}</span>
+  </div>
+);
 
 export default CertificatesPage;
