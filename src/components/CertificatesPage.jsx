@@ -50,7 +50,7 @@ const CertificatesPage = () => {
               type="text"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              placeholder="رقم الاستمارة"
+              placeholder="ادخل رقم الاستمارة"
               className="flex-1 p-4 text-lg border-0 focus:ring-2 focus:ring-blue-500 rounded-l-xl bg-white/95"
             />
             <button
