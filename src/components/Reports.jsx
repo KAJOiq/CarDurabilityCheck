@@ -74,15 +74,15 @@ const ReportStatus = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6 lg:p-10">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-slate-50 p-6 lg:p-10">
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-6">
         {/* Filter Section */}
-        <div className="w-sm lg:w-64 shrink-0 bg-white p-6 rounded-xl shadow-lg border border-slate-100">
+        <div className="w-sm lg:w-72 shrink-0 bg-white p-6 rounded-2xl shadow-xl border border-blue-100">
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-slate-600 mb-2">نوع الاستمارة</label>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">نوع الاستمارة</label>
               <select 
-                className="w-full p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="w-full p-3 border-2 border-slate-100 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                 value={formType}
                 onChange={(e) => setFormType(e.target.value)}
               >
@@ -93,9 +93,9 @@ const ReportStatus = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-600 mb-2">نوع المحرك</label>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">نوع المحرك</label>
               <select 
-                className="w-full p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="w-full p-3 border-2 border-slate-100 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                 value={engineType}
                 onChange={(e) => setEngineType(e.target.value)}
               >
@@ -106,17 +106,17 @@ const ReportStatus = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-600 mb-2">النطاق الزمني</label>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">النطاق الزمني</label>
               <div className="space-y-3">
                 <input 
                   type="date" 
-                  className="w-full p-3 border border-slate-200 rounded-lg"
+                  className="w-full p-3 border-2 border-slate-100 rounded-xl focus:ring-2 focus:ring-blue-500"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
                 />
                 <input 
                   type="date" 
-                  className="w-full p-3 border border-slate-200 rounded-lg"
+                  className="w-full p-3 border-2 border-slate-100 rounded-xl focus:ring-2 focus:ring-blue-500"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
                 />
@@ -124,9 +124,12 @@ const ReportStatus = () => {
             </div>
 
             <button 
-              className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition mb-8"
+              className="w-full bg-gradient-to-r from-blue-600 to-blue-500 text-white py-3 rounded-xl 
+                        hover:from-blue-700 hover:to-blue-600 transition-all shadow-md hover:shadow-lg
+                        font-semibold flex items-center justify-center gap-2"
               onClick={handleApplyFilter}
             >
+              <ClipboardDocumentIcon className="w-5 h-5" />
               تطبيق الفلتر
             </button>
           </div>
@@ -139,26 +142,26 @@ const ReportStatus = () => {
             {filteredStatusItems.map((item) => (
               <div 
                 key={item.id}
-                className="bg-white p-5 rounded-xl shadow-md hover:shadow-lg transition-all
-                border-l-4 border-blue-500"
+                className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all
+                border-l-4 border-blue-500 relative overflow-hidden"
               >
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="text-sm font-medium text-slate-500 mb-2">{item.title}</p>
-                    <p className={`text-3xl font-bold ${item.color.split(' ')[1]}`}>
+                    <p className="text-sm font-semibold text-slate-600 mb-2">{item.title}</p>
+                    <p className={`text-3xl font-bold ${item.color.split(' ')[1]} mb-4`}>
                       {item.value.toLocaleString()}
                       {item.showPercentage && '%'}
                     </p>
                   </div>
-                  <div className={`p-3 rounded-lg ${item.color}`}>
-                    <item.icon className={`w-6 h-6 ${item.color.split(' ')[1]}`} />
+                  <div className={`p-3 rounded-xl ${item.color} bg-opacity-20`}>
+                    <item.icon className={`w-8 h-8 ${item.color.split(' ')[1]}`} />
                   </div>
                 </div>
                 
-                <div className="mt-4">
-                  <div className="h-2 bg-slate-100 rounded-full">
+                <div className="absolute bottom-0 left-0 right-0">
+                  <div className="h-1.5 bg-slate-100">
                     <div 
-                      className={`h-2 rounded-full ${item.color.split(' ')[0]} transition-all duration-500`}
+                      className={`h-full ${item.color.split(' ')[0]} transition-all duration-500`}
                       style={{ width: item.showPercentage ? `${item.value}%` : '100%' }}
                     />
                   </div>
@@ -168,7 +171,7 @@ const ReportStatus = () => {
           </div>
 
           {/* Print Section */}
-          <div className="bg-white p-5 rounded-xl shadow-md border border-slate-100">
+          <div className="bg-white p-6 rounded-2xl shadow-lg border border-slate-100">
             <PrintingReports data={preparePrintData()} />
           </div>
         </div>
