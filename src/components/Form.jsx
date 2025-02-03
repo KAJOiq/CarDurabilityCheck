@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import SearchModal from "./SearchModalForPrint";
+import SearchModalForPrint from "./SearchModalForPrint";
 import { MagnifyingGlassIcon, PlusCircleIcon } from '@heroicons/react/24/outline';
 
 const Form = ({ formType, setFormType }) => {
@@ -71,7 +71,7 @@ const Form = ({ formType, setFormType }) => {
           </Link>
         </div>
 
-        <SearchModal 
+        <SearchModalForPrint 
           isOpen={isSearchModalOpen} 
           onClose={() => setIsSearchModalOpen(false)} 
           onSearch={handleSearch} 
