@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { UserPlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { UserPlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
 const FetchUsers = () => {
   const [users, setUsers] = useState([]);
@@ -8,10 +8,10 @@ const FetchUsers = () => {
   const [showAddUser, setShowAddUser] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [newUser, setNewUser] = useState({
-    name: '',
-    username: '',
-    code: '',
-    role: 'user'
+    name: "",
+    username: "",
+    code: "",
+    role: "user",
   });
 
   useEffect(() => {
@@ -51,7 +51,7 @@ const FetchUsers = () => {
       const createdUser = await response.json();
       setUsers([...users, createdUser]);
       setShowAddUser(false);
-      setNewUser({ name: '', username: '', code: '', role: 'user' });
+      setNewUser({ name: "", username: "", code: "", role: "user" });
     } catch (error) {
       alert(error.message);
     } finally {
@@ -63,12 +63,12 @@ const FetchUsers = () => {
     <div className="p-6 max-w-4xl mx-auto">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-800">قائمة المستخدمين</h2>
-        <button 
+        <button
           className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
           onClick={() => setShowAddUser(true)}
         >
           <UserPlusIcon className="w-5 h-5" />
-          اضافة مستخدم جديد
+          إضافة مستخدم جديد
         </button>
       </div>
 
@@ -82,8 +82,8 @@ const FetchUsers = () => {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-4 py-3 text-right text-gray-600 font-semibold">الاسم</th>
-                <th className="px-4 py-3 text-right text-gray-600 font-semibold">المعرف</th>
-                <th className="px-4 py-3 text-right text-gray-600 font-semibold">الحالة</th>
+                <th className="px-4 py-3 text-right text-gray-600 font-semibold">اسم المستخدم</th>
+                <th className="px-4 py-3 text-right text-gray-600 font-semibold">الصلاحية</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -91,15 +91,7 @@ const FetchUsers = () => {
                 <tr key={user.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-4 py-3 text-gray-700">{user.name}</td>
                   <td className="px-4 py-3 text-gray-700">{user.username}</td>
-                  <td className="px-4 py-3">
-                    <span className={`px-2 py-1 rounded-full text-sm ${
-                      user.isDeleted 
-                        ? 'bg-red-100 text-red-800' 
-                        : 'bg-green-100 text-green-800'
-                    }`}>
-                      {user.isDeleted ? "محذوف" : "نشط"}
-                    </span>
-                  </td>
+                  <td className="px-4 py-3 text-gray-700">{user.role}</td>
                 </tr>
               ))}
             </tbody>
@@ -117,33 +109,43 @@ const FetchUsers = () => {
               </button>
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <input 
-                type="text" 
-                name="name" 
-                placeholder="الاسم" 
-                value={newUser.name} 
-                onChange={handleInputChange} 
+              <input
+                type="text"
+                name="name"
+                placeholder="الاسم"
+                value={newUser.name}
+                onChange={handleInputChange}
                 className="w-full p-2 border rounded-lg"
                 required
               />
-              <input 
-                type="text" 
-                name="username" 
-                placeholder="اسم المستخدم" 
-                value={newUser.username} 
-                onChange={handleInputChange} 
+              <input
+                type="text"
+                name="username"
+                placeholder="اسم المستخدم"
+                value={newUser.username}
+                onChange={handleInputChange}
                 className="w-full p-2 border rounded-lg"
                 required
               />
-              <input 
-                type="text" 
-                name="code" 
-                placeholder="الكود" 
-                value={newUser.code} 
-                onChange={handleInputChange} 
+              <input
+                type="text"
+                name="code"
+                placeholder="الرمز"
+                value={newUser.code}
+                onChange={handleInputChange}
                 className="w-full p-2 border rounded-lg"
                 required
               />
+              <select
+                name="role"
+                value={newUser.role}
+                onChange={handleInputChange}
+                className="w-full p-2 border rounded-lg bg-white"
+                required
+              >
+                <option value="user">مستخدم</option>
+                <option value="admin">مدير</option>
+              </select>
               <button type="submit" disabled={isSubmitting} className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg w-full">
                 {isSubmitting ? "جاري الإضافة..." : "إضافة"}
               </button>
