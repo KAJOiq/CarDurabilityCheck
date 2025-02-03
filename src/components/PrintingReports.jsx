@@ -39,8 +39,6 @@ const PrintingReports = ({ data }) => {
         <table className="min-w-full table-auto border-collapse">
           <thead>
             <tr className="bg-gray-200">
-              <th className="px-4 py-2 text-sm font-semibold text-gray-700">نوع الاستمارة</th>
-              <th className="px-4 py-2 text-sm font-semibold text-gray-700">نوع المحرك</th>
               <th className="px-4 py-2 text-sm font-semibold text-gray-700">عدد الاستمارات الحكومية</th>
               <th className="px-4 py-2 text-sm font-semibold text-gray-700">عدد شهادات الفحص</th>
               <th className="px-4 py-2 text-sm font-semibold text-gray-700">مجموع عدد الاستمارات</th>
@@ -49,8 +47,6 @@ const PrintingReports = ({ data }) => {
           <tbody>
             {data.map((item, index) => (
               <tr key={index} className="border-b">
-                <td className="px-4 py-2 text-sm text-gray-700">{item.formType}</td>
-                <td className="px-4 py-2 text-sm text-gray-700">{item.engineType}</td>
                 <td className="px-4 py-2 text-sm text-gray-700">{item.governmentForms}</td>
                 <td className="px-4 py-2 text-sm text-gray-700">{item.inspectionCertificates}</td>
                 <td className="px-4 py-2 text-sm text-gray-700">{item.totalForms}</td>

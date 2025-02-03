@@ -1,3 +1,6 @@
+// نوع الاستمارة ونوع المحرك يتم تضمينها بالاستمارة فقط من الفلتر
+// استفسار على الموقع هل يتم تضمينه في الفلتر أم لا ؟
+
 import React, { useState } from 'react';
 import PrintingReports from './PrintingReports';
 import { 
