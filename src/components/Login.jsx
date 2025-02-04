@@ -24,14 +24,14 @@ const Login = ({ onLogin }) => {
         },
         { "Content-Type": "application/json" }
       );
-  
+    
       if (data.isSuccess) {
         const { accessToken, userDetails } = data.results;
         const { role } = userDetails;
-  
+    
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("role", role); // roles: admin, user, supervisor, reporter, checker.
-  
+    
         onLogin(userName);
         navigate("/");
       } 
@@ -40,7 +40,7 @@ const Login = ({ onLogin }) => {
     } finally {
       setLoading(false);
     }
-  };
+  };    
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 w-full">
