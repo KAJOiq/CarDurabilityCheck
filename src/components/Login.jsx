@@ -14,6 +14,7 @@ const Login = ({ onLogin }) => {
     e.preventDefault();
     setLoading(true);
     setErrorMessage("");
+
     try {
       const data = await FetchData(
         "Users/login",
@@ -23,26 +24,23 @@ const Login = ({ onLogin }) => {
         },
         { "Content-Type": "application/json" }
       );
-
+    
       if (data.isSuccess) {
         const { accessToken, userDetails } = data.results;
-        const { id, role } = userDetails;
-
+        const { role } = userDetails;
+    
         localStorage.setItem("accessToken", accessToken);
-        localStorage.setItem("id", id);
-        localStorage.setItem("role", role); // roles:- admin, user, supervisor, reporter, checker.
-
+        localStorage.setItem("role", role); // roles: admin, user, supervisor, reporter, checker.
+    
         onLogin(userName);
-        navigate("/users");
-      } else {
-        throw new Error("فشل تسجيل الدخول. حاول مرة أخرى.");
-      }
+        navigate("/");
+      } 
     } catch (error) {
-      setErrorMessage(error.message || "حدث خطأ. حاول مرة أخرى.");
+      setErrorMessage("خطأ في اسم المستخدم أو كلمة المرور. يرجى المحاولة مرة أخرى.");
     } finally {
       setLoading(false);
     }
-  };
+  };    
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 w-full">
