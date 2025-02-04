@@ -8,6 +8,7 @@ import FetchUsers from "./components/FetchUsers";
 import Login from "./components/Login";
 import ReportStatus from "./components/Reports";
 import CreateForm from "./components/CreateForm";
+import ChangePassword from "./components/ChangePassword"; // Import ChangePassword Component
 import "./index.css";
 
 const App = () => {
@@ -22,7 +23,6 @@ const App = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
-    //localStorage.removeItem("id");
     localStorage.removeItem("role");
     setIsLoggedIn(false);
   };
@@ -38,6 +38,7 @@ const App = () => {
             <Route path="/users" element={<FetchUsers />} />
             <Route path="/reports" element={<ReportStatus />} />
             <Route path="/create-form" element={<CreateForm />} />
+            <Route path="/change-password" element={<ChangePassword />} /> {/* Add change-password route */}
             <Route path="*" element={<Navigate to="/users" />} />
           </Routes>
         );
@@ -46,6 +47,7 @@ const App = () => {
           <Routes>
             <Route path="/entry" element={<Form formType="entry" />} />
             <Route path="/create-form" element={<CreateForm />} />
+            <Route path="/change-password" element={<ChangePassword />} /> {/* Add change-password route */}
             <Route path="*" element={<Navigate to="/entry" />} />
           </Routes>
         );
@@ -53,6 +55,7 @@ const App = () => {
         return (
           <Routes>
             <Route path="/reports" element={<ReportStatus />} />
+            <Route path="/change-password" element={<ChangePassword />} /> {/* Add change-password route */}
             <Route path="*" element={<Navigate to="/reports" />} />
           </Routes>
         );
@@ -60,6 +63,7 @@ const App = () => {
         return (
           <Routes>
             <Route path="/certificates" element={<CertificatesPage />} />
+            <Route path="/change-password" element={<ChangePassword />} /> {/* Add change-password route */}
             <Route path="*" element={<Navigate to="/certificates" />} />
           </Routes>
         );
