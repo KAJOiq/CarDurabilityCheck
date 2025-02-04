@@ -9,7 +9,7 @@ const fetchData = async (url, options = {}, headers = {}) => {
       };
 
       const response = await fetch(
-          `http://localhost/api/web/v1/${url}`,
+          `http://localhost:5273/api/${url}`,
           { ...options, headers: defaultHeaders }
       );
 

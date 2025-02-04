@@ -1,76 +1,93 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { UserIcon, LockClosedIcon, ArrowPathIcon } from "@heroicons/react/24/outline";
 import FetchData from "../utils/fetchData";
 
-const Login = ({ onLogin }) => { // Accept onLogin as a prop
-  const [username, setUsername] = useState("");
+const Login = ({ onLogin }) => {
+  const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
-    e.preventDefault(); // Prevent page refresh on form submit
+    e.preventDefault();
     setLoading(true);
     setErrorMessage("");
     try {
-        const data = await FetchData(
-            'auth/login',
-            {
-                method: 'POST',
-                body: JSON.stringify({ username, password }),
-            },
-            { 'Content-Type': 'application/json' }
-        );
+      const data = await FetchData(
+        "Users/login",
+        {
+          method: "POST",
+          body: JSON.stringify({ userName, password }),
+        },
+        { "Content-Type": "application/json" }
+      );
 
+      if (data.isSuccess) {
         const { accessToken, userDetails } = data.results;
         const { id, role } = userDetails;
 
-        // Save sensitive data securely
-        localStorage.setItem('accessToken', accessToken);
-        localStorage.setItem('id', id);
-        
-        onLogin(username); // Trigger onLogin after successful login
-        navigate('/'); // Redirect to home after login
+        localStorage.setItem("accessToken", accessToken);
+        localStorage.setItem("id", id);
+        localStorage.setItem("role", role);
+
+        onLogin(userName);
+        navigate("/users");
+      } else {
+        throw new Error("فشل تسجيل الدخول. حاول مرة أخرى.");
+      }
     } catch (error) {
-        setErrorMessage(error.message || 'Login failed. Please try again.');
+      setErrorMessage(error.message || "حدث خطأ. حاول مرة أخرى.");
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 w-full">
-      <div className="bg-white p-8 rounded shadow-md w-full max-w-sm">
-        <h1 className="text-2xl font-bold mb-6 text-center">تسجيل الدخول</h1>
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div>
-            <label className="block text-right font-medium mb-1">اسم المستخدم</label>
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-sm">
+        <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">تسجيل الدخول</h1>
+        <form onSubmit={handleLogin} className="space-y-5">
+          <div className="relative">
+            <UserIcon className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
             <input
               type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
               required
-              className="border rounded px-3 py-2 w-full" 
+              placeholder="اسم المستخدم"
+              className="border rounded-lg pl-10 pr-3 py-2 w-full focus:ring-2 focus:ring-blue-300 focus:outline-none"
             />
           </div>
-          <div>
-            <label className="block text-right font-medium mb-1">كلمة المرور</label>
+          <div className="relative">
+            <LockClosedIcon className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="border rounded px-3 py-2 w-full"
+              placeholder="كلمة المرور"
+              className="border rounded-lg pl-10 pr-3 py-2 w-full focus:ring-2 focus:ring-blue-300 focus:outline-none"
             />
           </div>
           <button
             type="submit"
-            className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 w-full"
+            disabled={loading}
+            className={`flex items-center justify-center bg-blue-500 text-white px-6 py-2 rounded-lg w-full hover:bg-blue-600 transition ${
+              loading ? "opacity-70 cursor-not-allowed" : ""
+            }`}
           >
-            تسجيل الدخول
+            {loading ? (
+              <>
+                <ArrowPathIcon className="w-5 h-5 animate-spin mr-2" />
+                جاري تسجيل الدخول...
+              </>
+            ) : (
+              "تسجيل الدخول"
+            )}
           </button>
-          {errorMessage && <p className="text-red-500 text-center mt-4">{errorMessage}</p>}
+          {errorMessage && <p className="text-red-500 text-center mt-3">{errorMessage}</p>}
         </form>
       </div>
     </div>

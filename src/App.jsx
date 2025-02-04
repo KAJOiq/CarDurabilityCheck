@@ -12,26 +12,25 @@ import CreateForm from "./components/CreateForm";
 import './index.css';
 
 const App = () => {
-  const [userName, setUserName] = useState(""); // Store logged-in username
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login state
-  const [formType, setFormType] = useState("entry"); // Default form type
+  const [userName, setUserName] = useState(""); 
+  const [isLoggedIn, setIsLoggedIn] = useState(false); 
+  const [formType, setFormType] = useState("entry"); 
   
 
   const handleLogin = (userName) => {
     setUserName(userName);
-    setIsLoggedIn(true); // Set logged-in state to true after login
+    setIsLoggedIn(true);
   };
 
   const handleSearch = (searchTerm) => {
     console.log("Searching for:", searchTerm);
     setIsSearchOpen(true);
-    // Add logic to handle the search action
   };
 
   return (
     <Router>
       <div className="min-h-screen flex flex-col items-center">
-        {/* {isLoggedIn ? ( */}
+        {isLoggedIn ? ( 
           <>
             <Header userName={userName} setFormType={setFormType} />
             <main className="w-full max-w-7xl p-4">
@@ -45,9 +44,9 @@ const App = () => {
               </Routes>
             </main>
           </>
-        {/* ) : (
-          <Login onLogin={handleLogin} /> // Pass handleLogin function to Login component
-        )} */}
+       ) : (
+          <Login onLogin={handleLogin} /> 
+        )} 
 
       </div>
     </Router>
