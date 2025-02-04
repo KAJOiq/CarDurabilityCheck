@@ -23,7 +23,7 @@ const App = () => {
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
     //localStorage.removeItem("id");
-    localStorage.removeItem("role");
+    //localStorage.removeItem("role");
     setIsLoggedIn(false);
   };
 
