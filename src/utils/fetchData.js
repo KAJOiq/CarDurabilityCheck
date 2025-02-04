@@ -18,9 +18,9 @@ const fetchData = async (url, options = {}, headers = {}) => {
           try {
               errorBody = await response.json();
           } catch {
-              throw new Error(`HTTP error! status: ${response.status}`);
+              throw new Error(`انتهت الجلسة! من فضلك قم بإعادة تسجيل الدخول ${response.status}`);
           }
-          throw new Error(errorBody.message || `HTTP error! status: ${response.status}`);
+          throw new Error(errorBody.message || `انتهت الجلسة! من فضلك قم بإعادة تسجيل الدخول ${response.status}`);
       }
 
       const text = await response.text();

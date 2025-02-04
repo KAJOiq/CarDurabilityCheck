@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LockClosedIcon, CheckCircleIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline";
-import FetchData from "../utils/fetchData";
+import fetchData from "../utils/fetchData"; 
 
 const ChangePassword = () => {
   const [password, setPassword] = useState("");
@@ -22,7 +22,9 @@ const ChangePassword = () => {
     setSuccess(null);
 
     if (!validatePassword(password)) {
-      setError("يجب أن تتكون كلمة المرور من 6 أحرف على الأقل، وتحتوي على حرف كبير واحد على الأقل، وحرف صغير واحد، ورقم واحد، وحرف خاص واحد (#$^+=!*()@%&).");
+      setError(
+        "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل، وتحتوي على حرف كبير واحد على الأقل، وحرف صغير واحد، ورقم واحد، وحرف خاص واحد (#$^+=!*()@%&)."
+      );
       setLoading(false);
       return;
     }
@@ -31,7 +33,10 @@ const ChangePassword = () => {
       const formData = new FormData();
       formData.append("Password", password);
 
-      const response = await FetchData("PATCH", "Users/change-password", formData, true);
+      const response = await fetchData("Users/change-password", {
+        method: "PATCH",
+        body: formData,
+      });
 
       if (response.isSuccess) {
         setSuccess("تم تغيير كلمة المرور بنجاح.");
@@ -40,7 +45,7 @@ const ChangePassword = () => {
         setError(response.errors?.[0]?.message || "حدث خطأ أثناء تغيير كلمة المرور.");
       }
     } catch (err) {
-      setError("حدث خطأ أثناء تغيير كلمة المرور. يرجى المحاولة مرة أخرى.");
+      setError(err.message || "حدث خطأ أثناء تغيير كلمة المرور. يرجى المحاولة مرة أخرى.");
     } finally {
       setLoading(false);
     }
