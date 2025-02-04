@@ -33,7 +33,7 @@ const Login = ({ onLogin }) => {
         localStorage.setItem("role", role); // roles:- admin, user, supervisor, reporter, checker.
 
         onLogin(userName);
-        navigate("/users");
+        navigate("/");
       } else {
         throw new Error("فشل تسجيل الدخول. حاول مرة أخرى.");
       }
