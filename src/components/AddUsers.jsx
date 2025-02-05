@@ -5,8 +5,8 @@ import Select from "react-select";
 
 const AddUsers = ({ setShowAddUser, setUsers }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState(""); // New state for success feedback
+  const [errorMessages, setErrorMessages] = useState([]);
+  const [successMessage, setSuccessMessage] = useState("");
   const [newUser, setNewUser] = useState({
     name: "",
     userName: "",
@@ -30,6 +30,16 @@ const AddUsers = ({ setShowAddUser, setUsers }) => {
     { value: "supervisor", label: "Supervisor" },
   ];
 
+  const translateError = (message) => {
+    const translations = {
+      "Too short password": "كلمة المرور قصيرة جدًا",
+      "Password must be at least 6 characters long, contains at least one uppercase letter, one lowercase letter, one number, and one special character (#$^+=!*()@%&).": "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل، وتحتوي على حرف كبير واحد على الأقل، وحرف صغير واحد، ورقم واحد، وحرف خاص واحد (#$^+=!*()@%&).",
+      "The field UserName must be a string or array type with a minimum length of '4'.": " يجب أن يكون حقل اسم المستخدم بحد أدنى للطول 4 حروف صغيرة",
+    };
+
+    return translations[message] || "حدث خطأ غير متوقع";
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewUser((prev) => ({ ...prev, [name]: value }));
@@ -46,11 +56,11 @@ const AddUsers = ({ setShowAddUser, setUsers }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setErrorMessage("");
-    setSuccessMessage(""); // Reset success message before submission
+    setErrorMessages([]);
+    setSuccessMessage("");
 
     try {
-      const createdUser = await fetchData(
+      const response = await fetchData(
         "Users/Register-new-user",
         {
           method: "POST",
@@ -59,20 +69,29 @@ const AddUsers = ({ setShowAddUser, setUsers }) => {
         { "Content-Type": "application/json" }
       );
 
+      if (!response.isSuccess) {
+        if (response.errors) {
+          setErrorMessages(response.errors.map((err) => translateError(err.message)));
+        } else {
+          setErrorMessages(["فشل في إضافة المستخدم"]);
+        }
+        return;
+      }
+
       const formattedUser = {
-        ...createdUser,
-        username: createdUser.userName,
+        ...response.results,
+        username: response.results.userName,
         location: locations.find((loc) => loc.value === newUser.locationId)?.label || "",
         userType: userTypes.find((type) => type.value === newUser.userType)?.label || "",
       };
 
       setUsers((prevUsers) => [...prevUsers, formattedUser]);
-      setSuccessMessage("تم إضافة المستخدم بنجاح!"); // Success message on successful user creation
+      setSuccessMessage("تم إضافة المستخدم بنجاح!");
       setTimeout(() => {
         setShowAddUser(false);
-      }, 1500); // Auto-close after success
+      }, 1500);
     } catch (error) {
-      setErrorMessage(error?.message || "فشل في إضافة المستخدم");
+      setErrorMessages([translateError(error?.message || "فشل في إضافة المستخدم")]);
     } finally {
       setIsSubmitting(false);
     }
@@ -91,8 +110,16 @@ const AddUsers = ({ setShowAddUser, setUsers }) => {
           </button>
         </div>
 
-        {errorMessage && <div className="text-red-600 text-sm mb-3">{errorMessage}</div>}
-        {successMessage && <div className="text-green-600 text-sm mb-3">{successMessage}</div>} {/* Success message display */}
+        {errorMessages.length > 0 && (
+          <div className="text-red-600 text-sm mb-3 text-right">
+            <ul>
+              {errorMessages.map((err, index) => (
+                <li key={index}>• {err}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {successMessage && <div className="text-right text-green-600 text-sm mb-3">{successMessage}</div>}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
