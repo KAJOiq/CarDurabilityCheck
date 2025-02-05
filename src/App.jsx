@@ -4,11 +4,12 @@ import Form from "./components/Form";
 import Header from "./components/Header";
 import ViewData from "./components/ViewData";
 import CertificatesPage from "./components/CertificatesPage";
-import FetchUsers from "./components/FetchUsers";
+import ShowUsers from "./components/ShowUsers";
+import AddUsers from "./components/AddUsers";
 import Login from "./components/Login";
 import ReportStatus from "./components/Reports";
 import CreateForm from "./components/CreateForm";
-import ChangePassword from "./components/ChangePassword"; // Import ChangePassword Component
+import ChangePassword from "./components/ChangePassword";
 import "./index.css";
 
 const App = () => {
@@ -35,7 +36,8 @@ const App = () => {
             <Route path="/entry" element={<Form formType="entry" />} />
             <Route path="/view-data" element={<ViewData />} />
             <Route path="/certificates" element={<CertificatesPage />} />
-            <Route path="/users" element={<FetchUsers />} />
+            <Route path="/users" element={<ShowUsers />} />
+            <Route path="/add-user" element={<AddUsers />} />
             <Route path="/reports" element={<ReportStatus />} />
             <Route path="/create-form" element={<CreateForm />} />
             <Route path="/change-password" element={<ChangePassword />} /> 
