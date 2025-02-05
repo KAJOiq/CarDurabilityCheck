@@ -30,16 +30,6 @@ const AddUsers = ({ setShowAddUser, setUsers }) => {
     { value: "supervisor", label: "Supervisor" },
   ];
 
-  const translateError = (message) => {
-    const translations = {
-      "Too short password": "كلمة المرور قصيرة جدًا",
-      "Password must be at least 6 characters long, contains at least one uppercase letter, one lowercase letter, one number, and one special character (#$^+=!*()@%&).": "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل، وتحتوي على حرف كبير واحد على الأقل، وحرف صغير واحد، ورقم واحد، وحرف خاص واحد (#$^+=!*()@%&).",
-      "The field UserName must be a string or array type with a minimum length of '4'.": " يجب أن يكون حقل اسم المستخدم بحد أدنى للطول 4 حروف صغيرة",
-    };
-
-    return translations[message] || "حدث خطأ غير متوقع";
-  };
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewUser((prev) => ({ ...prev, [name]: value }));
@@ -71,7 +61,7 @@ const AddUsers = ({ setShowAddUser, setUsers }) => {
 
       if (!response.isSuccess) {
         if (response.errors) {
-          setErrorMessages(response.errors.map((err) => translateError(err.message)));
+          setErrorMessages(response.errors.map((err) => err.message));
         } else {
           setErrorMessages(["فشل في إضافة المستخدم"]);
         }
@@ -91,14 +81,14 @@ const AddUsers = ({ setShowAddUser, setUsers }) => {
         setShowAddUser(false);
       }, 1500);
     } catch (error) {
-      setErrorMessages([translateError(error?.message || "فشل في إضافة المستخدم")]);
+      setErrorMessages([error?.message || "فشل في إضافة المستخدم"]);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black/30 backdrop-blur-lg flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-black/30 backdrop-blur-lg flex items-center justify-center p-4" dir="rtl">
       <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-semibold">إضافة مستخدم جديد</h3>
@@ -111,15 +101,15 @@ const AddUsers = ({ setShowAddUser, setUsers }) => {
         </div>
 
         {errorMessages.length > 0 && (
-          <div className="text-red-600 text-sm mb-3 text-right">
+          <div className="text-right text-red-600 text-sm mb-3">
             <ul>
               {errorMessages.map((err, index) => (
-                <li key={index}>• {err}</li>
+                <li key={index}>{err} •</li>
               ))}
             </ul>
           </div>
         )}
-        {successMessage && <div className="text-right text-green-600 text-sm mb-3">{successMessage}</div>}
+        {successMessage && <div className="text-green-600 text-sm mb-3">{successMessage}</div>}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <input

@@ -25,6 +25,15 @@ const Login = ({ onLogin }) => {
         { "Content-Type": "application/json" }
       );
     
+      if (!data.isSuccess) {
+        if (data.errors) {
+          setErrorMessages(data.errors.map((err) => err.message));
+        } else {
+          setErrorMessages(["فشل في تسجيل الدخول"]);
+        }
+        return;
+      }
+
       if (data.isSuccess) {
         const { accessToken, userDetails } = data.results;
         const { role } = userDetails;

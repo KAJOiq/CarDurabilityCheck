@@ -13,7 +13,11 @@ const ShowUsers = () => {
     const loadUsers = async () => {
       try {
         const response = await fetchData("Users/find-system-users?page=0&pageSize=20");
-        setUsers(response.results?.result || []);
+        if (response.isSuccess) {
+          setUsers(response.results?.result || []);
+        } else {
+          setError("فشل في تحميل المستخدمين");
+        }
       } catch (err) {
         setError("انتهت الجلسة! من فضلك قم بإعادة تسجيل الدخول");
       } finally {
@@ -25,7 +29,7 @@ const ShowUsers = () => {
   }, []);
 
   const handleAddUser = (newUser) => {
-    setUsers((prevUsers) => [...prevUsers, newUser]); 
+    setUsers((prevUsers) => [...prevUsers, newUser]);
     setShowAddUser(false);
   };
 
