@@ -29,7 +29,9 @@
     "react-easy-crop": "^5.2.0",
     "react-native-svg": "^15.11.1",
     "react-router-dom": "^7.1.1",
-    "react-to-print": "^3.0.4"
+    "react-select": "^5.10.0",
+    "react-to-print": "^3.0.4",
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

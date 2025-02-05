@@ -1,33 +1,21 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 import { LockClosedIcon, CheckCircleIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline";
 import fetchData from "../utils/fetchData"; 
+import { useNavigate } from "react-router-dom";
 
 const ChangePassword = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
+  const [errorMessages, setErrorMessages] = useState([]);
+  const [successMessage, setSuccessMessage] = useState("");
   const navigate = useNavigate();
-
-  const validatePassword = (password) => {
-    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#\$\^+=!*()@%&])[A-Za-z\d#$\^+=!*()@%&]{6,}$/;
-    return regex.test(password);
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
-    setSuccess(null);
-
-    if (!validatePassword(password)) {
-      setError(
-        "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل، وتحتوي على حرف كبير واحد على الأقل، وحرف صغير واحد، ورقم واحد، وحرف خاص واحد (#$^+=!*()@%&)."
-      );
-      setLoading(false);
-      return;
-    }
+    setErrorMessages([]);
+    setSuccessMessage("");
 
     try {
       const formData = new FormData();
@@ -38,39 +26,56 @@ const ChangePassword = () => {
         body: formData,
       });
 
-      if (response.isSuccess) {
-        setSuccess("تم تغيير كلمة المرور بنجاح.");
-        setTimeout(() => navigate("/"), 2000);
-      } else {
-        setError(response.errors?.[0]?.message || "حدث خطأ أثناء تغيير كلمة المرور.");
+      if (!response.isSuccess) {
+        if (response.errors) {
+          setErrorMessages(response.errors.map((err) => err.message));
+        } else {
+          setErrorMessages(["فشل في تغيير كلمة المرور"]);
+        }
+        return;
       }
+
+      setSuccessMessage("تم تغيير كلمة المرور بنجاح.");
+      setTimeout(() => navigate("/"), 2000);
+
     } catch (err) {
-      setError(err.message || "حدث خطأ أثناء تغيير كلمة المرور. يرجى المحاولة مرة أخرى.");
+      setErrorMessages([err.message || "حدث خطأ أثناء تغيير كلمة المرور. يرجى المحاولة مرة أخرى."]);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 px-4">
-      <div className="bg-white shadow-lg rounded-xl p-6 w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center mb-4 text-gray-800">تغيير كلمة المرور</h2>
+    <div className="fixed inset-0 bg-black/30 backdrop-blur-lg flex items-center justify-center p-4" dir="rtl">
+      <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-semibold">تغيير كلمة المرور</h3>
+          <button
+            onClick={() => navigate("/")}
+            className="group text-gray-500 hover:text-gray-800"
+          >
+            <XMarkIcon className="w-6 h-6 transition-transform group-hover:rotate-90" />
+          </button>
+        </div>
 
-        {error && (
-          <div className="flex items-center gap-2 text-red-600 bg-red-100 p-3 rounded-md mb-3">
-            <ExclamationCircleIcon className="w-5 h-5" />
-            <span>{error}</span>
+        {errorMessages.length > 0 && (
+          <div className="text-right text-red-600 text-sm mb-3">
+            <ul>
+              {errorMessages.map((err, index) => (
+                <li key={index}>{err} •</li>
+              ))}
+            </ul>
           </div>
         )}
 
-        {success && (
-          <div className="flex items-center gap-2 text-green-600 bg-green-100 p-3 rounded-md mb-3">
-            <CheckCircleIcon className="w-5 h-5" />
-            <span>{success}</span>
+        {successMessage && (
+          <div className="text-green-600 text-sm mb-3">
+            <CheckCircleIcon className="w-5 h-5 inline-block mr-2" />
+            {successMessage}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <label className="relative">
             <span className="text-gray-700 block mb-1">كلمة المرور الجديدة</span>
             <div className="relative">
@@ -85,15 +90,17 @@ const ChangePassword = () => {
             </div>
           </label>
 
-          <button
-            type="submit"
-            className="group bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-3 rounded-xl
-                      hover:from-blue-600 hover:to-blue-700 transition-all duration-300
-                      flex items-center justify-center gap-3 shadow-lg hover:shadow-xl disabled:opacity-50"
-            disabled={loading}
-          >
-            {loading ? "جاري التغيير..." : "تغيير"}
-          </button>
+          <div className="flex justify-center">
+            <button
+              type="submit"
+              className="group bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-3 rounded-xl
+                        hover:from-blue-600 hover:to-blue-700 transition-all duration-300
+                        flex items-center justify-center gap-3 shadow-lg hover:shadow-xl disabled:opacity-50"
+              disabled={loading}
+            >
+              {loading ? "جاري التغيير..." : "تغيير"}
+            </button>
+          </div>
         </form>
       </div>
     </div>

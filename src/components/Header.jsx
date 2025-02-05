@@ -15,22 +15,22 @@ const Header = ({ userName, role, onLogout }) => {
     <header className="bg-gray-900 text-white w-full p-4 flex justify-between items-center shadow-lg">
       <h1 className="text-2xl font-bold text-right">نظام إدارة طلبات فحص المتانة</h1>
       <nav className="flex items-center gap-6 text-lg">
-        {(role === "admin" || role === "user") && (
-          <Link
-            to="/entry"
-            className="flex items-center gap-2 hover:text-blue-400 transition duration-200"
-          >
-            <DocumentTextIcon className="w-6 h-6" />
-            الاستمارات
-          </Link>
-        )}
-        {role === "admin" && (
+      {role === "admin" && (
           <Link
             to="/users"
             className="flex items-center gap-2 hover:text-blue-400 transition duration-200"
           >
             <UsersIcon className="w-6 h-6" />
             المستخدمون
+          </Link>
+        )}
+      {(role === "admin" || role === "reporter") && (
+          <Link
+            to="/reports"
+            className="flex items-center gap-2 hover:text-blue-400 transition duration-200"
+          >
+            <ChartBarSquareIcon className="w-6 h-6" />
+            التقارير
           </Link>
         )}
         {(role === "admin" || role === "checker") && (
@@ -42,16 +42,15 @@ const Header = ({ userName, role, onLogout }) => {
             شهادات الفحص
           </Link>
         )}
-        {(role === "admin" || role === "reporter") && (
+        {(role === "admin" || role === "user") && (
           <Link
-            to="/reports"
+            to="/entry"
             className="flex items-center gap-2 hover:text-blue-400 transition duration-200"
           >
-            <ChartBarSquareIcon className="w-6 h-6" />
-            التقارير
+            <DocumentTextIcon className="w-6 h-6" />
+            الاستمارات
           </Link>
         )}
-
         {/* User Dropdown */}
         <div
           className="relative"
