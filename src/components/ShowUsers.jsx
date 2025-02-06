@@ -13,10 +13,29 @@ const ShowUsers = () => {
   const [showUpdateUser, setShowUpdateUser] = useState(false);
   const [userIdToUpdate, setUserIdToUpdate] = useState(null);
 
+  const [filters, setFilters] = useState({
+    name: "",
+    username: "",
+    status: "",
+    userType: "",
+    page: 0,
+    pageSize: 20,
+  });
+
   useEffect(() => {
     const loadUsers = async () => {
       try {
-        const response = await fetchData("Users/find-system-users?page=0&pageSize=20");
+        const { name, username, status, userType, page, pageSize } = filters;
+        const queryParams = new URLSearchParams({
+          name,
+          username,
+          status,
+          userType,
+          page: page.toString(),
+          pageSize: pageSize.toString(),
+        }).toString();
+
+        const response = await fetchData(`Users/find-system-users?${queryParams}`);
         if (response.isSuccess) {
           setUsers(response.results?.result || []);
         } else {
@@ -30,7 +49,7 @@ const ShowUsers = () => {
     };
 
     loadUsers();
-  }, []);
+  }, [filters]); // Re-fetch users when filters change
 
   const handleAddUser = (newUser) => {
     setUsers((prevUsers) => [...prevUsers, newUser]); // Update the users state with the new user
@@ -51,13 +70,31 @@ const ShowUsers = () => {
   const refreshUsers = async () => {
     // Refresh the users list after updating
     try {
-      const response = await fetchData("Users/find-system-users?page=0&pageSize=20");
+      const { name, username, status, userType, page, pageSize } = filters;
+      const queryParams = new URLSearchParams({
+        name,
+        username,
+        status,
+        userType,
+        page: page.toString(),
+        pageSize: pageSize.toString(),
+      }).toString();
+
+      const response = await fetchData(`Users/find-system-users?${queryParams}`);
       if (response.isSuccess) {
         setUsers(response.results?.result || []);
       }
     } catch (err) {
       setError("Error while refreshing users");
     }
+  };
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [name]: value,
+    }));
   };
 
   return (
@@ -73,6 +110,51 @@ const ShowUsers = () => {
           <UserPlusIcon className="w-6 h-6 transition-transform group-hover:scale-110" />
           <span className="font-semibold">إضافة مستخدم جديد</span>
         </button>
+      </div>
+
+      <div className="mb-6 p-4 bg-white shadow-lg rounded-lg text-right">
+        <h3 className="text-lg font-semibold text-gray-700 mb-4"></h3>
+        <div className="flex flex-wrap gap-4">
+          <input
+            type="text"
+            name="name"
+            value={filters.name}
+            onChange={handleFilterChange}
+            placeholder="الاسم"
+            className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all text-right"
+          />
+          <input
+            type="text"
+            name="username"
+            value={filters.username}
+            onChange={handleFilterChange}
+            placeholder="اسم المستخدم"
+            className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all text-right"
+          />
+          <select
+            name="status"
+            value={filters.status}
+            onChange={handleFilterChange}
+            className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all text-right"
+          >
+            <option value="">الكل</option>
+            <option value="true">غير مفعل</option>
+            <option value="false">مفعل</option>
+          </select>
+          <select
+            name="userType"
+            value={filters.userType}
+            onChange={handleFilterChange}
+            className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all text-right"
+          >
+            <option value="">الكل</option>
+            <option value="admin">admin</option>
+            <option value="user">user</option>
+            <option value="reporter">reporter</option>
+            <option value="checker">checker</option>
+            <option value="supervisor">supervisor</option>
+          </select>
+        </div>
       </div>
 
       {loading ? (
