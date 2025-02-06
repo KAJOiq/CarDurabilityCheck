@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { UserPlusIcon } from "@heroicons/react/24/outline";
+import { UserPlusIcon, PencilIcon } from "@heroicons/react/24/outline";
 import fetchData from "../utils/fetchData";
 import AddUsers from "./AddUsers";
 import DeleteUsers from "./DeleteUsers";
+import UpdateUsers from "./UpdateUsers";
 
 const ShowUsers = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showAddUser, setShowAddUser] = useState(false);
+  const [showUpdateUser, setShowUpdateUser] = useState(false);
+  const [userIdToUpdate, setUserIdToUpdate] = useState(null);
 
   useEffect(() => {
     const loadUsers = async () => {
@@ -38,6 +41,23 @@ const ShowUsers = () => {
     setUsers((prevUsers) =>
       prevUsers.map((user) => (user.id === userId ? { ...user, disabled: true } : user))
     );
+  };
+
+  const handleEditUser = (userId) => {
+    setUserIdToUpdate(userId);
+    setShowUpdateUser(true);
+  };
+
+  const refreshUsers = async () => {
+    // Refresh the users list after updating
+    try {
+      const response = await fetchData("Users/find-system-users?page=0&pageSize=20");
+      if (response.isSuccess) {
+        setUsers(response.results?.result || []);
+      }
+    } catch (err) {
+      setError("Error while refreshing users");
+    }
   };
 
   return (
@@ -79,6 +99,13 @@ const ShowUsers = () => {
                 <tr key={index} className={`hover:bg-blue-50 transition-colors ${user.disabled ? 'opacity-70' : ''}`}>
                   <td className="px-4 py-3 text-right">
                     <DeleteUsers userId={user.id} onDisable={handleDisableUser} isDisabled={user.disabled} />
+                    <button
+                      className={`ml-2 ${user.disabled ? 'text-gray-400 cursor-not-allowed' : 'text-blue-600'}`}
+                      onClick={() => !user.disabled && handleEditUser(user.id)}
+                      disabled={user.disabled}
+                    >
+                      <PencilIcon className={`w-6 h-5 ${user.disabled ? 'text-gray-400' : 'text-blue-600'}`} />
+                    </button>
                   </td>
                   <td className="px-4 py-3 text-right text-gray-700">{user.disabled ? "لا" : "نعم"}</td>
                   <td className="px-4 py-3 text-right text-gray-700">{user.location}</td>
@@ -93,6 +120,7 @@ const ShowUsers = () => {
       )}
 
       {showAddUser && <AddUsers setShowAddUser={setShowAddUser} setUsers={handleAddUser} />}
+      {showUpdateUser && <UpdateUsers userId={userIdToUpdate} closeModal={() => setShowUpdateUser(false)} refreshUsers={refreshUsers} />}
     </div>
   );
 };
