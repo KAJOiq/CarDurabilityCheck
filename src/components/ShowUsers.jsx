@@ -86,7 +86,7 @@ const ShowUsers = () => {
           <table className="w-full border-collapse">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-4 py-3 text-right text-blue-600 font-semibold">إجراء</th>
+                <th className="px-4 py-3 text-right text-blue-600 font-semibold"></th>
                 <th className="px-4 py-3 text-right text-blue-600 font-semibold">هل المستخدم مفعل؟</th>
                 <th className="px-4 py-3 text-right text-blue-600 font-semibold">الموقع</th>
                 <th className="px-4 py-3 text-right text-blue-600 font-semibold">الصلاحية</th>
@@ -96,7 +96,7 @@ const ShowUsers = () => {
             </thead>
             <tbody className="bg-white divide-y divide-blue-200">
               {users.map((user, index) => (
-                <tr key={index} className={`hover:bg-blue-50 transition-colors ${user.disabled ? 'opacity-70' : ''}`}>
+                <tr key={index} className={`hover:bg-blue-50 transition-colors ${user.disabled ? 'opacity-80' : ''}`}>
                   <td className="px-4 py-3 text-right">
                     <DeleteUsers userId={user.id} onDisable={handleDisableUser} isDisabled={user.disabled} />
                     <button

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import fetchData from "../utils/fetchData";
 
 const UpdateUsers = ({ userId, closeModal, refreshUsers }) => {
@@ -6,7 +7,7 @@ const UpdateUsers = ({ userId, closeModal, refreshUsers }) => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(""); 
+  const [successMessage, setSuccessMessage] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,36 +19,28 @@ const UpdateUsers = ({ userId, closeModal, refreshUsers }) => {
 
     setLoading(true);
     setError(null);
-    setSuccessMessage(""); 
-
-    const token = localStorage.getItem("accessToken");
+    setSuccessMessage(null);
 
     try {
-      const response = await fetchData(
-        `Users/update-user-information?UserId=${userId}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ name, password }),
-        }
-      );
+      const response = await fetchData(`Users/update-user-information?UserId=${userId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+        body: JSON.stringify({ name, password }),
+      });
 
       if (response.isSuccess) {
-        setTimeout(() => {
-          setSuccessMessage("تم تحديث بيانات المستخدم بنجاح");
-        });
-
+        setSuccessMessage("تم تحديث بيانات المستخدم بنجاح");
         setTimeout(() => {
           refreshUsers();
           closeModal();
-        }, 1000); 
+        }, 1000);
       } else {
         setError("فشل في تحديث معلومات المستخدم");
       }
-    } catch (err) {
+    } catch {
       setError("حدث خطأ أثناء تحديث المستخدم.");
     } finally {
       setLoading(false);
@@ -55,16 +48,19 @@ const UpdateUsers = ({ userId, closeModal, refreshUsers }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex text-right items-center justify-center">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-        <h3 className="text-2xl font-bold mb-4">تحديث بيانات المستخدم</h3>
-        {error && <p className="text-red-500 mb-4">{error}</p>}
-        {successMessage && (
-          <p className="text-green-500 mb-4 animate-fade-in">{successMessage}</p>
-        )}
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block text-gray-700 mb-2">الاسم</label>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md">
+        <div className="text-right mb-6">
+          <h3 className="text-xl font-bold text-gray-800">تحديث بيانات المستخدم</h3>
+          <p className="text-gray-600 mt-2">يمكنك تعديل الاسم وكلمة المرور لهذا المستخدم.</p>
+        </div>
+
+        {error && <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-lg">{error}</div>}
+        {successMessage && <div className="mb-4 p-3 bg-green-50 text-green-700 text-right rounded-lg">{successMessage}</div>}
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-right text-gray-700 mb-1">الاسم</label>
             <input
               type="text"
               className="w-full p-2 border border-gray-300 rounded-lg"
@@ -72,8 +68,8 @@ const UpdateUsers = ({ userId, closeModal, refreshUsers }) => {
               onChange={(e) => setName(e.target.value)}
             />
           </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 mb-2">كلمة المرور</label>
+          <div>
+            <label className="block text-right text-gray-700 mb-1">كلمة المرور</label>
             <input
               type="password"
               className="w-full p-2 border border-gray-300 rounded-lg"
@@ -81,25 +77,32 @@ const UpdateUsers = ({ userId, closeModal, refreshUsers }) => {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <div className="flex justify-between gap-4">
+          <div className="flex justify-end gap-3">
             <button
               type="button"
               onClick={closeModal}
-              className="group bg-gradient-to-r from-gray-500 to-gray-600 text-white px-6 py-3 rounded-xl 
-                       hover:from-gray-600 hover:to-gray-700 transition-all duration-300 
-                       flex items-center justify-center gap-3 shadow-lg hover:shadow-xl w-1/2"
+              className="group bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 px-6 py-2.5 rounded-xl
+                         hover:from-gray-200 hover:to-gray-300 transition-all duration-300
+                         flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
             >
               إلغاء
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="group bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-3 rounded-xl 
-                       hover:from-blue-600 hover:to-blue-700 transition-all duration-300 
-                       flex items-center justify-center gap-3 shadow-lg hover:shadow-xl w-1/2 
-                       disabled:opacity-50 disabled:cursor-not-allowed"
+              className="group bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-2.5 rounded-xl
+                         hover:from-blue-600 hover:to-blue-700 transition-all duration-300
+                         flex items-center justify-center gap-2 shadow-md hover:shadow-lg
+                         disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              {loading ? "جاري التحديث..." : "تحديث المستخدم"}
+              {loading ? (
+                <span className="animate-pulse">جاري التحديث...</span>
+              ) : (
+                <>
+                  <PencilSquareIcon className="w-5 h-5" />
+                  <span>تحديث المستخدم</span>
+                </>
+              )}
             </button>
           </div>
         </form>
