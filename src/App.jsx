@@ -6,6 +6,7 @@ import ViewData from "./components/ViewData";
 import CertificatesPage from "./components/CertificatesPage";
 import ShowUsers from "./components/ShowUsers";
 import AddUsers from "./components/AddUsers";
+import DeleteUsers from "./components/DeleteUsers";
 import Login from "./components/Login";
 import ReportStatus from "./components/Reports";
 import CreateForm from "./components/CreateForm";
@@ -13,8 +14,8 @@ import ChangePassword from "./components/ChangePassword";
 import "./index.css";
 
 const App = () => {
-  const [userName, setUserName] = useState("");
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userName, setUserName] = useState(localStorage.getItem("userName") || "");
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("accessToken"));
   const role = localStorage.getItem("role");
 
   const handleLogin = (userName) => {
@@ -25,6 +26,7 @@ const App = () => {
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("role");
+    localStorage.removeItem("userName");
     setIsLoggedIn(false);
   };
 
@@ -38,6 +40,7 @@ const App = () => {
             <Route path="/certificates" element={<CertificatesPage />} />
             <Route path="/users" element={<ShowUsers />} />
             <Route path="/add-user" element={<AddUsers />} />
+            <Route path="/delete-user" element={<DeleteUsers />} />
             <Route path="/reports" element={<ReportStatus />} />
             <Route path="/create-form" element={<CreateForm />} />
             <Route path="/change-password" element={<ChangePassword />} /> 
@@ -95,3 +98,4 @@ const App = () => {
 };
 
 export default App;
+
