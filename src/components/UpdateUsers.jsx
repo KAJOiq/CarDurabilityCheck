@@ -52,7 +52,7 @@ const UpdateUsers = ({ userId, closeModal, refreshUsers }) => {
       <div className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md">
         <div className="text-right mb-6">
           <h3 className="text-xl font-bold text-gray-800">تحديث بيانات المستخدم</h3>
-          <p className="text-gray-600 mt-2">يمكنك تعديل الاسم وكلمة المرور لهذا المستخدم.</p>
+          <p className="text-gray-600 mt-2">يمكنك تعديل الاسم وكلمة المرور لهذا المستخدم</p>
         </div>
 
         {error && <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-lg">{error}</div>}
