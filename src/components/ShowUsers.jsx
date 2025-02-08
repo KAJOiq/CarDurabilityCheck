@@ -113,39 +113,13 @@ const ShowUsers = () => {
       </div>
 
       <div className="mb-6 p-4 bg-white shadow-lg rounded-lg text-right">
-        <h3 className="text-lg font-semibold text-gray-700 mb-4"></h3>
-        <div className="flex flex-wrap gap-4">
-          <input
-            type="text"
-            name="name"
-            value={filters.name}
-            onChange={handleFilterChange}
-            placeholder="الاسم"
-            className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all text-right"
-          />
-          <input
-            type="text"
-            name="username"
-            value={filters.username}
-            onChange={handleFilterChange}
-            placeholder="اسم المستخدم"
-            className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all text-right"
-          />
-          <select
-            name="status"
-            value={filters.status}
-            onChange={handleFilterChange}
-            className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all text-right"
-          >
-            <option value="">الكل</option>
-            <option value="true">غير مفعل</option>
-            <option value="false">مفعل</option>
-          </select>
+        {/* Filters */}
+        <div className="flex flex-row-reverse flex-wrap gap-4">
           <select
             name="userType"
             value={filters.userType}
             onChange={handleFilterChange}
-            className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all text-right"
+            className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all w-full sm:w-auto text-right"
           >
             <option value="">الكل</option>
             <option value="admin">admin</option>
@@ -154,9 +128,35 @@ const ShowUsers = () => {
             <option value="checker">checker</option>
             <option value="supervisor">supervisor</option>
           </select>
+          <select
+            name="status"
+            value={filters.status}
+            onChange={handleFilterChange}
+            className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all w-full sm:w-auto text-right"
+          >
+            <option value="">الكل</option>
+            <option value="true">غير مفعل</option>
+            <option value="false">مفعل</option>
+          </select>
+          <input
+            type="text"
+            name="username"
+            value={filters.username}
+            onChange={handleFilterChange}
+            placeholder="اسم المستخدم"
+            className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all w-full sm:w-auto text-right"
+          />
+          <input
+            type="text"
+            name="name"
+            value={filters.name}
+            onChange={handleFilterChange}
+            placeholder="الاسم"
+            className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all w-full sm:w-auto text-right"
+          />
         </div>
+        {/* Title below the filters */}
       </div>
-
       {loading ? (
         <div className="text-center p-8 text-gray-500 bg-gray-50 rounded-lg">جارٍ التحميل...</div>
       ) : error ? (
@@ -200,7 +200,6 @@ const ShowUsers = () => {
           </table>
         </div>
       )}
-
       {showAddUser && <AddUsers setShowAddUser={setShowAddUser} setUsers={handleAddUser} />}
       {showUpdateUser && <UpdateUsers userId={userIdToUpdate} closeModal={() => setShowUpdateUser(false)} refreshUsers={refreshUsers} />}
     </div>
