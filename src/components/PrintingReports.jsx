@@ -4,9 +4,53 @@ import { PrinterIcon } from '@heroicons/react/24/outline';
 const PrintingReports = ({ data }) => {
   const handlePrint = () => {
     const printWindow = window.open('', '', 'height=800,width=800');
-    printWindow.document.write('<html><head><title>تقرير</title></head><body>');
+    printWindow.document.write('<html><head><title>تقرير</title>');
+
+    // Add custom styles for the print version
+    printWindow.document.write(`
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          line-height: 1.5;
+          padding: 20px;
+          direction: rtl; /* Right-to-left for Arabic text */
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 20px;
+        }
+        th, td {
+          text-align: center;
+          padding: 12px;
+          border: 1px solid #ddd;
+        }
+        th {
+          background-color: #f5f7fb;
+          color: #444;
+        }
+        td {
+          color: #333;
+        }
+        h2 {
+          text-align: center;
+          font-size: 20px;
+        }
+        @media print {
+          body {
+            margin: 0;
+            padding: 0;
+          }
+          .no-print {
+            display: none;
+          }
+        }
+      </style>
+    `);
 
     // Print Header Section
+    printWindow.document.write('<body>');
+    printWindow.document.write('<h2>تقرير فحص المتانة</h2>');
     printWindow.document.write('<p style="font-size: 18px; text-align: center; color: #555;">');
     printWindow.document.write(`${data[0]?.location || '--'} <br />`);
     printWindow.document.write(`<strong>نوع الاستمارة:</strong> ${data[0]?.formType || '--'} <br />`);
@@ -15,15 +59,15 @@ const PrintingReports = ({ data }) => {
     printWindow.document.write('</p>');
 
     // Table Section for Print (Single Row Display)
-    printWindow.document.write('<table border="1" style="width: 100%; border-collapse: collapse; margin-bottom: 20px; border-color: #ddd;">');
+    printWindow.document.write('<table>');
     printWindow.document.write(
-      '<thead><tr style="background-color: #f5f7fb;"><th style="text-align: center; padding: 12px; font-weight: 600; color: #444;">عدد الاستمارات الحكومية</th><th style="text-align: center; padding: 12px; font-weight: 600; color: #444;">عدد شهادات الفحص</th><th style="text-align: center; padding: 12px; font-weight: 600; color: #444;">مجموع عدد الاستمارات</th></tr></thead>'
+      '<thead><tr><th>عدد الاستمارات الحكومية</th><th>عدد شهادات الفحص</th><th>مجموع عدد الاستمارات</th></tr></thead>'
     );
     printWindow.document.write('<tbody><tr>');
     
     data.forEach((item) => {
       printWindow.document.write(
-        `<td style="text-align: center; padding: 12px; color: #333;">${item.value || '--'}</td>`
+        `<td>${item.value || '--'}</td>`
       );
     });
 
