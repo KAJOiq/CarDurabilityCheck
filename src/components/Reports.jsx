@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PrintingReports from './PrintingReports'; 
 import fetchData from '../utils/fetchData';
 
@@ -7,12 +7,11 @@ import {
   ClipboardDocumentCheckIcon
 } from '@heroicons/react/24/outline';
 
-// Mock data with "الكل"
 const mockData = {
-  الكل: { الكل: 0 }, // Represents all vehicle and engine types
-  سيارة: { وقود: 15, هجين: 5, كهربائي: 10 },
-  شاحنة: { وقود: 20, هجين: 8, كهربائي: 7 },
-  دراجة: { وقود: 5, هجين: 2, كهربائي: 5 }
+  الكل: { الكل: 0 }, 
+  سيارة: { وقود: 0, هجين: 0, كهربائي: 0 },
+  شاحنة: { وقود: 0, هجين: 0, كهربائي: 0 },
+  دراجة: { وقود: 0, هجين: 0, كهربائي: 0 }
 };
 
 const ReportStatus = () => {
@@ -24,7 +23,7 @@ const ReportStatus = () => {
     { 
       id: 1,
       title: 'عدد الاستمارات الحكومية',
-      value: 21,
+      value: 0, 
       icon: ClipboardDocumentIcon,
       color: 'bg-green-100 text-green-600',
       showPercentage: false
@@ -32,7 +31,7 @@ const ReportStatus = () => {
     { 
       id: 2,
       title: 'عدد شهادات الفحص',
-      value: 35,
+      value: 0,
       icon: ClipboardDocumentCheckIcon,
       color: 'bg-orange-100 text-orange-600',
       showPercentage: false
@@ -40,16 +39,19 @@ const ReportStatus = () => {
     { 
       id: 3,
       title: 'مجموع عدد الاستمارات',
-      value: 12,
+      value: 0, 
       icon: ClipboardDocumentIcon,
       color: 'bg-yellow-100 text-yellow-600',
       showPercentage: false
     },
   ]);
 
+  useEffect(() => {
+    handleApplyFilter();
+  }, [formType, engineType, startDate, endDate]);
+
   const handleApplyFilter = async () => {
     try {
-      // Send "الكل" as an empty string in API request to fetch all data
       const vehicleType = formType === 'الكل' ? '' : formType;
       const motorType = engineType === 'الكل' ? '' : engineType;
 
