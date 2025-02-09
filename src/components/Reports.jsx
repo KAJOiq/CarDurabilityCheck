@@ -1,23 +1,23 @@
-// نوع الاستمارة ونوع المحرك يتم تضمينها بالاستمارة فقط من الفلتر
-// استفسار على الموقع هل يتم تضمينه في الفلتر أم لا ؟
-
 import React, { useState } from 'react';
-import PrintingReports from './PrintingReports';
+import PrintingReports from './PrintingReports'; 
+import fetchData from '../utils/fetchData';
+
 import { 
   ClipboardDocumentIcon,
-
+  ClipboardDocumentCheckIcon
 } from '@heroicons/react/24/outline';
 
-// Mock data with type safety
+// Mock data with "الكل"
 const mockData = {
+  الكل: { الكل: 0 }, // Represents all vehicle and engine types
   سيارة: { وقود: 15, هجين: 5, كهربائي: 10 },
   شاحنة: { وقود: 20, هجين: 8, كهربائي: 7 },
   دراجة: { وقود: 5, هجين: 2, كهربائي: 5 }
 };
 
 const ReportStatus = () => {
-  const [formType, setFormType] = useState('سيارة');
-  const [engineType, setEngineType] = useState('وقود');
+  const [formType, setFormType] = useState('الكل');
+  const [engineType, setEngineType] = useState('الكل');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [filteredStatusItems, setFilteredStatusItems] = useState([
@@ -33,7 +33,7 @@ const ReportStatus = () => {
       id: 2,
       title: 'عدد شهادات الفحص',
       value: 35,
-      icon: ClipboardDocumentIcon,
+      icon: ClipboardDocumentCheckIcon,
       color: 'bg-orange-100 text-orange-600',
       showPercentage: false
     },
@@ -47,20 +47,39 @@ const ReportStatus = () => {
     },
   ]);
 
-  const handleApplyFilter = () => {
-    const selectedFormData = mockData[formType];
-    const selectedValue = selectedFormData[engineType] || 0;
+  const handleApplyFilter = async () => {
+    try {
+      // Send "الكل" as an empty string in API request to fetch all data
+      const vehicleType = formType === 'الكل' ? '' : formType;
+      const motorType = engineType === 'الكل' ? '' : engineType;
 
-    const newValues = {
-      'عدد الاستمارات الحكومية': selectedValue,
-      'عدد شهادات الفحص': Math.floor(Math.random() * 50) + 10,
-      'مجموع عدد الاستمارات': Object.values(selectedFormData).reduce((a, b) => a + b, 0)
-    };
+      const response = await fetchData(
+        `Reporter/applications-reporter?VehicleType=${vehicleType}&EngineType=${motorType}&LocationId=1&StartDate=${startDate}&EndDate=${endDate}`,
+        {
+          method: 'GET',
+          headers: {
+            'accept': '*/*',
+          }
+        }
+      );
 
-    setFilteredStatusItems(prev => prev.map(item => ({
-      ...item,
-      value: newValues[item.title] || 0
-    })));
+      if (response.isSuccess) {
+        const { totalApplications, certifiedApplications, governmentApplications } = response.results;
+
+        const newValues = {
+          'عدد الاستمارات الحكومية': governmentApplications,
+          'عدد شهادات الفحص': certifiedApplications,
+          'مجموع عدد الاستمارات': totalApplications
+        };
+
+        setFilteredStatusItems(prev => prev.map(item => ({
+          ...item,
+          value: newValues[item.title] || 0
+        })));
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   };
 
   const preparePrintData = () => {
@@ -99,7 +118,7 @@ const ReportStatus = () => {
                 value={engineType}
                 onChange={(e) => setEngineType(e.target.value)}
               >
-                {Object.keys(mockData[formType]).map((engine) => (
+                {Object.keys(mockData[formType] || mockData['الكل']).map((engine) => (
                   <option key={engine} value={engine}>{engine}</option>
                 ))}
               </select>
@@ -150,20 +169,10 @@ const ReportStatus = () => {
                     <p className="text-sm font-semibold text-slate-600 mb-2">{item.title}</p>
                     <p className={`text-3xl font-bold ${item.color.split(' ')[1]} mb-4`}>
                       {item.value.toLocaleString()}
-                      {item.showPercentage && '%'}
                     </p>
                   </div>
                   <div className={`p-3 rounded-xl ${item.color} bg-opacity-20`}>
                     <item.icon className={`w-8 h-8 ${item.color.split(' ')[1]}`} />
-                  </div>
-                </div>
-                
-                <div className="absolute bottom-0 left-0 right-0">
-                  <div className="h-1.5 bg-slate-100">
-                    <div 
-                      className={`h-full ${item.color.split(' ')[0]} transition-all duration-500`}
-                      style={{ width: item.showPercentage ? `${item.value}%` : '100%' }}
-                    />
                   </div>
                 </div>
               </div>
