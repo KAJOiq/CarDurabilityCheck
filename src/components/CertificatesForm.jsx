@@ -1,46 +1,32 @@
 import React, { useRef, useState, useEffect } from "react";
 import logo from "../assets/logo.jpg";
-//import imgStatic from "../assets/truck.png";
 import QRCode from "qrcode"; // Import QRCode component
 
 
 const CertificatesForm = ({ formData, photo1, photo2 }) => {
-  const [apiData, setApiData] = useState({
-    inspectionFormNumber: "12345", // Replace with actual form number if necessary
-    date: new Date().toLocaleDateString("ar-IQ", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    }),
-  });
   
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState("");
 
-    useEffect(() => {
-      const qrData = JSON.stringify({
-        customerName: formData.customerName,
-        vehicleModel: formData.vehicleModel,
-        vehicleType: formData.vehicleType,
-        vehicleColor: formData.vehicleColor,
-        vehicleNumber: formData.vehicleNumber,
-        isGovernment: formData.isGovernment,
-        chassisNumber: formData.chassisNumber,
-        model: formData.model,
-        engineType: formData.engineType,
-        cylinderCount: formData.cylinderCount,
-        receiptNumber: formData.receiptNumber,
-        trafficFormNumber: formData.trafficFormNumber,
-        formType: formData.formType,
-        inspectionFormNumber: apiData.inspectionFormNumber,
-        date: apiData.date,
-        load: formData.load, // Truck-specific
-        attachedLoadType: formData.attachedLoadType, // Truck-specific
-        attachedChassis: formData.attachedChassis, // Truck-specific
-        numberOfAttachedVehicles: formData.numberOfAttachedVehicles, // Truck-specific
-        numberOfAxes: formData.numberOfAxes, // Truck-specific
-        nameOfLocation: formData.nameOfLocation, // Truck-specific
-      });
+  useEffect(() => {
+    const qrData = JSON.stringify({
+      customerName: formData.carOwnerName,
+      vehicleModel: formData.carModel,
+      vehicleType: formData.vehicleType,
+      vehicleColor: formData.carColor,
+      vehicleNumber: formData.plateNumber,
+      isGovernment: formData.governmental,
+      chassisNumber: formData.chassisNumber,
+      model: formData.carModel,
+      engineType: formData.engineType,
+      cylinderCount: formData.engineCylindersNumber,
+      receiptNumber: formData.receiptId,
+      trafficFormNumber: formData.trafficPoliceApplicationId,
+      formType: formData.vehicleType,
+      applicationId: formData.applicationId,
+      issueDate: formData.issueDate,
+      load: formData.loadWeight, // Truck-specific
+      nameOfLocation: formData.location, // Truck-specific
+    });
   
       QRCode.toDataURL(qrData)
         .then((url) => {
@@ -49,7 +35,7 @@ const CertificatesForm = ({ formData, photo1, photo2 }) => {
           }
         })
         .catch((error) => console.error("Error generating QR code:", error));
-    }, [formData, apiData.inspectionFormNumber, apiData.date]); // Keep dependencies minimal and specific
+    }, [formData]); // Keep dependencies minimal and specific
   
   
   const handlePrint = () => {
@@ -252,27 +238,27 @@ const CertificatesForm = ({ formData, photo1, photo2 }) => {
             <div class="vehicle-data">
               <h3><strong>بيانات المركبة</strong></h3>
               <div class="info-container">
-                <div class="info"><strong>اسم المواطن:</strong> <div><strong>${formData.customerName}</strong></div></div>
-                <div class="info"><strong>نوع المركبة:</strong> <div><strong>${formData.vehicleType}</strong></div></div>
-                <div class="info"><strong>طراز المركبة:</strong> <div><strong>${formData.vehicleModel}</strong></div></div>
-                <div class="info"><strong>لون المركبة:</strong> <div><strong>${formData.vehicleColor}</strong></div></div>
-                <div class="info"><strong>رقم المركبة:</strong> <div><strong>${formData.vehicleNumber}</strong></div></div>
+                <div class="info"><strong>اسم المواطن:</strong> <div><strong>${formData.carOwnerName}</strong></div></div>
+                <div class="info"><strong>نوع المركبة:</strong> <div><strong>${formData.carBrand}</strong></div></div>
+                <div class="info"><strong>طراز المركبة:</strong> <div><strong>${formData.carName}</strong></div></div>
+                <div class="info"><strong>لون المركبة:</strong> <div><strong>${formData.carColor}</strong></div></div>
+                <div class="info"><strong>رقم المركبة:</strong> <div><strong>${formData.plateNumber}</strong></div></div>
                 <div class="info"><strong>رقم الشاصي:</strong> <div><strong>${formData.chassisNumber}</strong></div></div>
-                <div class="info"><strong>الموديل:</strong> <div><strong>${formData.model}</strong></div></div>
+                <div class="info"><strong>الموديل:</strong> <div><strong>${formData.carModel}</strong></div></div>
                 <div class="info"><strong>نوع المحرك:</strong> <div><strong>${formData.engineType}</strong></div></div>
-                <div class="info"><strong>عدد السلندر:</strong> <div><strong>${formData.cylinderCount}</strong></div></div>
+                <div class="info"><strong>عدد السلندر:</strong> <div><strong>${formData.engineCylindersNumber}</strong></div></div>
                 <div class="info"><strong>عدد المحاور:</strong> <div><strong>${formData.numberOfAxes}</strong></div></div>
               </div>
             </div>
             <div class="form-data">
               <h3><strong>بيانات الاستمارة</strong></h3>
               <div class="info-container">
-                <div class="info"><strong>رقم استمارة الفحص:</strong> <div><strong>${apiData.inspectionFormNumber}</strong></div></div>
-                <div class="info"><strong>رقم استمارة المرور:</strong> <div><strong>${formData.trafficFormNumber}</strong></div></div>
-                <div class="info"><strong>رقم وصل القبض:</strong> <div><strong>${formData.receiptNumber}</strong></div></div>
-                <div class="info"><strong>نوع الاستمارة:</strong> <div><strong>${formData.formType}</strong></div></div>
-                <div class="info"><strong>اسم الموقع:</strong> <div><strong>${formData.nameOfLocation}</strong></div></div>
-                <div class="info"><strong>التاريخ:</strong> <div><strong>${apiData.date}</strong></div></div>
+                <div class="info"><strong>رقم استمارة الفحص:</strong> <div><strong>${formData.applicationId}</strong></div></div>
+                <div class="info"><strong>رقم استمارة المرور:</strong> <div><strong>${formData.trafficPoliceApplicationId}</strong></div></div>
+                <div class="info"><strong>رقم وصل القبض:</strong> <div><strong>${formData.receiptId}</strong></div></div>
+                <div class="info"><strong>نوع الاستمارة:</strong> <div><strong>${formData.vehicleType}</strong></div></div>
+                <div class="info"><strong>اسم الموقع:</strong> <div><strong>${formData.location}</strong></div></div>
+                <div class="info"><strong>التاريخ:</strong> <div><strong>${formData.issueDate}</strong></div></div>
               </div>
             </div>
           </div>
@@ -290,7 +276,11 @@ const CertificatesForm = ({ formData, photo1, photo2 }) => {
       </html>
     `);
     printWindow.document.close();
-    printWindow.print();
+    
+    // Add a delay of 500 milliseconds (0.5 seconds) before calling print()
+    setTimeout(() => {
+      printWindow.print();
+    }, 500);  // Adjust the 500 milliseconds as needed
   };
 
 
