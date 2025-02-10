@@ -1,10 +1,8 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import logo from "../assets/logo.jpg";
-import QRCode from "qrcode"; // Import QRCode component
+import QRCode from "qrcode";
 
-
-const CertificatesForm = ({ formData, photo1, photo2 }) => {
-  
+const CertificatesForm = ({ formData, photo1 }) => {
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState("");
 
   useEffect(() => {
@@ -24,276 +22,160 @@ const CertificatesForm = ({ formData, photo1, photo2 }) => {
       formType: formData.vehicleType,
       applicationId: formData.applicationId,
       issueDate: formData.issueDate,
-      load: formData.loadWeight, // Truck-specific
-      nameOfLocation: formData.location, // Truck-specific
+      load: formData.loadWeight,
+      nameOfLocation: formData.location,
+      vehicleID: formData.vehicleID,
     });
-  
-      QRCode.toDataURL(qrData)
-        .then((url) => {
-          if (url !== qrCodeDataUrl) {
-            setQrCodeDataUrl(url); // Set the QR code URL only if it has changed
-          }
-        })
-        .catch((error) => console.error("Error generating QR code:", error));
-    }, [formData]); // Keep dependencies minimal and specific
-  
-  
+
+    QRCode.toDataURL(qrData)
+      .then((url) => {
+        if (url !== qrCodeDataUrl) setQrCodeDataUrl(url);
+      })
+      .catch((error) => console.error("Error generating QR code:", error));
+  }, [formData]);
+
   const handlePrint = () => {
-    const logoBase64 = logo;
-    const printWindow = window.open("_blank");
+    const printWindow = window.open("", "_blank");
     printWindow.document.open();
     printWindow.document.write(`
       <!DOCTYPE html>
-      <html lang="ar">
-        <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>طباعة الاستمارة</title>
-          <style>
-            body {
-              font-family: Arial, sans-serif;
-              direction: rtl;
-              text-align: right;
-              margin: 0;
-              font-size: 9px;
-              padding: 0 5px;
-            }
-            h2 {
-              text-align: center;
-              font-size: 12px;
-            }
-            .grid {
-              display: grid;
-              grid-template-columns: 1fr 1fr;
-              gap: 10px;
-            }
-            .field {
-              margin-bottom: 6px;
-              padding: 6px;
-              border-radius: 6px;
-            }
-            .img {
-              max-width: 90%;
-              height: auto;
-              margin-top: 10px;
-              display: block;
-              margin-left: auto;
-              margin-right: auto;
-            }
-            .header {
-              position: relative;
-              width: 100%;
-              height: 140px;
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-            }
-            .logo-container {
-              position: absolute;
-              top: 0;
-              left: 50%;
-              transform: translateX(-50%);
-              text-align: center;
-            }
-            .logo-container img {
-              max-width: 100px;
-            }
-            .title-container {
-              position: absolute;
-              top: 20px;
-              right: 15px;
-              text-align: right;
-            }
-            .title-container .title {
-              font-size: 24px;
-              font-weight: bold;
-            }
-            .title-container .subtitle {
-              font-size: 18px;
-              font-weight: bold;
-            }
-            .form-data,
-            .vehicle-data {
-              padding: 8px;
-              border-radius: 6px;
-              margin-bottom: 12px;
-              background-color: #f4f7fb;
-              border: 1px solid #ccc;
-              box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
-            }
-            .form-data h3,
-            .vehicle-data h3 {
-              margin-bottom: 6px;
-              background-color: #e5e7eb;
-              padding: 6px;
-              border-radius: 4px;
-              font-size: 16px;
-              font-weight: bold;
-              color: #333;
-            }
-            .form-data h3 strong,
-            .vehicle-data h3 strong {
-              font-size: 22px;
-              font-weight: bold;
-            }
-            .form-data .info-container,
-            .vehicle-data .info-container {
-              display: flex;
-              flex-wrap: wrap;
-              justify-content: space-between;
-            }
-            .info {
-              width: 48%;
-              margin-bottom: 6px;
-            }
-            .info strong {
-              font-size: 16px;
-              font-weight: bold;
-              color: rgb(0, 0, 0);
-            }
-            .footer-photo-container {
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              margin-top: 8px;
-            }
-            .footer-photo-container img {
-              margin: 0 10px;
-            }
-            .bottom-images {
-              display: flex;
-              flex-direction: Row;
-              gap: 20px;
-            }
-            .bottom-image {
-              max-width: 160px;
-              height: auto;
-              margin-top: 15px;
-            }
-            .footer-text {
-              display: flex;
-              justify-content: space-between;
-              width: 100%;
-              margin-top: 10px;
-              text-align: center;
-              font-size: 12px;
-              font-weight: bold;
-              transform: translateY(-100px);
-            }
-            .footer-text div {
-              width: 23%;
-            }
-            .qr-code-container {
-              position: absolute;
-              left: 15px;
-              top: 10px;
-            }
-            .qr-code-container img {
-              max-width: 100px;
-              height: auto;
-            }
-            @media print {
-              body {
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-                font-size: 9px;
-              }
-              .header {
-                height: 110px;
-              }
-              .logo-container img {
-                max-width: 100px;
-              }
-              .form-data h3, .vehicle-data h3 {
-                font-size: 11px;
-              }
-              .info {
-                font-size: 10px;
-              }
-              .info strong {
-                font-size: 12px;
-                color:rgb(0, 0, 0);
-              }
-              .bottom-image {
-                max-width: 120px;
-              }
-            }
-          </style>
-        </head>
-        <body>
-          <div class="header">
-            <div class="title-container">
-              <div class="title"><strong>جمهورية العراق</strong></div>
-              <div class="subtitle"><strong>وزارة الداخلية</strong></div>
-            </div>
-            <div class="logo-container">
-              <img src="${logoBase64}" alt="Logo" />
-            </div>
-            <div class="qr-code-container">
-              <img src="${qrCodeDataUrl}" alt="QR Code" width="120" />
+      <html lang="ar" dir="rtl">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>شهادة فحص المركبة</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <style>
+          @page {
+            size: A5 landscape;
+            margin: 8mm;
+          }
+          body {
+            font-family: 'Arial Arabic', sans-serif;
+            width: 210mm;
+            height: 148mm;
+            padding: 10mm;
+            box-sizing: border-box;
+          }
+          .print-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+          }
+          .info-cell {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 5px;
+          }
+          .section-header {
+            background-color: #f3f4f6;
+            padding: 5px;
+            text-align: center;
+            font-weight: bold;
+          }
+          .section-content {
+            padding: 10px;
+            font-size: 14px;
+          }
+          .text-small {
+            font-size: 12px;
+          }
+        </style>
+      </head>
+      <body class="bg-white">
+        <!-- Header Section -->
+        <div class="flex justify-between items-start border-b-2 border-gray-300 pb-2">
+          <div class="w-24">
+            <img src="${qrCodeDataUrl}" alt="QR Code" class="w-full h-auto">
+          </div>
+          <div class="text-center">
+            <h1 class="text-xl font-bold">جمهورية العراق</h1>
+            <h2 class="text-lg font-semibold">وزارة الداخلية</h2>
+            <h3 class="text-base mt-1">شهادة فحص المركبة</h3>
+          </div>
+          <div class="w-24">
+            <img src="${logo}" alt="Logo" class="w-full h-auto">
+          </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="grid print-grid mt-4">
+          <!-- Vehicle Data -->
+          <div class="border border-gray-200 rounded p-3">
+            <h3 class="section-header">بيانات المركبة</h3>
+            <div class="section-content">
+              ${[
+                ["اسم المواطن", formData.carOwnerName],
+                ["نوع المركبة", formData.carBrand],
+                ["طراز المركبة", formData.carName],
+                ["لون المركبة", formData.carColor],
+                ["رقم المركبة", formData.plateNumber],
+                ["رقم الشاصي", formData.chassisNumber],
+                ["الموديل", formData.carModel],
+                ["نوع المحرك", formData.engineType],
+                ["عدد السلندر", formData.engineCylindersNumber],
+                ["عدد المحاور", formData.numberOfAxes]
+              ].map(([label, value]) => `
+                <div class="info-cell text-small">
+                  <span class="font-semibold">${label}</span>
+                  <span>${value || '---'}</span>
+                </div>
+              `).join('')}
             </div>
           </div>
-          <hr />
-          <div class="grid">
-            <div class="vehicle-data">
-              <h3><strong>بيانات المركبة</strong></h3>
-              <div class="info-container">
-                <div class="info"><strong>اسم المواطن:</strong> <div><strong>${formData.carOwnerName}</strong></div></div>
-                <div class="info"><strong>نوع المركبة:</strong> <div><strong>${formData.carBrand}</strong></div></div>
-                <div class="info"><strong>طراز المركبة:</strong> <div><strong>${formData.carName}</strong></div></div>
-                <div class="info"><strong>لون المركبة:</strong> <div><strong>${formData.carColor}</strong></div></div>
-                <div class="info"><strong>رقم المركبة:</strong> <div><strong>${formData.plateNumber}</strong></div></div>
-                <div class="info"><strong>رقم الشاصي:</strong> <div><strong>${formData.chassisNumber}</strong></div></div>
-                <div class="info"><strong>الموديل:</strong> <div><strong>${formData.carModel}</strong></div></div>
-                <div class="info"><strong>نوع المحرك:</strong> <div><strong>${formData.engineType}</strong></div></div>
-                <div class="info"><strong>عدد السلندر:</strong> <div><strong>${formData.engineCylindersNumber}</strong></div></div>
-                <div class="info"><strong>عدد المحاور:</strong> <div><strong>${formData.numberOfAxes}</strong></div></div>
-              </div>
-            </div>
-            <div class="form-data">
-              <h3><strong>بيانات الاستمارة</strong></h3>
-              <div class="info-container">
-                <div class="info"><strong>رقم استمارة الفحص:</strong> <div><strong>${formData.applicationId}</strong></div></div>
-                <div class="info"><strong>رقم استمارة المرور:</strong> <div><strong>${formData.trafficPoliceApplicationId}</strong></div></div>
-                <div class="info"><strong>رقم وصل القبض:</strong> <div><strong>${formData.receiptId}</strong></div></div>
-                <div class="info"><strong>نوع الاستمارة:</strong> <div><strong>${formData.vehicleType}</strong></div></div>
-                <div class="info"><strong>اسم الموقع:</strong> <div><strong>${formData.location}</strong></div></div>
-                <div class="info"><strong>التاريخ:</strong> <div><strong>${formData.issueDate}</strong></div></div>
-              </div>
+
+          <!-- Form Data -->
+          <div class="border border-gray-200 rounded p-3">
+            <h3 class="section-header">بيانات الاستمارة</h3>
+            <div class="section-content">
+              ${[
+                ["رقم استمارة الفحص", formData.applicationId],
+                ["رقم استمارة المرور", formData.trafficPoliceApplicationId],
+                ["رقم وصل القبض", formData.receiptId],
+                ["نوع الاستمارة", formData.vehicleType],
+                ["اسم الموقع", formData.location],
+                ["التاريخ", formData.issueDate]
+              ].map(([label, value]) => `
+                <div class="info-cell text-small">
+                  <span class="font-semibold">${label}</span>
+                  <span>${value || '---'}</span>
+                </div>
+              `).join('')}
             </div>
           </div>
-          <div class="footer-photo-container">
-              <div class="bottom-images">
-                <img src="${formData.photo2}" alt="Captured Front" class="bottom-image" />
-              </div>
-            </div>
+        </div>
+
+        <!-- Footer Section -->
+        <div class="mt-4 flex justify-between items-end">
+          <div class="w-32 h-24 border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-500 text-sm">
+            ${formData.photo2 ? `<img src="${formData.photo2}" class="w-full h-full object-cover" />` : 'صورة المركبة'}
           </div>
-          <div class="footer-text">
-            <div>مثبت الملصق</div>
-            <div>مدخل المعلومات</div>
+          <div class="text-center text-sm">
+            <div class="mb-2">مثبت الملصق</div>
+            <div class="border-t-2 border-gray-400 w-32 mx-auto pt-1"></div>
           </div>
-        </body>
+        </div>
+      </body>
       </html>
     `);
     printWindow.document.close();
     
-    // Add a delay of 500 milliseconds (0.5 seconds) before calling print()
     setTimeout(() => {
       printWindow.print();
-    }, 500);  // Adjust the 500 milliseconds as needed
+    }, 500);
   };
 
-
   return (
-    <div>
+    <div className="mt-6 flex justify-center">
       <button
- 
-        className="bg-blue-500 text-white px-6 py-3 rounded-2xl hover:bg-blue-700"
         onClick={handlePrint}
+        className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg
+               transition-colors duration-200 flex items-center gap-2"
       >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fillRule="evenodd" d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v2a2 2 0 002 2h6a2 2 0 002-2v-2h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 0H7v3h6V4zm0 8H7v4h6v-4z" clipRule="evenodd" />
+        </svg>
         طباعة شهادة الفحص
       </button>
-
     </div>
   );
 };
