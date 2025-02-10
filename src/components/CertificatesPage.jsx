@@ -136,13 +136,13 @@ const CertificatesPage = () => {
                 <MagnifyingGlassIcon className="h-8 w-8 text-blue-600" />
                 {formData.applicationId}
               </h2>
-              <button
-                onClick={() => setIsModalOpen(true)}
-                className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg flex items-center gap-2"
-              >
-                <CheckBadgeIcon className="h-5 w-5" />
-                توثيق
-              </button>
+              {/* Certificates Form */}
+              {formData && (
+                <CertificatesForm 
+                  formData={formData} 
+                  stickerProvider={stickerProvider} 
+                />
+              )}
             </div>
 
             <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-right">
@@ -235,13 +235,7 @@ const CertificatesPage = () => {
         </div>
       )}
 
-      {/* Certificates Form */}
-      {formData && (
-        <CertificatesForm 
-        formData={formData} 
-        stickerProvider={stickerProvider} 
-      />
-      )}
+
     </div>
   );
 };
