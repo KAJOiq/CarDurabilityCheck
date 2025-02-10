@@ -237,7 +237,10 @@ const CertificatesPage = () => {
 
       {/* Certificates Form */}
       {formData && (
-        <CertificatesForm formData={formData} />
+        <CertificatesForm 
+        formData={formData} 
+        stickerProvider={stickerProvider} 
+      />
       )}
     </div>
   );

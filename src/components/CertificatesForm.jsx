@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import logo from "../assets/logo.jpg";
 import QRCode from "qrcode";
 
-const CertificatesForm = ({ formData, photo1 }) => {
+const CertificatesForm = ({ formData, photo1, stickerProvider }) => {
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState("");
 
   useEffect(() => {
@@ -145,12 +145,12 @@ const CertificatesForm = ({ formData, photo1 }) => {
         </div>
 
         <!-- Footer Section -->
-        <div class="mt-4 flex justify-between items-end">
+        <div class="mt-4 flex justify-between items-center">
           <div class="w-32 h-24 border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-500 text-sm">
             ${formData.photo2 ? `<img src="${formData.photo2}" class="w-full h-full object-cover" />` : 'صورة المركبة'}
           </div>
           <div class="text-center text-sm">
-            <div class="mb-2">مثبت الملصق</div>
+            <div class="mb-2">${stickerProvider}</div>
             <div class="border-t-2 border-gray-400 w-32 mx-auto pt-1"></div>
           </div>
         </div>
