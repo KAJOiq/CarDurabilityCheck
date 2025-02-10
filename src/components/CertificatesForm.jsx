@@ -2,8 +2,13 @@ import React, { useEffect, useState } from "react";
 import logo from "../assets/logo.jpg";
 import QRCode from "qrcode";
 
-const CertificatesForm = ({ formData, photo1, stickerProvider }) => {
+const CertificatesForm = ({ formData }) => {
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState("");
+  const [stickerNumber, setStickerNumber] = useState("");
+  const [stickerProvider, setStickerProvider] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const qrData = JSON.stringify({
@@ -150,6 +155,7 @@ const CertificatesForm = ({ formData, photo1, stickerProvider }) => {
             ${formData.photo2 ? `<img src="${formData.photo2}" class="w-full h-full object-cover" />` : 'صورة المركبة'}
           </div>
           <div class="text-center text-sm">
+            <div class="mb-2">مثبت الملصق</div>
             <div class="mb-2">${stickerProvider}</div>
             <div class="border-t-2 border-gray-400 w-32 mx-auto pt-1"></div>
           </div>
@@ -167,7 +173,7 @@ const CertificatesForm = ({ formData, photo1, stickerProvider }) => {
   return (
     <div className="mt-6 flex justify-center">
       <button
-        onClick={handlePrint}
+        onClick={() => setIsModalOpen(true)} // Open modal on button click
         className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg
                transition-colors duration-200 flex items-center gap-2"
       >
@@ -176,6 +182,69 @@ const CertificatesForm = ({ formData, photo1, stickerProvider }) => {
         </svg>
         طباعة شهادة الفحص
       </button>
+
+      {/* Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white p-6 rounded-xl w-96 space-y-4">
+            <h3 className="text-xl font-semibold text-center">أدخل تفاصيل الملصق</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">رقم الملصق</label>
+                <input
+                  type="text"
+                  value={stickerNumber}
+                  onChange={(e) => setStickerNumber(e.target.value)}
+                  className="mt-1 p-2 w-full border border-gray-300 rounded-lg"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">مثبت الملصق</label>
+                <input
+                  type="text"
+                  value={stickerProvider}
+                  onChange={(e) => setStickerProvider(e.target.value)}
+                  className="mt-1 p-2 w-full border border-gray-300 rounded-lg"
+                />
+              </div>
+            </div>
+            <div className="flex justify-center gap-4 mt-4">
+              <button
+                onClick={() => {
+                  if (stickerNumber && stickerProvider) {
+                    handlePrint();
+                    setIsModalOpen(false); // Close modal after printing
+                  } else {
+                    setError("يرجى ملء جميع الحقول."); // Error message if fields are empty
+                  }
+                }}
+                className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg"
+              >
+                توثيق
+              </button>
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="bg-gray-600 hover:bg-gray-700 text-white px-5 py-2 rounded-lg"
+              >
+                إغلاق
+              </button>
+            </div>
+
+            {/* Success or Error Popup */}
+            {successMessage && (
+              <div className="bg-green-100 text-green-700 text-center p-4 rounded-md mt-4">
+                {successMessage}
+              </div>
+            )}
+
+            {error && (
+              <div className="bg-red-100 text-red-700 text-center p-4 rounded-md mt-4">
+                {error}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

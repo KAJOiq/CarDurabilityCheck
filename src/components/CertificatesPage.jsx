@@ -142,7 +142,7 @@ const CertificatesPage = () => {
                   formData={formData} 
                   stickerProvider={stickerProvider} 
                 />
-              )}
+              )}              
             </div>
 
             <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-right">
@@ -234,8 +234,6 @@ const CertificatesPage = () => {
           </div>
         </div>
       )}
-
-
     </div>
   );
 };
