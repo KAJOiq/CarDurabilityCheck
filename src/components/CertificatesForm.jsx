@@ -39,137 +39,145 @@ const CertificatesForm = ({ formData }) => {
       .catch((error) => console.error("Error generating QR code:", error));
   }, [formData]);
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toISOString().split('T')[0];
+  };
+
   const handlePrint = () => {
     const printWindow = window.open("", "_blank");
     printWindow.document.open();
     printWindow.document.write(`
-      <!DOCTYPE html>
-      <html lang="ar" dir="rtl">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>شهادة فحص المركبة</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-        <style>
-          @page {
-            size: A5 landscape;
-            margin: 8mm;
-          }
-          body {
-            font-family: 'Arial Arabic', sans-serif;
-            width: 210mm;
-            height: 148mm;
-            padding: 10mm;
-            box-sizing: border-box;
-          }
-          .print-grid {
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-          }
-          .info-cell {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 5px;
-          }
-          .section-header {
-            background-color: #f3f4f6;
-            padding: 5px;
-            text-align: center;
-            font-weight: bold;
-          }
-          .section-content {
-            padding: 10px;
-            font-size: 14px;
-          }
-          .text-small {
-            font-size: 12px;
-          }
-        </style>
-      </head>
-      <body class="bg-white">
-        <!-- Header Section -->
-        <div class="flex justify-between items-start border-b-2 border-gray-300 pb-2">
-          <div class="w-24">
-            <img src="${qrCodeDataUrl}" alt="QR Code" class="w-full h-auto">
-          </div>
-          <div class="text-center">
-            <h1 class="text-xl font-bold">جمهورية العراق</h1>
-            <h2 class="text-lg font-semibold">وزارة الداخلية</h2>
-            <h3 class="text-base mt-1">شهادة فحص المركبة</h3>
-          </div>
-          <div class="w-24">
-            <img src="${logo}" alt="Logo" class="w-full h-auto">
-          </div>
-        </div>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>شهادة فحص المركبة</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @media print {
+      @page {
+        size: A5 landscape;
+      }
+      body {
+        font-family: Arial, sans-serif;
+        direction: rtl;
+      }
+    }
+  </style>
+</head>
+<body class="bg-white w-[210mm] h-[148mm] p-6 text-right">
 
-        <!-- Main Content -->
-        <div class="grid print-grid mt-4">
-          <!-- Vehicle Data -->
-          <div class="border border-gray-200 rounded p-3">
-            <h3 class="section-header">بيانات المركبة</h3>
-            <div class="section-content">
-              ${[
-                ["اسم المواطن", formData.carOwnerName],
-                ["نوع المركبة", formData.carBrand],
-                ["طراز المركبة", formData.carName],
-                ["لون المركبة", formData.carColor],
-                ["رقم المركبة", formData.plateNumber],
-                ["رقم الشاصي", formData.chassisNumber],
-                ["الموديل", formData.carModel],
-                ["نوع المحرك", formData.engineType],
-                ["عدد السلندر", formData.engineCylindersNumber],
-                ["عدد المحاور", formData.numberOfAxes]
-              ].map(([label, value]) => `
-                <div class="info-cell text-small">
-                  <span class="font-semibold">${label}</span>
-                  <span>${value || '---'}</span>
-                </div>
-              `).join('')}
-            </div>
-          </div>
+<!-- Header -->
+<div class="flex items-center border-b-2 border-gray-300 pb-4" dir="rtl">
+  <!-- Logo on the left -->
+  <div class="w-24 flex items-center justify-start">
+    <img src="${logo}" alt="Logo" class="w-auto h-auto">
+  </div>
 
-          <!-- Form Data -->
-          <div class="border border-gray-200 rounded p-3">
-            <h3 class="section-header">بيانات الاستمارة</h3>
-            <div class="section-content">
-              ${[
-                ["رقم استمارة الفحص", formData.applicationId],
-                ["رقم استمارة المرور", formData.trafficPoliceApplicationId],
-                ["رقم وصل القبض", formData.receiptId],
-                ["نوع الاستمارة", formData.vehicleType],
-                ["اسم الموقع", formData.location],
-                ["التاريخ", formData.issueDate]
-              ].map(([label, value]) => `
-                <div class="info-cell text-small">
-                  <span class="font-semibold">${label}</span>
-                  <span>${value || '---'}</span>
-                </div>
-              `).join('')}
-            </div>
-          </div>
-        </div>
+  <!-- Centered Titles -->
+  <div class="flex flex-col items-center justify-center flex-grow mx-4">
+    <h1 class="text-2xl font-bold mb-1 text-gray-800">جمهورية العراق</h1>
+    <h2 class="text-xl font-semibold text-gray-700">وزارة الداخلية</h2>
+    <h3 class="text-lg mt-2 font-bold text-black-600">شهادة فحص المركبة</h3>
+  </div>
 
-        <!-- Footer Section -->
-        <div class="mt-4 flex justify-between items-center">
-          <div class="w-32 h-24 border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-500 text-sm">
-            ${formData.photo2 ? `<img src="${formData.photo2}" class="w-full h-full object-cover" />` : 'صورة المركبة'}
-          </div>
-          <div class="text-center text-sm">
-            <div class="mb-2">مثبت الملصق</div>
-            <div class="mb-2">${stickerProvider}</div>
-            <div class="border-t-2 border-gray-400 w-32 mx-auto pt-1"></div>
-          </div>
+  <!-- QR Code Container -->
+  <div class="w-24 flex items-center justify-end">
+    <img src="${qrCodeDataUrl}" alt="QR Code" class="w-auto h-auto">
+  </div>
+
+  <!-- Right-side Details -->
+  <div class="flex flex-col items-end w-1/4">
+    <!-- Additional Information -->
+    <div class="text-sm mb-4 space-y-2">
+      <p class="whitespace-normal">
+        <strong>رقم استمارة الفحص:</strong>
+        <span class="text-gray-600">${formData.applicationId}</span>
+      </p>
+      <p class="whitespace-normal">
+        <strong>اسم الموقع:</strong>
+        <span class="text-gray-600">${formData.location}</span>
+      </p>
+      <p class="whitespace-normal">
+        <strong>تاريخ الاصدار:</strong>
+        <span class="text-gray-600">${formatDate(formData.issueDate)}</span>
+      </p>
+      <p class="whitespace-normal">
+        <strong>تاريخ النفاذ:</strong>
+        <span class="text-gray-600">${formatDate(formData.expiryDate)}</span>
+      </p>
+    </div>
+  </div>
+</div>
+
+   <!-- Main Content with Grid -->
+<div class="grid grid-cols-2 gap-6 mt-4">
+  <!-- Vehicle Data (Left) -->
+  <div class="border border-gray-300 rounded-lg p-4" dir="rtl">
+    <h3 class="bg-gray-200 text-center font-bold py-2">بيانات المركبة</h3>
+    <div class="text-sm">
+      ${[
+        ["نوع المركبة", formData.carBrand],
+        ["طراز المركبة", formData.carName],
+        ["لون المركبة", formData.carColor],
+        ["رقم المركبة", formData.plateNumber],
+        ["رقم الشاصي", formData.chassisNumber],
+        ["الموديل", formData.carModel],
+        ["نوع المحرك", formData.engineType],
+        ["عدد السلندر", formData.engineCylindersNumber],
+        ["عدد المحاور", formData.numberOfAxes]
+      ].map(([label, value]) => `
+        <div class="flex justify-start py-1">
+          <span class="font-semibold w-1/3">${label}:</span>
+          <span class="w-2/3">${value || '---'}</span>
         </div>
-      </body>
-      </html>
+      `).join('')}
+    </div>
+  </div>
+
+  <!-- Form Data (Right) -->
+  <div class="border border-gray-300 rounded-lg p-4" dir="rtl">
+    <h3 class="bg-gray-200 text-center font-bold py-2">بيانات الاستمارة</h3>
+    <div class="text-sm">
+      ${[
+        ["اسم المواطن", formData.carOwnerName],
+        ["رقم وصل القبض", formData.receiptId],
+        ["رقم الملصق", stickerNumber]
+      ].map(([label, value]) => `
+        <div class="flex justify-start py-1">
+          <span class="font-semibold w-1/3">${label}:</span>
+          <span class="w-2/3">${value || '---'}</span>
+        </div>
+      `).join('')}
+
+      <!-- Sticker Information -->
+      <div class="flex justify-start py-1">
+        <span class="font-semibold w-1/3">مثبت الملصق:</span>
+        <span class="w-2/3">${stickerProvider || '---'}</span>
+      </div>
+
+      <!-- Vehicle Image -->
+      <div class="flex justify-center mt-4">
+        <div class="border-2 border-dashed flex items-center justify-center text-gray-500 text-xs">
+          ${formData.photo2 ? `<img src="${formData.photo2}" class="object-contain" />` : 'صورة المركبة'}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
+
     `);
     printWindow.document.close();
-    
+  
     setTimeout(() => {
       printWindow.print();
     }, 500);
   };
-
   return (
     <div className="mt-6 flex justify-center">
       <button
@@ -220,7 +228,7 @@ const CertificatesForm = ({ formData }) => {
                 }}
                 className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg"
               >
-                توثيق
+                طباعة
               </button>
               <button
                 onClick={() => setIsModalOpen(false)}
