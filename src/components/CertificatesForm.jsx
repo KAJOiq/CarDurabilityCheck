@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import logo from "../assets/logo.jpg";
 import QRCode from "qrcode";
+import fetchData from "../utils/fetchData";
 
 const CertificatesForm = ({ formData }) => {
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState("");
@@ -9,6 +10,7 @@ const CertificatesForm = ({ formData }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [error, setError] = useState("");
+  const [certifying, setCertifying] = useState(false);
 
   useEffect(() => {
     const qrData = JSON.stringify({
@@ -41,7 +43,7 @@ const CertificatesForm = ({ formData }) => {
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toISOString().split('T')[0];
+    return date.toISOString().split("T")[0];
   };
 
   const handlePrint = () => {
@@ -70,53 +72,53 @@ const CertificatesForm = ({ formData }) => {
 <body class="bg-white w-[210mm] h-[148mm] p-6 text-right">
 
 <!-- Header -->
-<div class="flex items-center border-b-2 border-gray-300 pb-4" dir="rtl">
-  <!-- Logo on the left -->
-  <div class="w-24 flex items-center justify-start">
-    <img src="${logo}" alt="Logo" class="w-auto h-auto">
+<div class="flex items-center justify-between border-b-2 border-gray-300 pb-4 w-full" dir="rtl">
+  <!-- Left-side Titles -->
+  <div class="flex flex-col items-start w-1/4 text-sm space-y-2">
+    <h1 class="text-2xl font-bold text-black-800">جمهورية العراق</h1>
+    <h1 class="text-xl font-bold text-black-800">وزارة الداخلية</h1>
   </div>
 
-  <!-- Centered Titles -->
-  <div class="flex flex-col items-center justify-center flex-grow mx-4">
-    <h1 class="text-2xl font-bold mb-1 text-gray-800">جمهورية العراق</h1>
-    <h2 class="text-xl font-semibold text-gray-700">وزارة الداخلية</h2>
-    <h3 class="text-lg mt-2 font-bold text-black-600">شهادة فحص المركبة</h3>
-  </div>
+  <!-- Centered Section (QR Code and Logo) -->
+  <div class="flex items-center justify-center space-x-12 w-1/2">
+    <!-- QR Code -->
+    <div class="w-24 mb-2">
+      <img src="${qrCodeDataUrl}" alt="QR Code" class="w-auto h-auto" />
+    </div>
 
-  <!-- QR Code Container -->
-  <div class="w-24 flex items-center justify-end">
-    <img src="${qrCodeDataUrl}" alt="QR Code" class="w-auto h-auto">
+    <!-- Logo in the center -->
+    <div class="mb-2">
+      <img src="${logo}" alt="Logo" class="w-24 h-auto" />
+    </div>
   </div>
 
   <!-- Right-side Details -->
-  <div class="flex flex-col items-end w-1/4">
-    <!-- Additional Information -->
-    <div class="text-sm mb-4 space-y-2">
-      <p class="whitespace-normal">
-        <strong>رقم استمارة الفحص:</strong>
-        <span class="text-gray-600">${formData.applicationId}</span>
-      </p>
-      <p class="whitespace-normal">
-        <strong>اسم الموقع:</strong>
-        <span class="text-gray-600">${formData.location}</span>
-      </p>
-      <p class="whitespace-normal">
-        <strong>تاريخ الاصدار:</strong>
-        <span class="text-gray-600">${formatDate(formData.issueDate)}</span>
-      </p>
-      <p class="whitespace-normal">
-        <strong>تاريخ النفاذ:</strong>
-        <span class="text-gray-600">${formatDate(formData.expiryDate)}</span>
-      </p>
-    </div>
+  <div class="flex flex-col items-end w-1/4 text-sm text-center">
+    <!-- Form Data -->
+    <p class="flex justify-between w-full">
+      <strong class="text-black-800">رقم استمارة الفحص:</strong>
+      <span class="text-gray-600">${formData.applicationId}</span>
+    </p>
+    <p class="flex justify-between w-full">
+      <strong class="text-black-800">اسم الموقع:</strong>
+      <span class="text-gray-600">${formData.location}</span>
+    </p>
+    <p class="flex justify-between w-full">
+      <strong class="text-black-800">تاريخ الاصدار:</strong>
+      <span class="text-gray-600">${formatDate(formData.issueDate)}</span>
+    </p>
+    <p class="flex justify-between w-full">
+      <strong class="text-black-800">تاريخ النفاذ:</strong>
+      <span class="text-gray-600">${formatDate(formData.expiryDate)}</span>
+    </p>
   </div>
 </div>
 
-   <!-- Main Content with Grid -->
-<div class="grid grid-cols-2 gap-6 mt-4">
+<!-- Main Content with Grid -->
+<div class="grid grid-cols-2 gap-4 mt-4">
   <!-- Vehicle Data (Left) -->
-  <div class="border border-gray-300 rounded-lg p-4" dir="rtl">
-    <h3 class="bg-gray-200 text-center font-bold py-2">بيانات المركبة</h3>
+  <div class="border border-gray-300 rounded-lg p-2" dir="rtl">
+    <h3 class="bg-gray-200 text-center font-bold py-1">بيانات المركبة</h3>
     <div class="text-sm">
       ${[
         ["نوع المركبة", formData.carBrand],
@@ -127,41 +129,51 @@ const CertificatesForm = ({ formData }) => {
         ["الموديل", formData.carModel],
         ["نوع المحرك", formData.engineType],
         ["عدد السلندر", formData.engineCylindersNumber],
-        ["عدد المحاور", formData.numberOfAxes]
-      ].map(([label, value]) => `
-        <div class="flex justify-start py-1">
-          <span class="font-semibold w-1/3">${label}:</span>
-          <span class="w-2/3">${value || '---'}</span>
+        ["عدد المحاور", formData.numberOfAxes],
+      ]
+        .map(
+          ([label, value]) => `
+        <div class="flex justify-between items-center py-1 border-b border-gray-200">
+          <span class="font-semibold text-xs w-1/3">${label}:</span>
+          <span class="text-xs w-2/3 p-1 border border-gray-300 rounded">${value || "---"}</span>
         </div>
-      `).join('')}
+      `
+        )
+        .join("")}
     </div>
   </div>
 
   <!-- Form Data (Right) -->
-  <div class="border border-gray-300 rounded-lg p-4" dir="rtl">
-    <h3 class="bg-gray-200 text-center font-bold py-2">بيانات الاستمارة</h3>
+  <div class="border border-gray-300 rounded-lg p-2" dir="rtl">
+    <h3 class="bg-gray-200 text-center font-bold py-1">بيانات اخرى</h3>
     <div class="text-sm">
       ${[
         ["اسم المواطن", formData.carOwnerName],
         ["رقم وصل القبض", formData.receiptId],
-        ["رقم الملصق", stickerNumber]
-      ].map(([label, value]) => `
-        <div class="flex justify-start py-1">
-          <span class="font-semibold w-1/3">${label}:</span>
-          <span class="w-2/3">${value || '---'}</span>
+        ["رقم الملصق", stickerNumber],
+      ]
+        .map(
+          ([label, value]) => `
+        <div class="flex justify-between items-center py-1 border-b border-gray-200">
+          <span class="font-semibold text-xs w-1/3">${label}:</span>
+          <span class="text-xs w-2/3 p-1 border border-gray-300 rounded">${value || "---"}</span>
         </div>
-      `).join('')}
+      `
+        )
+        .join("")}
 
       <!-- Sticker Information -->
-      <div class="flex justify-start py-1">
-        <span class="font-semibold w-1/3">مثبت الملصق:</span>
-        <span class="w-2/3">${stickerProvider || '---'}</span>
+      <div class="flex justify-between items-center py-1 border-b border-gray-200">
+        <span class="font-semibold text-xs w-1/3">مثبت الملصق:</span>
+        <span class="text-xs w-2/3 p-1 border border-gray-300 rounded">${stickerProvider || "---"}</span>
       </div>
 
       <!-- Vehicle Image -->
       <div class="flex justify-center mt-4">
-        <div class="border-2 border-dashed flex items-center justify-center text-gray-500 text-xs">
-          ${formData.photo2 ? `<img src="${formData.photo2}" class="object-contain" />` : 'صورة المركبة'}
+        <div class="w-full max-w-64 h-auto p-2">
+          ${formData.cropedCarImagePath
+            ? `<img src="http://localhost:5273${formData.cropedCarImagePath}" class="object-contain w-full h-full rounded-md" />`
+            : "صورة المركبة"}
         </div>
       </div>
     </div>
@@ -170,24 +182,75 @@ const CertificatesForm = ({ formData }) => {
 
 </body>
 </html>
-
     `);
     printWindow.document.close();
-  
+
     setTimeout(() => {
       printWindow.print();
     }, 500);
   };
+
+  const handleCertify = async () => {
+    if (!formData || !stickerNumber || !stickerProvider) return;
+    setCertifying(true);
+    setError(null);
+    setSuccessMessage("");
+
+    const form = new FormData();
+    form.append("ApplicationId", formData.applicationId);
+    form.append("StickerNumber", stickerNumber);
+    form.append("StickerProvider", stickerProvider);
+
+    try {
+      const response = await fetchData("checker/application/certify-durability-application", {
+        method: "PUT",
+        body: form,
+      });
+
+      if (response.isSuccess) {
+        setSuccessMessage("تم التوثيق بنجاح!");
+      } else {
+        if (response.errors) {
+          const errorMessage = response.errors[0].message;
+          if (response.errors[0].code === "400") {
+            setError("رقم الملصق مسجل بالفعل, يرجى التأكد من رقم الملصق مرة اخرى.");
+          } else {
+            setError(errorMessage);
+          }
+        } else {
+          setError("فشل في توثيق الشهادة، يرجى المحاولة لاحقًا.");
+        }
+      }
+    } catch (err) {
+      setError("حدث خطأ أثناء التوثيق، يرجى المحاولة مرة أخرى.");
+    } finally {
+      setCertifying(false);
+    }
+  };
+
+  const handleBoth = async () => {
+    await Promise.all([handleCertify(), handlePrint()]);
+  };
+
   return (
     <div className="mt-6 flex justify-center">
       <button
-        onClick={() => setIsModalOpen(true)} // Open modal on button click
+        onClick={() => setIsModalOpen(true)}
         className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-5 py-3 rounded-lg 
                       hover:from-blue-600 hover:to-blue-700 transition-all duration-300
                       flex items-center justify-center gap-3 shadow-lg hover:shadow-xl"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-          <path fillRule="evenodd" d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v2a2 2 0 002 2h6a2 2 0 002-2v-2h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 0H7v3h6V4zm0 8H7v4h6v-4z" clipRule="evenodd" />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-5 w-5"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fillRule="evenodd"
+            d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v2a2 2 0 002 2h6a2 2 0 002-2v-2h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 0H7v3h6V4zm0 8H7v4h6v-4z"
+            clipRule="evenodd"
+          />
         </svg>
         طباعة شهادة الفحص
       </button>
@@ -218,27 +281,20 @@ const CertificatesForm = ({ formData }) => {
               </div>
             </div>
             <div className="flex justify-center gap-4 mt-4">
-            <button
-                onClick={() => {
-                  if (stickerNumber && stickerProvider) {
-                    handlePrint();
-                    setIsModalOpen(false); // Close modal after printing
-                  } else {
-                    setError("يرجى ملء جميع الحقول."); // Error message if fields are empty
-                  }
-                }}
+              <button 
+                onClick={handleBoth}
                 className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-5 py-3 rounded-lg 
                       hover:from-blue-600 hover:to-blue-700 transition-all duration-300
                       flex items-center justify-center gap-3 shadow-lg hover:shadow-xl"
               >
                 طباعة
-            </button>
-            <button
+              </button>
+              <button
                 onClick={() => setIsModalOpen(false)}
                 className="bg-gray-600 hover:bg-gray-700 text-white px-5 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
               >
                 إغلاق
-            </button>
+              </button>
             </div>
 
             {/* Success or Error Popup */}

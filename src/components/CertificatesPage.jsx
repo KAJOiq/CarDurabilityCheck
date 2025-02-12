@@ -9,11 +9,7 @@ const CertificatesPage = () => {
   const [formData, setFormData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [certifying, setCertifying] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
-  const [stickerNumber, setStickerNumber] = useState("");
-  const [stickerProvider, setStickerProvider] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -55,44 +51,6 @@ const CertificatesPage = () => {
 
     fetchCertificate();
   }, [applicationId]);
-
-  const handleCertify = async () => {
-    if (!formData || !stickerNumber || !stickerProvider) return;
-    setCertifying(true);
-    setError(null);
-    setSuccessMessage("");
-
-    const form = new FormData();
-    form.append("ApplicationId", formData.applicationId);
-    form.append("StickerNumber", stickerNumber);
-    form.append("StickerProvider", stickerProvider);
-
-    try {
-      const response = await fetchData("checker/application/certify-durability-application", {
-        method: "PUT",
-        body: form,
-      });
-
-      if (response.isSuccess) {
-        setSuccessMessage("تم التوثيق بنجاح!");
-      } else {
-        if (response.errors) {
-          const errorMessage = response.errors[0].message;
-          if (response.errors[0].code === "400") {
-            setError("رقم الملصق مسجل بالفعل, يرجى التأكد من رقم الملصق مرة اخرى.");
-          } else {
-            setError(errorMessage);
-          }
-        } else {
-          setError("فشل في توثيق الشهادة، يرجى المحاولة لاحقًا.");
-        }
-      }
-    } catch (err) {
-      setError("حدث خطأ أثناء التوثيق، يرجى المحاولة مرة أخرى.");
-    } finally {
-      setCertifying(false);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-6" dir="rtl">
@@ -140,7 +98,6 @@ const CertificatesPage = () => {
               {formData && (
                 <CertificatesForm 
                   formData={formData} 
-                  stickerProvider={stickerProvider} 
                 />
               )}              
             </div>
@@ -165,9 +122,21 @@ const CertificatesPage = () => {
                 "فئة المركبة": formData.category,
                 "تاريخ الإصدار": formData.issueDate,
                 "الموقع": formData.location,
-              }).map(([label, value]) => (
-                <InfoItem key={label} label={label} value={value} />
-              ))}
+                "صورة السيارة": formData.cropedCarImagePath,
+              }).map(([label, value]) =>
+                label === "صورة السيارة" ? (
+                  <div key={label}>
+                    <strong>{label}:</strong>
+                    <img
+                      src={`http://localhost:5273${formData.cropedCarImagePath}`}
+                      alt="Car Image"
+                      style={{ width: "200px", height: "auto", marginTop: "10px", borderRadius: "8px" }}
+                    />
+                  </div>
+                ) : (
+                  <InfoItem key={label} label={label} value={value} />
+                )
+              )}
             </div>
           </div>
         )}
@@ -178,7 +147,6 @@ const CertificatesPage = () => {
           </div>
         )}
       </div>
-
     </div>
   );
 };
