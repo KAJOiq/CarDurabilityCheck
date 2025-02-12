@@ -182,8 +182,9 @@ const CertificatesForm = ({ formData }) => {
     <div className="mt-6 flex justify-center">
       <button
         onClick={() => setIsModalOpen(true)} // Open modal on button click
-        className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg
-               transition-colors duration-200 flex items-center gap-2"
+        className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-5 py-3 rounded-lg 
+                      hover:from-blue-600 hover:to-blue-700 transition-all duration-300
+                      flex items-center justify-center gap-3 shadow-lg hover:shadow-xl"
       >
         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
           <path fillRule="evenodd" d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v2a2 2 0 002 2h6a2 2 0 002-2v-2h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 0H7v3h6V4zm0 8H7v4h6v-4z" clipRule="evenodd" />
@@ -217,7 +218,7 @@ const CertificatesForm = ({ formData }) => {
               </div>
             </div>
             <div className="flex justify-center gap-4 mt-4">
-              <button
+            <button
                 onClick={() => {
                   if (stickerNumber && stickerProvider) {
                     handlePrint();
@@ -226,16 +227,18 @@ const CertificatesForm = ({ formData }) => {
                     setError("يرجى ملء جميع الحقول."); // Error message if fields are empty
                   }
                 }}
-                className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg"
+                className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-5 py-3 rounded-lg 
+                      hover:from-blue-600 hover:to-blue-700 transition-all duration-300
+                      flex items-center justify-center gap-3 shadow-lg hover:shadow-xl"
               >
                 طباعة
-              </button>
-              <button
+            </button>
+            <button
                 onClick={() => setIsModalOpen(false)}
-                className="bg-gray-600 hover:bg-gray-700 text-white px-5 py-2 rounded-lg"
+                className="bg-gray-600 hover:bg-gray-700 text-white px-5 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
               >
                 إغلاق
-              </button>
+            </button>
             </div>
 
             {/* Success or Error Popup */}
