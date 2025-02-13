@@ -80,42 +80,41 @@ const CertificatesForm = ({ formData }) => {
   </div>
 
   <!-- Centered Section (QR Code and Logo) -->
-  <div class="flex items-center justify-center space-x-12 w-1/2">
-    <!-- QR Code -->
-    <div class="w-24 mb-2">
+  <div class="relative flex items-center justify-center w-1/2">
+    <!-- QR Code (Left) -->
+    <div class="w-24 mb-2 absolute right-0 ml-4">
       <img src="${qrCodeDataUrl}" alt="QR Code" class="w-auto h-auto" />
     </div>
 
-    <!-- Logo in the center -->
-    <div class="mb-2">
+    <!-- Logo (Centered) -->
+    <div class="mb-2 mx-auto">
       <img src="${logo}" alt="Logo" class="w-24 h-auto" />
     </div>
   </div>
 
   <!-- Right-side Details -->
-  <div class="flex flex-col items-end w-1/4 text-sm text-center">
-    <!-- Form Data -->
-    <p class="flex justify-between w-full">
-      <strong class="text-black-800">رقم استمارة الفحص:</strong>
-      <span class="text-gray-600">${formData.applicationId}</span>
-    </p>
-    <p class="flex justify-between w-full">
-      <strong class="text-black-800">رقم وصل القبض:</strong>
-      <span class="text-gray-600">${formData.receiptId}</span>
-    </p>
-    <p class="flex justify-between w-full">
-      <strong class="text-black-800">اسم الموقع:</strong>
-      <span class="text-gray-600">${formData.location}</span>
-    </p>
-    <p class="flex justify-between w-full">
-      <strong class="text-black-800">تاريخ الاصدار:</strong>
-      <span class="text-gray-600">${formatDate(formData.issueDate)}</span>
-    </p>
-    <p class="flex justify-between w-full">
-      <strong class="text-black-800">تاريخ النفاذ:</strong>
-      <span class="text-gray-600">${formatDate(formData.expiryDate)}</span>
-    </p>
-  </div>
+<div class="flex flex-col items-start w-1/4 text-sm text-right">
+  <p class="flex justify-between w-full">
+    <strong class="text-black-800">رقم استمارة الفحص:</strong>
+    <span class="text-gray-600">${formData.applicationId}</span>
+  </p>
+  <p class="flex justify-between w-full">
+    <strong class="text-black-800">رقم وصل القبض:</strong>
+    <span class="text-gray-600">${formData.receiptId}</span>
+  </p>
+  <p class="flex justify-between w-full">
+    <strong class="text-black-800">اسم الموقع:</strong>
+    <span class="text-gray-600">${formData.location}</span>
+  </p>
+  <p class="flex justify-between w-full">
+    <strong class="text-black-800">تاريخ الاصدار:</strong>
+    <span class="text-gray-600">${formatDate(formData.issueDate)}</span>
+  </p>
+  <p class="flex justify-between w-full">
+    <strong class="text-black-800">تاريخ النفاذ:</strong>
+    <span class="text-gray-600">${formatDate(formData.expiryDate)}</span>
+  </p>
+</div>
 </div>
 
 <!-- Main Content with Grid -->
@@ -214,7 +213,7 @@ const CertificatesForm = ({ formData }) => {
       <!-- Sticker Information -->
       <div class="flex justify-between items-center py-1">
         <span class="font-semibold text-xs text-center w-1/3">مثبت الملصق:</span>
-        <span class="text-xs w-2/3 p-1 border border-black rounded">${stickerProvider || "---"}</span>
+        <span class="text-xs w-2/3 p-1 rounded">${stickerProvider || "---"}</span>
       </div>
 
     </div>
