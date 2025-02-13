@@ -72,7 +72,7 @@ const CertificatesForm = ({ formData }) => {
 <body class="bg-white w-[210mm] h-[148mm] p-6 text-right">
 
 <!-- Header -->
-<div class="flex items-center justify-between border-b-2 border-gray-300 pb-4 w-full" dir="rtl">
+<div class="flex items-center justify-between border-b-2 border-black pb-4 w-full" dir="rtl">
   <!-- Left-side Titles -->
   <div class="flex flex-col items-start w-1/4 text-sm space-y-2">
     <h1 class="text-2xl font-bold text-black-800">جمهورية العراق</h1>
@@ -100,6 +100,10 @@ const CertificatesForm = ({ formData }) => {
       <span class="text-gray-600">${formData.applicationId}</span>
     </p>
     <p class="flex justify-between w-full">
+      <strong class="text-black-800">رقم وصل القبض:</strong>
+      <span class="text-gray-600">${formData.receiptId}</span>
+    </p>
+    <p class="flex justify-between w-full">
       <strong class="text-black-800">اسم الموقع:</strong>
       <span class="text-gray-600">${formData.location}</span>
     </p>
@@ -117,7 +121,7 @@ const CertificatesForm = ({ formData }) => {
 <!-- Main Content with Grid -->
 <div class="grid grid-cols-2 gap-4 mt-4">
   <!-- Vehicle Data (Left) -->
-  <div class="border border-gray-300 rounded-lg p-2" dir="rtl">
+  <div class="border border-black rounded-lg p-2" dir="rtl">
     <h3 class="bg-gray-200 text-center font-bold py-1">بيانات المركبة</h3>
     <div class="text-sm">
       ${[
@@ -126,56 +130,93 @@ const CertificatesForm = ({ formData }) => {
         ["لون المركبة", formData.carColor],
         ["رقم المركبة", formData.plateNumber],
         ["رقم الشاصي", formData.chassisNumber],
-        ["الموديل", formData.carModel],
-        ["نوع المحرك", formData.engineType],
-        ["عدد السلندر", formData.engineCylindersNumber],
-        ["عدد المحاور", formData.numberOfAxes],
+
+        [
+          `<div class="flex justify-between w-full py-1 border-b border-black">
+            <span class="font-semibold text-xs text-center w-1/4">الاستخدام:</span>
+            <span class="text-xs w-1/4 p-1 border border-black rounded">${formData.usage || "---"}</span>
+            <span class="font-semibold text-xs text-center w-1/4">عدد الركاب:</span>
+            <span class="text-xs w-1/4 p-1 border border-black rounded">${formData.seatsNumber || "---"}</span>
+          </div>`,
+          null
+        ],
+        [
+          `<div class="flex justify-between w-full py-1 border-b border-black">
+            <span class="text-center font-semibold text-xs w-1/4">الموديل:</span>
+            <span class="text-xs w-1/4 p-1 border border-black rounded">${formData.carModel || "---"}</span>
+            <span class="font-semibold text-xs text-center w-1/4">عدد السلندر:</span>
+            <span class="text-xs w-1/4 p-1 border border-black rounded">${formData.engineCylindersNumber || "---"}</span>
+          </div>`,
+          null
+        ],
+
+        [
+          `<div class="flex justify-between w-full py-1 border-b border-black">
+            <span class="font-semibold text-center text-xs w-1/4">نوع المحرك:</span>
+            <span class="text-xs w-1/4 p-1 border border-black rounded">${formData.engineType || "---"}</span>
+            <span class="font-semibold text-xs text-center w-1/4">عدد المحاور:</span>
+            <span class="text-xs w-1/4 p-1 border border-black rounded">${formData.numberOfAxes || "---"}</span>
+          </div>`,
+          null
+        ],
+
+        [
+          `<div class="flex justify-between w-full py-1 border-b border-black">
+            <span class="font-semibold text-center text-xs w-1/4">فئة المركبة:</span>
+            <span class="text-xs w-1/4 p-1 border border-black rounded">${formData.category || "---"}</span>
+            <span class="font-semibold text-center text-xs w-1/4">الحمولة:</span>
+            <span class="text-xs w-1/4 p-1 border border-black rounded">${formData.loadWeight || "---"}</span>
+          </div>`,
+          null
+        ]   
       ]
-        .map(
-          ([label, value]) => `
-        <div class="flex justify-between items-center py-1 border-b border-gray-200">
-          <span class="font-semibold text-xs w-1/3">${label}:</span>
-          <span class="text-xs w-2/3 p-1 border border-gray-300 rounded">${value || "---"}</span>
-        </div>
-      `
+        .map(([label, value]) => 
+          value !== null
+            ? `
+              <div class="flex justify-between items-center py-1 border-b border-black">
+                <span class="font-semibold text-center text-xs w-1/3">${label}:</span>
+                <span class="text-xs w-2/3 p-1 border border-black rounded">${value || "---"}</span>
+              </div>
+            `
+            : label 
         )
         .join("")}
     </div>
   </div>
 
   <!-- Form Data (Right) -->
-  <div class="border border-gray-300 rounded-lg p-2" dir="rtl">
-    <h3 class="bg-gray-200 text-center font-bold py-1">بيانات اخرى</h3>
+  <div class="border border-black rounded-lg p-2" dir="rtl">
+    <h3 class="bg-gray-200 text-center font-bold py-1">بيانات الاستمارة</h3>
     <div class="text-sm">
       ${[
         ["اسم المواطن", formData.carOwnerName],
-        ["رقم وصل القبض", formData.receiptId],
         ["رقم الملصق", stickerNumber],
       ]
         .map(
           ([label, value]) => `
-        <div class="flex justify-between items-center py-1 border-b border-gray-200">
-          <span class="font-semibold text-xs w-1/3">${label}:</span>
-          <span class="text-xs w-2/3 p-1 border border-gray-300 rounded">${value || "---"}</span>
+        <div class="flex justify-between items-center py-1 border-b border-black">
+          <span class="font-semibold text-xs text-center w-1/3">${label}:</span>
+          <span class="text-xs w-2/3 p-1 border border-black rounded">${value || "---"}</span>
         </div>
       `
         )
         .join("")}
 
-      <!-- Sticker Information -->
-      <div class="flex justify-between items-center py-1 border-b border-gray-200">
-        <span class="font-semibold text-xs w-1/3">مثبت الملصق:</span>
-        <span class="text-xs w-2/3 p-1 border border-gray-300 rounded">${stickerProvider || "---"}</span>
-      </div>
-
       <!-- Vehicle Image -->
       <div class="flex justify-center mt-4">
-        <div class="w-full max-w-64 h-auto p-2">
+        <div class="w-full max-w-48 h-auto p-2">
           ${formData.cropedCarImagePath
             ? `<img src="http://localhost:5273${formData.cropedCarImagePath}" class="object-contain w-full h-full rounded-md" />`
             : "صورة المركبة"}
         </div>
       </div>
+
+      <!-- Sticker Information -->
+      <div class="flex justify-between items-center py-1">
+        <span class="font-semibold text-xs text-center w-1/3">مثبت الملصق:</span>
+        <span class="text-xs w-2/3 p-1 border border-black rounded">${stickerProvider || "---"}</span>
+      </div>
+
     </div>
   </div>
 </div>
@@ -267,7 +308,7 @@ const CertificatesForm = ({ formData }) => {
                   type="text"
                   value={stickerNumber}
                   onChange={(e) => setStickerNumber(e.target.value)}
-                  className="mt-1 p-2 w-full border border-gray-300 rounded-lg"
+                  className="mt-1 p-2 w-full border border-black rounded-lg"
                 />
               </div>
               <div>
@@ -276,7 +317,7 @@ const CertificatesForm = ({ formData }) => {
                   type="text"
                   value={stickerProvider}
                   onChange={(e) => setStickerProvider(e.target.value)}
-                  className="mt-1 p-2 w-full border border-gray-300 rounded-lg"
+                  className="mt-1 p-2 w-full border border-black rounded-lg"
                 />
               </div>
             </div>
