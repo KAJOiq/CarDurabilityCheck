@@ -132,18 +132,18 @@ const CertificatesForm = ({ formData }) => {
         [
           `<div class="flex justify-between w-full py-1 border-b border-black">
             <span class="font-extrabold text-sm text-center w-1/4">الاستخدام :</span>
-            <span class="text-sm w-1/4 p-1 border border-black rounded">${formData.usage || "---"}</span>
+            <span class="font-semibold text-sm w-1/4 p-1 border border-black rounded">${formData.usage || "---"}</span>
             <span class="font-extrabold text-sm text-center w-1/4">عدد الركاب :</span>
-            <span class="text-sm w-1/4 p-1 border border-black rounded">${formData.seatsNumber || "---"}</span>
+            <span class="font-semibold text-sm w-1/4 p-1 border border-black rounded">${formData.seatsNumber || "---"}</span>
           </div>`,
           null
         ],
         [
           `<div class="flex justify-between w-full py-1 border-b border-black">
             <span class="text-center font-extrabold text-sm w-1/4">الموديل :</span>
-            <span class="text-sm w-1/4 p-1 border border-black rounded">${formData.carModel || "---"}</span>
+            <span class="font-semibold text-sm w-1/4 p-1 border border-black rounded">${formData.carModel || "---"}</span>
             <span class="font-extrabold text-sm text-center w-1/4">عدد السلندر :</span>
-            <span class="text-sm w-1/4 p-1 border border-black rounded">${formData.engineCylindersNumber || "---"}</span>
+            <span class="font-semibold text-sm w-1/4 p-1 border border-black rounded">${formData.engineCylindersNumber || "---"}</span>
           </div>`,
           null
         ],
@@ -151,9 +151,9 @@ const CertificatesForm = ({ formData }) => {
         [
           `<div class="flex justify-between w-full py-1 border-b border-black">
             <span class="font-extrabold text-center text-sm w-1/4">نوع المحرك :</span>
-            <span class="text-sm w-1/4 p-1 border border-black rounded">${formData.engineType || "---"}</span>
+            <span class="font-semibold text-sm w-1/4 p-1 border border-black rounded">${formData.engineType || "---"}</span>
             <span class="font-extrabold text-sm text-center w-1/4">عدد المحاور :</span>
-            <span class="text-sm w-1/4 p-1 border border-black rounded">${formData.numberOfAxes || "---"}</span>
+            <span class="font-semibold text-sm w-1/4 p-1 border border-black rounded">${formData.numberOfAxes || "---"}</span>
           </div>`,
           null
         ],
@@ -161,9 +161,9 @@ const CertificatesForm = ({ formData }) => {
         [
           `<div class="flex justify-between w-full py-1 border-b border-black">
             <span class="font-extrabold text-center text-sm w-1/4">فئة المركبة :</span>
-            <span class="text-sm w-1/4 p-1 border border-black rounded">${formData.category || "---"}</span>
+            <span class="font-semibold text-sm w-1/4 p-1 border border-black rounded">${formData.category || "---"}</span>
             <span class="font-extrabold text-center text-sm w-1/4">الحمولة :</span>
-            <span class="text-sm w-1/4 p-1 border border-black rounded">${formData.loadWeight || "---"}</span>
+            <span class="font-semibold text-sm w-1/4 p-1 border border-black rounded">${formData.loadWeight || "---"}</span>
           </div>`,
           null
         ]   
@@ -173,7 +173,7 @@ const CertificatesForm = ({ formData }) => {
             ? `
               <div class="flex justify-between items-center py-1 border-b border-black">
                 <span class="font-extrabold text-center text-sm w-1/3">${label} :</span>
-                <span class="text-sm w-2/3 p-1 border border-black rounded">${value || "---"}</span>
+                <span class="font-semibold text-sm w-2/3 p-1 border border-black rounded">${value || "---"}</span>
               </div>
             `
             : label 
@@ -194,7 +194,7 @@ const CertificatesForm = ({ formData }) => {
             ([label, value]) => `
           <div class="flex justify-between items-center py-1 border-b border-black">
             <span class="font-semibold text-sm text-center w-1/3">${label} :</span>
-            <span class="text-sm w-2/3 p-1 border border-black rounded">${value || "---"}</span>
+            <span class="font-semibold text-sm w-2/3 p-1 border border-black rounded">${value || "---"}</span>
           </div>
         `
           )
