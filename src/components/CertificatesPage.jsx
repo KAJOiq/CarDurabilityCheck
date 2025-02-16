@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import fetchData from "../utils/fetchData";
 import { MagnifyingGlassIcon, CheckBadgeIcon } from "@heroicons/react/24/outline";
 import CertificatesForm from "./CertificatesForm"; // Import the CertificatesForm
+import CertificatesFormForTruck from "./CertificatesFormForTruck"; // Import the CertificatesFormForTruck
 
 const CertificatesPage = () => {
   const [searchInput, setSearchInput] = useState("");
@@ -100,15 +101,25 @@ const CertificatesPage = () => {
                 {formData.applicationId}
               </h2>
               {/* Certificates Form */}
-              {formData && (
-                <CertificatesForm 
+              {formData.vehicleType === "سيارة" && (
+                <CertificatesForm
                   formData={formData} 
+                />
+              )}
+              {formData.vehicleType === "شاحنة" && (
+                <CertificatesFormForTruck
+                  formData={formData} 
+                />
+              )}
+              {formData.vehicleType === "دراجة" && (
+                <CertificatesForm
+                  formData={formData}
                 />
               )}              
             </div>
 
             <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-right">
-              {Object.entries({
+            {Object.entries({
                 "رقم استمارة المرور": formData.trafficPoliceApplicationId,
                 "رقم وصل القبض": formData.receiptId,
                 "اسم المواطن": formData.carOwnerName,
@@ -130,14 +141,18 @@ const CertificatesPage = () => {
                 "صورة السيارة": formData.cropedCarImagePath,
               }).map(([label, value]) =>
                 label === "صورة السيارة" ? (
-                  <div key={label} className="col-span-2 flex flex-col items-start">
-                    <span className="font-semibold text-gray-600">{label}:</span>
-                    <img
-                      src={`http://localhost:5273${formData.cropedCarImagePath}`}
-                      alt="Car Image"
-                      className="w-48 mt-2 rounded-lg shadow-md border"
-                    />
-                  </div>
+                  <div key={label} className="col-span-2">
+        <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
+          <h3 className="font-semibold text-gray-600 mb-3">{label}</h3>
+          <div className="flex justify-center">
+            <img
+              src={`http://localhost:5273${formData.cropedCarImagePath}`}
+              alt="Car Image"
+              className="w-64 h-48 object-contain rounded-lg shadow-md border-2 border-gray-200"
+            />
+          </div>
+        </div>
+      </div>
                 ) : (
                   <div key={label} className="flex justify-between items-center bg-gray-50 p-3 rounded-lg border border-gray-200">
                     <span className="font-semibold text-gray-600">{label}:</span>

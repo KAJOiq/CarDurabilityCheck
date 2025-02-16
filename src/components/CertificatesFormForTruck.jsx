@@ -3,7 +3,7 @@ import logo from "../assets/logo.jpg";
 import QRCode from "qrcode";
 import fetchData from "../utils/fetchData";
 
-const CertificatesForm = ({ formData }) => {
+const CertificatesFormForTruck = ({ formData }) => {
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState("");
   const [stickerNumber, setStickerNumber] = useState("");
   const [stickerProvider, setStickerProvider] = useState("");
@@ -116,105 +116,170 @@ const CertificatesForm = ({ formData }) => {
   </div>
   </div>
 
-  <!-- Main Content with Grid -->
-  <div class="grid grid-cols-2 gap-4">
-    <!-- Vehicle Data (Left) -->
-  <div class="border border-black rounded-lg p-2" dir="rtl">
+<!-- Main Content with Grid -->
+<div class="grid grid-cols-3 gap-2">
+  <!-- Vehicle Data (Left) -->
+  <div class="border border-black rounded-lg p-2 relative col-span-2" dir="rtl">
     <h3 class="bg-gray-200 text-center font-bold py-1">بيانات المركبة</h3>
     <div class="text-2xl">
       ${[
-        ["نوع المركبة", formData.carBrand],
-        ["طراز المركبة", formData.carName],
-        ["لون المركبة", formData.carColor],
+        [
+          `<div class="flex justify-between w-full py-0 border border-black">
+            <span class="font-extrabold text-sm text-center w-1/4 border border-black">نوع المركبة</span>
+            <span class="font-semibold text-sm w-2/4 px-1 border border-black">${formData.carBrand || "---"}</span>
+            <span class="font-extrabold text-sm text-center w-1/4 border border-black">طراز المركبة</span>
+            <span class="font-semibold text-sm w-2/4 px-1 border border-black">${formData.carName || "---"}</span>
+          </div>`,
+          null,
+        ],
+
+        [
+          `<div class="flex justify-between w-full py-0 border border-black">
+            <span class="font-extrabold text-center text-sm w-1/4 border border-black">لون المركبة</span>
+            <span class="font-semibold text-sm w-2/4 px-1 border border-black">${formData.carColor || "---"}</span>
+            <span class="font-extrabold text-center text-sm w-1/4 border border-black">نوع المحرك</span>
+            <span class="font-semibold text-sm w-2/4 px-1 border border-black">${formData.engineType || "---"}</span>
+          </div>`,
+          null,
+        ],
+        [
+          `<div class="flex justify-between w-full py-0 border border-black">
+            <span class="font-extrabold text-sm text-center w-1/4">الاستخدام</span>
+            <span class="font-semibold text-sm w-1/4 px-1 border border-black">${formData.usage || "---"}</span>
+            <span class="text-center font-extrabold text-sm w-1/4">الموديل</span>
+            <span class="font-semibold text-sm w-1/4 px-1 border border-black">${formData.carModel || "---"}</span>
+            <span class="font-extrabold text-sm text-center w-1/4">عدد السلندر</span>
+            <span class="font-semibold text-sm w-1/4 px-1 border border-black">${formData.engineCylindersNumber || "---"}</span>
+          </div>`,
+          null,
+        ],
+        
         ["رقم المركبة", formData.plateNumber],
         ["رقم الشاصي", formData.chassisNumber],
 
+        /* [
+          `<div class="flex justify-between w-full py-0 border border-black">
+            <span class="font-extrabold text-sm text-center w-1/4 border border-black">رقم المركبة</span>
+            <span class="font-semibold text-sm w-2/4 px-1 border border-black">${formData.plateNumber || "---"}</span>
+            <span class="font-extrabold text-center text-sm w-1/4 border border-black">رقم الشاصي</span>
+            <span class="font-semibold text-sm w-2/4 px-1 border border-black">${formData.chassisNumber || "---"}</span>
+          </div>`,
+          null,
+        ],
+ */
         [
-          `<div class="flex justify-between w-full py-1 border-b border-black">
-            <span class="font-extrabold text-sm text-center w-1/4">الاستخدام :</span>
-            <span class="font-semibold text-sm w-1/4 p-1 border border-black rounded">${formData.usage || "---"}</span>
-            <span class="font-extrabold text-sm text-center w-1/4">عدد الركاب :</span>
-            <span class="font-semibold text-sm w-1/4 p-1 border border-black rounded">${formData.seatsNumber || "---"}</span>
+          `<div class="border-black p-1">
+            <h3 class="bg-gray-200 text-center font-semibold py-1 text-sm">بيانات الملحق</h3>
+            ${[
+              [
+                `<div class="flex justify-between w-full py-0 border-black">
+                  <span class="font-extrabold text-sm text-center w-1/4 border border-black">نوع الحمل</span>
+                  <span class="font-semibold text-sm w-2/4 px-1 border border-black">${formData.category || "---"}</span>
+                  <span class="font-extrabold text-center text-sm w-1/4 border border-black">شاصي الحمل</span>
+                  <span class="font-semibold text-sm w-2/4 px-1 border border-black">${formData.chassisNumbertrailer || "---"}</span>
+                </div>`,
+                null,
+              ],
+              [
+                `<div class="flex justify-between w-full py-0 border border-black">
+                  <span class="font-extrabold text-sm text-center w-1/4 border border-black">عدد المحاور</span>
+                  <span class="font-semibold text-sm w-2/4 px-1 border border-black">${formData.numberOfAxes || "---"}</span>
+                  <span class="font-extrabold text-center text-sm w-1/4 border border-black">الحمولة</span>
+                  <span class="font-semibold text-sm w-2/4 px-1 border border-black">${formData.loadWeight || "---"}</span>
+                </div>`,
+                null,
+              ],
+                        [
+                `<div class="flex justify-between w-full py-0 border-black">
+                  <span class="font-extrabold text-sm text-center w-1/4 border border-black">نوع الحمل</span>
+                  <span class="font-semibold text-sm w-2/4 px-1 border border-black">${formData.category || "---"}</span>
+                  <span class="font-extrabold text-center text-sm w-1/4 border border-black">شاصي الحمل</span>
+                  <span class="font-semibold text-sm w-2/4 px-1 border border-black">${formData.chassisNumbertrailer || "---"}</span>
+                </div>`,
+                null,
+              ],
+              [
+                `<div class="flex justify-between w-full py-0 border border-black">
+                  <span class="font-extrabold text-sm text-center w-1/4 border border-black">عدد المحاور</span>
+                  <span class="font-semibold text-sm w-2/4 px-1 border border-black">${formData.numberOfAxes || "---"}</span>
+                  <span class="font-extrabold text-center text-sm w-1/4 border border-black">الحمولة</span>
+                  <span class="font-semibold text-sm w-2/4 px-1 border border-black">${formData.loadWeight || "---"}</span>
+                </div>`,
+                null,
+              ],
+                        [
+                `<div class="flex justify-between w-full py-0 border-black">
+                  <span class="font-extrabold text-sm text-center w-1/4 border border-black">نوع الحمل</span>
+                  <span class="font-semibold text-sm w-2/4 px-1 border border-black">${formData.category || "---"}</span>
+                  <span class="font-extrabold text-center text-sm w-1/4 border border-black">شاصي الحمل</span>
+                  <span class="font-semibold text-sm w-2/4 px-1 border border-black">${formData.chassisNumbertrailer || "---"}</span>
+                </div>`,
+                null,
+              ],
+              [
+                `<div class="flex justify-between w-full py-0 border border-black">
+                  <span class="font-extrabold text-sm text-center w-1/4 border border-black">عدد المحاور</span>
+                  <span class="font-semibold text-sm w-2/4 px-1 border border-black">${formData.numberOfAxes || "---"}</span>
+                  <span class="font-extrabold text-center text-sm w-1/4 border border-black">الحمولة</span>
+                  <span class="font-semibold text-sm w-2/4 px-1 border border-black">${formData.loadWeight || "---"}</span>
+                </div>`,
+                null,
+              ]
+            ].map(([content]) => content).join('')}
           </div>`,
           null
         ],
-        [
-          `<div class="flex justify-between w-full py-1 border-b border-black">
-            <span class="text-center font-extrabold text-sm w-1/4">الموديل :</span>
-            <span class="font-semibold text-sm w-1/4 p-1 border border-black rounded">${formData.carModel || "---"}</span>
-            <span class="font-extrabold text-sm text-center w-1/4">عدد السلندر :</span>
-            <span class="font-semibold text-sm w-1/4 p-1 border border-black rounded">${formData.engineCylindersNumber || "---"}</span>
-          </div>`,
-          null
-        ],
-
-        [
-          `<div class="flex justify-between w-full py-1 border-b border-black">
-            <span class="font-extrabold text-center text-sm w-1/4">نوع المحرك :</span>
-            <span class="font-semibold text-sm w-1/4 p-1 border border-black rounded">${formData.engineType || "---"}</span>
-            <span class="font-extrabold text-sm text-center w-1/4">عدد المحاور :</span>
-            <span class="font-semibold text-sm w-1/4 p-1 border border-black rounded">${formData.numberOfAxes || "---"}</span>
-          </div>`,
-          null
-        ],
-
-        [
-          `<div class="flex justify-between w-full py-1 border-b border-black">
-            <span class="font-extrabold text-center text-sm w-1/4">فئة المركبة :</span>
-            <span class="font-semibold text-sm w-1/4 p-1 border border-black rounded">${formData.category || "---"}</span>
-            <span class="font-extrabold text-center text-sm w-1/4">الحمولة :</span>
-            <span class="font-semibold text-sm w-1/4 p-1 border border-black rounded">${formData.loadWeight || "---"}</span>
-          </div>`,
-          null
-        ]   
       ]
-        .map(([label, value]) => 
+        .map(([label, value]) =>
           value !== null
             ? `
-              <div class="flex justify-between items-center py-1 border-b border-black">
+              <div class="flex justify-between items-center py-0 border-black">
                 <span class="font-extrabold text-center text-sm w-1/3">${label} :</span>
-                <span class="font-semibold text-sm w-2/3 p-1 border border-black rounded">${value || "---"}</span>
+                <span class="font-semibold text-sm w-2/3 px-1 border border-black rounded">${value || "---"}</span>
               </div>
             `
-            : label 
+            : label
         )
         .join("")}
     </div>
-  </div>
 
-    <!-- Form Data (Right) -->
-    <div class="border border-black rounded-lg p-2" dir="rtl">
-      <h3 class="bg-gray-200 text-center font-bold py-1">بيانات الاستمارة</h3>
-      <div class="text-2xl">
-        ${[
-          ["اسم المواطن", formData.carOwnerName],
-          ["رقم الملصق", stickerNumber],
-        ]
-          .map(
-            ([label, value]) => `
-          <div class="flex justify-between items-center py-1 border-b border-black">
-            <span class="font-semibold text-sm text-center w-1/3">${label} :</span>
-            <span class="font-semibold text-sm w-2/3 p-1 border border-black rounded">${value || "---"}</span>
-          </div>
-        `
-          )
-          .join("")}
-        <!-- Vehicle Image -->
-        <div class="flex justify-center mt-4">
-          <div class="w-full max-w-48 h-auto p-2">
-            ${formData.cropedCarImagePath
+  </div>
+  <!-- Form Data (Right) -->
+  <div class="border border-black rounded-lg p-2 w-md" dir="rtl">
+    <h3 class="bg-gray-200 text-center font-bold py-1">بيانات الاستمارة</h3>
+    <div class="text-2xl">
+      ${[
+        ["اسم المواطن", formData.carOwnerName],
+        ["رقم الملصق", stickerNumber],
+      ]
+        .map(
+          ([label, value]) => `
+        <div class="flex justify-between items-center py-0 border border-black">
+          <span class="font-semibold text-sm text-center w-1/3">${label}</span>
+          <span class="font-semibold text-sm w-2/3 px-1 border border-black">${value || "---"}</span>
+        </div>
+      `
+        )
+        .join("")}
+      <!-- Vehicle Image -->
+      <div class="flex justify-center mt-4">
+        <div class="w-full max-w-48 h-auto p-2">
+          ${
+            formData.cropedCarImagePath
               ? `<img src="http://localhost:5273${formData.cropedCarImagePath}" class="object-contain w-full h-full rounded-md p-1 border border-black" />`
-              : "صورة المركبة"}
-          </div>
+              : "صورة المركبة"
+          }
         </div>
-        <!-- Sticker Information -->
-        <div class="flex justify-between items-center py-1">
-          <span class="font-semibold text-sm text-center w-1/3">مثبت الملصق :</span>
-          <span class="font-semibold text-sm w-2/3 p-1 rounded">${stickerProvider || "---"}</span>
-        </div>
+      </div>
+      <!-- Sticker Information -->
+      <div class="flex justify-between items-center py-0">
+        <span class="font-semibold text-sm text-center w-1/3">مثبت الملصق :</span>
+        <span class="font-semibold text-sm w-2/3 px-1 rounded">${stickerProvider || "---"}</span>
       </div>
     </div>
   </div>
+</div>
+
   </body>
   </html>
     `);
@@ -271,8 +336,8 @@ const CertificatesForm = ({ formData }) => {
     <div className="mt-6 flex justify-center">
       <button
         onClick={() => setIsModalOpen(true)}
-        className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-5 py-3 rounded-lg 
-                      hover:from-blue-600 hover:to-blue-700 transition-all duration-300
+        className="bg-gradient-to-r from-green-500 to-green-600 text-white px-5 py-3 rounded-lg 
+                      hover:from-green-600 hover:to-green-700 transition-all duration-300
                       flex items-center justify-center gap-3 shadow-lg hover:shadow-xl"
       >
         <svg
@@ -351,4 +416,4 @@ const CertificatesForm = ({ formData }) => {
   );
 };
 
-export default CertificatesForm;
+export default CertificatesFormForTruck;
