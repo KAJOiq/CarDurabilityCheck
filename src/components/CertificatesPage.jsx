@@ -52,6 +52,11 @@ const CertificatesPage = () => {
     fetchCertificate();
   }, [applicationId]);
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toISOString().split("T")[0];
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-6" dir="rtl">
       <div className="max-w-4xl mx-auto space-y-8">
@@ -120,7 +125,7 @@ const CertificatesPage = () => {
                 "عدد الركاب": formData.seatsNumber,
                 "الحمولة": formData.loadWeight,
                 "فئة المركبة": formData.category,
-                "تاريخ الإصدار": formData.issueDate,
+                "تاريخ الإصدار": formatDate(formData.issueDate),
                 "الموقع": formData.location,
                 "صورة السيارة": formData.cropedCarImagePath,
               }).map(([label, value]) =>
