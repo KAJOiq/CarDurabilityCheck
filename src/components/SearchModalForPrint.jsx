@@ -14,18 +14,17 @@ const SearchModalForPrint = ({ isOpen, onClose, onSearch }) => {
     chassis: {
       label: "بحث برقم الشاصي",
       placeholder: "أدخل رقم الشاصي",
-      endpoint: "vehicles/search"
+      param: "chassisNumber"
     },
-
     form: {
       label: "بحث برقم الاستمارة",
       placeholder: "أدخل رقم الاستمارة",
-      endpoint: "forms/search"
+      param: "applicationId"
     },
     citizen: {
       label: "بحث بإسم المواطن",
       placeholder: "أدخل اسم المواطن",
-      endpoint: "citizens/search"
+      param: "carOwnerName"
     }
   };
 
@@ -34,19 +33,17 @@ const SearchModalForPrint = ({ isOpen, onClose, onSearch }) => {
     setError(null);
     
     try {
-      const { endpoint } = searchTypes[selectedSearchType];
-      const searchParam = {
-        chassis: "chassisNumber",
-        form: "formNumber",
-        citizen: "name"
-      }[selectedSearchType];
+      const paramKey = searchTypes[selectedSearchType].param;
+      const url = `user/application/print-application?${paramKey}=${encodeURIComponent(searchTerm)}`;
 
-      const url = `${endpoint}?${searchParam}=${encodeURIComponent(searchTerm)}`;
+      const response = await fetchData(url);
       
-      const data = await fetchData(url);
-      
-      onSearch(data); // Pass results to parent component
-      onClose();
+      if (response.isSuccess) {
+        onSearch(response.results);
+        onClose();
+      } else {
+        throw new Error("فشل في استرجاع البيانات");
+      }
     } catch (error) {
       setError(error.message || "فشل البحث، يرجى المحاولة مرة أخرى");
     } finally {

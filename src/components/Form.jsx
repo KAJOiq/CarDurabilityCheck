@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import SearchModalForPrint from "./SearchModalForPrint";
 import SearchModalForForm from "./SearchModalForForm";
@@ -6,43 +6,15 @@ import SearchModalForForm from "./SearchModalForForm";
 const Form = ({ formType, setFormType }) => {
   const [isSearchModalForFormOpen, setIsSearchModalForFormOpen] = useState(false);
   const [isSearchModalForPrintOpen, setIsSearchModalForPrintOpen] = useState(false);
+  const [searchResults, setSearchResults] = useState(null); // State to hold search results
 
-  const [formData, setFormData] = useState({
-    customerName: "",
-    vehicleModel: "",
-    vehicleType: "",
-    vehicleColor: "",
-    vehicleNumber: "",
-    vehicleCategory: "",
-    isGovernment: false,
-    chassisNumber: "",
-    model: "",
-    cylinderCount: "",
-    receiptNumber: "",
-    trafficFormNumber: "",
-    formType: "",
-    numberOfPassengers: "",
-    load: "",
-    attachedLoadType: "",
-    attachedChassis: "",
-    numberOfAttachedVehicles: "",
-    numberOfAxes: "",
-    nameOfLocation: "",
-  });
+  const handleSearch = (formData) => {
+    setSearchResults(formData); // Store the search results in the state
+  };
 
-  useEffect(() => {
-    const savedData = localStorage.getItem("formData");
-    if (savedData) {
-      try {
-        setFormData(JSON.parse(savedData));
-      } catch (error) {
-        console.error("Error parsing saved data", error);
-      }
-    }
-  }, []);
-
-  const handleSearch = (searchTerm) => {
-    console.log(searchTerm);
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toISOString().split("T")[0];
   };
 
   return (
@@ -83,6 +55,61 @@ const Form = ({ formType, setFormType }) => {
           onClose={() => setIsSearchModalForPrintOpen(false)}
           onSearch={handleSearch}
         />
+
+        {/* Display Search Results */}
+        {searchResults && (
+          <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-right" dir="rtl">
+            {Object.entries({
+              "رقم استمارة المرور": searchResults.trafficPoliceApplicationId,
+              "رقم وصل القبض": searchResults.receiptId,
+              "اسم المواطن": searchResults.carOwnerName,
+              "نوع الاستمارة": searchResults.vehicleType,
+              "الاستخدام": searchResults.usage,
+              "نوع المركبة": searchResults.carBrand,
+              "طراز المركبة": searchResults.carName,
+              "لون المركبة": searchResults.carColor,
+              "الموديل": searchResults.carModel,
+              "رقم اللوحة": searchResults.plateNumber,
+              "رقم الشاصي": searchResults.chassisNumber,
+              "نوع المحرك": searchResults.engineType,
+              "عدد السلندر": searchResults.engineCylindersNumber, 
+              "عدد الركاب": searchResults.seatsNumber,
+              "الحمولة": searchResults.loadWeight,
+              "فئة المركبة": searchResults.category,
+              "تاريخ الإصدار":  formatDate(searchResults.issueDate),
+              "الموقع": searchResults.location,
+              "صورة السيارة": searchResults.cropedCarImagePath,
+            }).map(([label, value]) =>
+              label === "صورة السيارة" ? (
+                <div key={label} className="col-span-2 flex flex-row items-end">
+                  <span className="font-semibold text-gray-600">{label}:</span>
+                  <img
+                    src={`http://localhost:5273${searchResults.cropedCarImagePath}`}
+                    alt="Car Image"
+                    className="w-48 mt-2 rounded-lg shadow-md border"
+                  />
+                  <span className="font-semibold text-gray-600">{label}:</span>
+                  <img
+                    src={`http://localhost:5273${searchResults.cropedCarImagePath}`}
+                    alt="Car Image"
+                    className="w-48 mt-2 rounded-lg shadow-md border"
+                  />
+                  <span className="font-semibold text-gray-600">{label}:</span>
+                  <img
+                    src={`http://localhost:5273${searchResults.cropedCarImagePath}`}
+                    alt="Car Image"
+                    className="w-48 mt-2 rounded-lg shadow-md border"
+                  />
+                </div>
+              ) : (
+                <div key={label} className="flex justify-between items-center bg-gray-50 p-3 rounded-lg border border-gray-200">
+                  <span className="font-semibold text-gray-600">{label}:</span>
+                  <span className="text-gray-800">{value || "---"}</span>
+                </div>
+              )
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
