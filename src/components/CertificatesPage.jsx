@@ -125,16 +125,19 @@ const CertificatesPage = () => {
                 "صورة السيارة": formData.cropedCarImagePath,
               }).map(([label, value]) =>
                 label === "صورة السيارة" ? (
-                  <div key={label}>
-                    <strong>{label}:</strong>
+                  <div key={label} className="col-span-2 flex flex-col items-start">
+                    <span className="font-semibold text-gray-600">{label}:</span>
                     <img
                       src={`http://localhost:5273${formData.cropedCarImagePath}`}
                       alt="Car Image"
-                      style={{ width: "200px", height: "auto", marginTop: "10px", borderRadius: "8px" }}
+                      className="w-48 mt-2 rounded-lg shadow-md border"
                     />
                   </div>
                 ) : (
-                  <InfoItem key={label} label={label} value={value} />
+                  <div key={label} className="flex justify-between items-center bg-gray-50 p-3 rounded-lg border border-gray-200">
+                    <span className="font-semibold text-gray-600">{label}:</span>
+                    <span className="text-gray-800">{value || "---"}</span>
+                  </div>
                 )
               )}
             </div>
@@ -150,12 +153,5 @@ const CertificatesPage = () => {
     </div>
   );
 };
-
-const InfoItem = ({ label, value }) => (
-  <div className="flex justify-between items-center bg-gray-50 p-3 rounded-lg">
-    <span className="font-semibold text-gray-600">{label}</span>
-    <span className="text-gray-800">{value || "---"}</span>
-  </div>
-);
 
 export default CertificatesPage;
