@@ -80,11 +80,6 @@ const CreateForm = ({ formType, setFormType }) => {
     }
   }, []);
 
-  const handleSearch = (searchTerm) => {
-    console.log(searchTerm);
-    // Add your API call or search logic here
-  };
-
   return (
     <div className="bg-slate-200 p-8 rounded-2xl shadow-md w-full h-full mt-10">
       <h1 className="text-2xl font-bold mb-6 text-right">انشاء استمارة</h1>

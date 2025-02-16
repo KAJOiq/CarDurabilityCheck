@@ -1,19 +1,10 @@
 import React, { useRef, useState, useEffect } from "react";
 import logo from "../assets/logo.jpg";
 import imgStatic from "../assets/car.png";
-import QRCode from "qrcode"; // Import QRCode component
+import QRCode from "qrcode"; // Import QRCode component from the qrcode package
 
 
-const CarForm = ({ formData, photo1, photo2 }) => {
-  const [apiData, setApiData] = useState({
-    inspectionFormNumber: "12345", // Replace with actual form number if necessary
-    date: new Date().toLocaleDateString("ar-IQ", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    }),
-  });
+const CarForm = ({ formData }) => {
   
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState("");
 
@@ -34,8 +25,6 @@ const CarForm = ({ formData, photo1, photo2 }) => {
         trafficFormNumber: formData.trafficFormNumber,
         formType: formData.formType,
         numberOfAxes: formData.numberOfAxes,
-        inspectionFormNumber: apiData.inspectionFormNumber,
-        date: apiData.date,
       });
   
       QRCode.toDataURL(qrData)
@@ -45,7 +34,7 @@ const CarForm = ({ formData, photo1, photo2 }) => {
           }
         })
         .catch((error) => console.error("Error generating QR code:", error));
-    }, [formData, apiData.inspectionFormNumber, apiData.date]); // Keep dependencies minimal and specific
+    }, [formData]); // Keep dependencies minimal and specific
   
   
   const handlePrint = () => {
@@ -274,11 +263,11 @@ const CarForm = ({ formData, photo1, photo2 }) => {
             <div class="form-data">
               <h3><strong>بيانات الاستمارة</strong></h3>
               <div class="info-container">
-                <div class="info"><strong>رقم استمارة الفحص:</strong> <div><strong>${apiData.inspectionFormNumber}</strong></div></div>
+                <div class="info"><strong>رقم استمارة الفحص:</strong> <div><strong>${formData.trafficFormNumber}</strong></div></div>
                 <div class="info"><strong>رقم استمارة المرور:</strong> <div><strong>${formData.trafficFormNumber}</strong></div></div>
                 <div class="info"><strong>رقم وصل القبض:</strong> <div><strong>${formData.receiptNumber}</strong></div></div>
                 <div class="info"><strong>نوع الاستمارة:</strong> <div><strong>${formData.formType}</strong></div></div>
-                <div class="info"><strong>التاريخ:</strong> <div><strong>${apiData.date}</strong></div></div>
+                <div class="info"><strong>التاريخ:</strong> <div><strong>${formData.date}</strong></div></div>
                 <div class="info"><strong>فئة المركبة:</strong> <div><strong>${formData.vehicleCategory}</strong></div></div>
               </div>
             </div>
