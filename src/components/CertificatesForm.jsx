@@ -73,7 +73,7 @@ const CertificatesForm = ({ formData }) => {
   <!-- Header -->
   <div class="flex items-center justify-between border-b-2 border-black pb-2 w-full" dir="rtl">
     <!-- Left-side Titles -->
-    <div class="flex flex-col items-start w-1/4 text-sm space-y-2">
+    <div class="flex flex-col items-center w-1/4 text-sm space-y-2">
       <h1 class="text-2xl font-bold text-black-800">جمهورية العراق</h1>
       <h1 class="text-xl font-bold text-black-800">وزارة الداخلية</h1>
     </div>
@@ -117,7 +117,7 @@ const CertificatesForm = ({ formData }) => {
   </div>
 
   <!-- Main Content with Grid -->
-  <div class="grid grid-cols-2 gap-4 mt-2">
+  <div class="grid grid-cols-2 gap-4">
     <!-- Vehicle Data (Left) -->
   <div class="border border-black rounded-lg p-2" dir="rtl">
     <h3 class="bg-gray-200 text-center font-bold py-1">بيانات المركبة</h3>
