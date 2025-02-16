@@ -2,8 +2,12 @@ import React, { useState } from "react";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import SearchModalForPrint from "./SearchModalForPrint";
 import SearchModalForForm from "./SearchModalForForm";
+import CarForm from "./CarForm";
+import TruckForm from "./TruckForm";
+import BikeForm from "./BikeForm"; 
 
-const Form = ({ formType, setFormType }) => {
+
+const Form = ({ vehicleType, setFormType }) => {
   const [isSearchModalForFormOpen, setIsSearchModalForFormOpen] = useState(false);
   const [isSearchModalForPrintOpen, setIsSearchModalForPrintOpen] = useState(false);
   const [searchResults, setSearchResults] = useState(null); // State to hold search results
@@ -55,6 +59,17 @@ const Form = ({ formType, setFormType }) => {
           onClose={() => setIsSearchModalForPrintOpen(false)}
           onSearch={handleSearch}
         />
+
+        {/* Conditionally Render Forms based on formType */}
+        {vehicleType === "سيارة" && (
+          <CarForm formData={searchResults} />
+        )}
+        {vehicleType === "شاحنة" && (
+          <TruckForm formData={searchResults} />
+        )}
+        {vehicleType === "دراجة" && (
+          <BikeForm formData={searchResults} />
+        )}
 
         {/* Display Search Results */}
         {searchResults && (
