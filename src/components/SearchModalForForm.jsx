@@ -14,7 +14,7 @@ const SearchModalForForm = ({ isOpen, onClose, onSearch }) => {
     chassis: {
       label: "بحث برقم الشاصي",
       placeholder: "أدخل رقم الشاصي",
-      endpoint: "vehicles/search"
+      param: "chassisNumber"
     }
   };
 
@@ -33,7 +33,7 @@ const SearchModalForForm = ({ isOpen, onClose, onSearch }) => {
         
         const data = await fetchData(url);
         
-        onSearch(data); // Pass results to parent component
+        onSearch(data);
         onClose();
       } catch (error) {
         setError(error.message || "فشل البحث، يرجى المحاولة مرة أخرى");

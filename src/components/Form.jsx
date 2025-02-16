@@ -60,17 +60,6 @@ const Form = ({ vehicleType, setFormType }) => {
           onSearch={handleSearch}
         />
 
-        {/* Conditionally Render Forms based on formType */}
-        {vehicleType === "سيارة" && (
-          <CarForm formData={searchResults} />
-        )}
-        {vehicleType === "شاحنة" && (
-          <TruckForm formData={searchResults} />
-        )}
-        {vehicleType === "دراجة" && (
-          <BikeForm formData={searchResults} />
-        )}
-
         {/* Display Search Results */}
         {searchResults && (
           <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-right" dir="rtl">
@@ -91,7 +80,7 @@ const Form = ({ vehicleType, setFormType }) => {
               "عدد الركاب": searchResults.seatsNumber,
               "الحمولة": searchResults.loadWeight,
               "فئة المركبة": searchResults.category,
-              "تاريخ الإصدار":  formatDate(searchResults.issueDate),
+              "تاريخ الإصدار": searchResults.issueDate,
               "الموقع": searchResults.location,
               "صورة السيارة": searchResults.cropedCarImagePath,
             }).map(([label, value]) =>
