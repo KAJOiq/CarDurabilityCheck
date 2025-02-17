@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from "react";
 import fetchData from "../utils/fetchData";
+import { MagnifyingGlassIcon, ChevronUpDownIcon, ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+
 
 const DropDownListPage = () => {
   const [activeTab, setActiveTab] = useState("vehicleCompanies");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // this is the initial filter state for each tab
+  // States for all lookup data
+  const [allVehicleCompanies, setAllVehicleCompanies] = useState([]);
+  const [allTrafficAgencies, setAllTrafficAgencies] = useState([]);
+
   // Vehicle Companies State
   const [vehicleCompanies, setVehicleCompanies] = useState([]);
   const [vcFilters, setVcFilters] = useState({
@@ -54,9 +59,46 @@ const DropDownListPage = () => {
   });
   const [tlTotal, setTlTotal] = useState(0);
 
+  // Fetch all necessary lookup data on mount
+  useEffect(() => {
+    const fetchLookupData = async () => {
+      try {
+        // Fetch all vehicle companies
+        const companiesParams = new URLSearchParams({
+          brandName: "",
+          page: 0,
+          pageSize: 1000,
+        });
+        const companiesResponse = await fetchData(
+          `lookup/find-vehicle-company?${companiesParams}`
+        );
+        if (companiesResponse.isSuccess) {
+          setAllVehicleCompanies(companiesResponse.results.result);
+        }
+
+        // Fetch all traffic agencies
+        const agenciesParams = new URLSearchParams({
+          agencyName: "",
+          page: 0,
+          pageSize: 1000,
+        });
+        const agenciesResponse = await fetchData(
+          `lookup/find-traffic-agencies?${agenciesParams}`
+        );
+        if (agenciesResponse.isSuccess) {
+          setAllTrafficAgencies(agenciesResponse.results.result);
+        }
+      } catch (error) {
+        console.error("Error fetching lookup data:", error);
+      }
+    };
+
+    fetchLookupData();
+  }, []);
+
   const fetchTabData = async (tab) => {
     setLoading(true);
-    setError(null); 
+    setError(null);
     try {
       let url, params;
       switch (tab) {
@@ -169,22 +211,31 @@ const DropDownListPage = () => {
     if (!data?.length) return <div className="text-center p-8 text-gray-500">لا توجد بيانات</div>;
 
     return (
-      <div className="border rounded-lg overflow-hidden shadow-sm">
+      <div className="border rounded-lg overflow-hidden shadow-sm bg-white">
         <table className="w-full border-collapse">
           <thead className="bg-gray-50">
             <tr>
               {columns.map((col) => (
-                <th key={col.key} className="px-4 py-3 text-right text-blue-600 font-semibold">
+                <th
+                  key={col.key}
+                  className="px-6 py-4 text-right text-sm font-semibold text-gray-700 tracking-wide"
+                >
                   {col.title}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-blue-200">
+          <tbody className="bg-white divide-y divide-gray-200">
             {data.map((item) => (
-              <tr key={item.id} className="hover:bg-blue-50 transition-colors">
+              <tr
+                key={item.id}
+                className="hover:bg-gray-50 transition-colors"
+              >
                 {columns.map((col) => (
-                  <td key={col.key} className="px-4 py-3 text-right text-gray-700">
+                  <td
+                    key={col.key}
+                    className="px-6 py-4 text-right text-sm text-gray-700"
+                  >
                     {item[col.key]}
                   </td>
                 ))}
@@ -268,17 +319,22 @@ const DropDownListPage = () => {
                   placeholder="ابحث باسم المركبة"
                   className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all text-right"
                 />
-                <input
-                  type="text"
+                <select
                   name="brandId"
                   value={vnFilters.brandId}
                   onChange={(e) => handleFilterChange(e, "vehicleNames")}
-                  placeholder="ابحث برقم الماركة"
                   className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all text-right"
-                />
+                >
+                  <option value="">اختر الماركة</option>
+                  {allVehicleCompanies.map((company) => (
+                    <option key={company.id} value={company.id}>
+                      {company.name}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
-            {renderTable(vehicleNames, [{ key: "id", title: "ID" }, { key: "name", title: "الاسم" }])}
+            {renderTable(vehicleNames, [{ key: "name", title: "اسم المركبة" }])}
             {renderPagination(vnTotal, vnFilters.pageSize, vnFilters.page, "vehicleNames")}
           </>
         );
@@ -336,17 +392,22 @@ const DropDownListPage = () => {
                   placeholder="ابحث باسم الموقع"
                   className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all text-right"
                 />
-                <input
-                  type="text"
+                <select
                   name="agensyId"
                   value={tlFilters.agensyId}
                   onChange={(e) => handleFilterChange(e, "trafficLocations")}
-                  placeholder="ابحث برقم الوكالة"
                   className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all text-right"
-                />
+                >
+                  <option value="">اختر المديرية</option>
+                  {allTrafficAgencies.map((agency) => (
+                    <option key={agency.id} value={agency.id}>
+                      {agency.name}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
-            {renderTable(trafficLocations, [{ key: "id", title: "ID" }, { key: "name", title: "اسم الموقع" }])}
+            {renderTable(trafficLocations, [{ key: "name", title: "اسم الموقع" }])}
             {renderPagination(tlTotal, tlFilters.pageSize, tlFilters.page, "trafficLocations")}
           </>
         );
@@ -379,13 +440,12 @@ const DropDownListPage = () => {
           </button>
         ))}
       </div>
-  
+
       <div className="text-center">
         {renderActiveTab()}
       </div>
     </div>
   );
-  
 };
 
 export default DropDownListPage;
