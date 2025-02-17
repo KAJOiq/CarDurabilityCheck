@@ -119,7 +119,7 @@ const CertificatesFormForTruck = ({ formData }) => {
 <!-- Main Content with Grid -->
 <div class="grid grid-cols-3 gap-2">
   <!-- Vehicle Data (Left) -->
-  <div class="border border-black rounded-lg p-2 relative col-span-2" dir="rtl">
+  <div class="border border-black rounded-lg p-1 relative col-span-2" dir="rtl">
     <h3 class="bg-gray-200 text-center font-bold py-1">بيانات المركبة</h3>
     <div class="text-2xl">
       ${[
@@ -169,7 +169,7 @@ const CertificatesFormForTruck = ({ formData }) => {
  */
         [
           `<div class="border-black p-1">
-            <h3 class="bg-gray-200 text-center font-semibold py-1 text-sm">بيانات الملحق</h3>
+            <h3 class="bg-gray-200 text-center font-semibold py-0 text-sm">بيانات الملحق الأول</h3>
             ${[
               [
                 `<div class="flex justify-between w-full py-0 border-black">
@@ -189,7 +189,15 @@ const CertificatesFormForTruck = ({ formData }) => {
                 </div>`,
                 null,
               ],
-                        [
+            ].map(([content]) => content).join('')}
+          </div>`,
+          null
+        ],
+        [
+          `<div class="border-black p-1">
+            <h3 class="bg-gray-200 text-center font-semibold py-0 text-sm">بيانات الملحق الثاني</h3>
+            ${[
+              [
                 `<div class="flex justify-between w-full py-0 border-black">
                   <span class="font-extrabold text-sm text-center w-1/4 border border-black">نوع الحمل</span>
                   <span class="font-semibold text-sm w-2/4 px-1 border border-black">${formData.category || "---"}</span>
@@ -207,7 +215,15 @@ const CertificatesFormForTruck = ({ formData }) => {
                 </div>`,
                 null,
               ],
-                        [
+            ].map(([content]) => content).join('')}
+          </div>`,
+          null
+        ],
+        [
+          `<div class="border-black p-1">
+            <h3 class="bg-gray-200 text-center font-semibold py-0 text-sm">بيانات الملحق الثالث</h3>
+            ${[
+              [
                 `<div class="flex justify-between w-full py-0 border-black">
                   <span class="font-extrabold text-sm text-center w-1/4 border border-black">نوع الحمل</span>
                   <span class="font-semibold text-sm w-2/4 px-1 border border-black">${formData.category || "---"}</span>
@@ -224,7 +240,7 @@ const CertificatesFormForTruck = ({ formData }) => {
                   <span class="font-semibold text-sm w-2/4 px-1 border border-black">${formData.loadWeight || "---"}</span>
                 </div>`,
                 null,
-              ]
+              ],
             ].map(([content]) => content).join('')}
           </div>`,
           null
