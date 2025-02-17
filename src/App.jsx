@@ -11,6 +11,7 @@ import Login from "./components/Login";
 import ReportStatus from "./components/Reports";
 import CreateForm from "./components/CreateForm";
 import ChangePassword from "./components/ChangePassword";
+import DropDownListPage from "./components/DropDownListPage";
 import "./index.css";
 
 const App = () => {
@@ -44,6 +45,7 @@ const App = () => {
             <Route path="/reports" element={<ReportStatus />} />
             <Route path="/create-form" element={<CreateForm />} />
             <Route path="/change-password" element={<ChangePassword />} /> 
+            <Route path="/dropdown-list" element={<DropDownListPage />} />
             <Route path="*" element={<Navigate to="/users" />} />
           </Routes>
         );

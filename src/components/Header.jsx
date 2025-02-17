@@ -15,6 +15,15 @@ const Header = ({ userName, role, onLogout }) => {
     <header className="bg-gray-900 text-white w-full p-4 flex justify-between items-center shadow-lg">
       <h1 className="text-2xl font-bold text-right">نظام فحص المتانة</h1>
       <nav className="flex items-center gap-6 text-lg">
+      {(role === "admin") && (
+          <Link
+            to="/dropdown-list"
+            className="flex items-center gap-2 hover:text-blue-400 transition duration-200"
+          >
+            <ChartBarSquareIcon className="w-6 h-6" />
+            القوائم المنسدلة
+          </Link>
+        )}
       {(role === "admin" || role === "reporter") && (
           <Link
             to="/reports"
