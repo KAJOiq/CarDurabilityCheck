@@ -13,7 +13,7 @@ const Header = ({ userName, role, onLogout }) => {
 
   return (
     <header className="bg-gray-900 text-white w-full p-4 flex justify-between items-center shadow-lg">
-      <h1 className="text-2xl font-bold text-right">نظام إدارة طلبات فحص المتانة</h1>
+      <h1 className="text-2xl font-bold text-right">نظام فحص المتانة</h1>
       <nav className="flex items-center gap-6 text-lg">
       {(role === "admin" || role === "reporter") && (
           <Link
