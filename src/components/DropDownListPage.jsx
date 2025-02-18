@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import fetchData from "../utils/fetchData";
-import { MagnifyingGlassIcon, ChevronUpDownIcon, ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import AddVehiclePopup from "./AddVehiclePopup";
+import AddColorPopup from "./AddColorPopup";
+import AddAgencyPopup from "./AddAgencyPopup";
+import AddLocationPopup from "./AddLocationPopup";
+import Select from "react-select";
+import { MagnifyingGlassIcon, ChevronUpDownIcon, ChevronLeftIcon, ChevronRightIcon, PlusCircleIcon  } from "@heroicons/react/24/outline";
 
 
 const DropDownListPage = () => {
@@ -13,6 +18,7 @@ const DropDownListPage = () => {
   const [allTrafficAgencies, setAllTrafficAgencies] = useState([]);
 
   // Vehicle Companies State
+  const [showAddVehiclePopup, setShowAddVehiclePopup] = useState(false);
   const [vehicleCompanies, setVehicleCompanies] = useState([]);
   const [vcFilters, setVcFilters] = useState({
     brandName: "",
@@ -32,6 +38,7 @@ const DropDownListPage = () => {
   const [vnTotal, setVnTotal] = useState(0);
 
   // Vehicle Colors State
+  const [showAddColorPopup, setShowAddColorPopup] = useState(false);
   const [vehicleColors, setVehicleColors] = useState([]);
   const [vColorFilters, setVColorFilters] = useState({
     color: "",
@@ -41,6 +48,7 @@ const DropDownListPage = () => {
   const [vColorTotal, setVColorTotal] = useState(0);
 
   // Traffic Agencies State
+  const [showAddAgencyPopup, setShowAddAgencyPopup] = useState(false);
   const [trafficAgencies, setTrafficAgencies] = useState([]);
   const [taFilters, setTaFilters] = useState({
     agencyName: "",
@@ -50,6 +58,7 @@ const DropDownListPage = () => {
   const [taTotal, setTaTotal] = useState(0);
 
   // Traffic Locations State
+  const [showAddLocationPopup, setShowAddLocationPopup] = useState(false);
   const [trafficLocations, setTrafficLocations] = useState([]);
   const [tlFilters, setTlFilters] = useState({
     locationName: "",
@@ -205,20 +214,53 @@ const DropDownListPage = () => {
     }
   };
 
+  const toggleAddVehiclePopup = () => {
+    setShowAddVehiclePopup(prev => !prev);
+  };
+
+  const toggleAddColorPopup = () => {
+    setShowAddColorPopup(prev => !prev);
+  };
+
+  const toggleAddAgencyPopup = () => {
+    setShowAddAgencyPopup(prev => !prev);
+  };
+
+  const toggleAddLocationPopup = () => {
+    setShowAddLocationPopup(prev => !prev)
+  }
+
   const renderTable = (data, columns) => {
-    if (loading) return <div className="text-center p-8 text-gray-500">جارٍ التحميل...</div>;
-    if (error) return <div className="text-center p-8 text-red-500">{error}</div>;
-    if (!data?.length) return <div className="text-center p-8 text-gray-500">لا توجد بيانات</div>;
+    if (loading) return (
+      <div className="p-8 flex flex-col items-center justify-center space-y-4">
+        <MagnifyingGlassIcon className="w-12 h-12 text-green-500 animate-pulse" />
+        <span className="text-gray-600">جارٍ التحميل...</span>
+      </div>
+    );
+
+    if (error) return (
+      <div className="p-8 flex flex-col items-center justify-center space-y-4 text-red-500">
+        <XCircleIcon className="w-12 h-12" />
+        <span>{error}</span>
+      </div>
+    );
+
+    if (!data?.length) return (
+      <div className="p-8 flex flex-col items-center justify-center space-y-4 text-gray-500">
+        <MagnifyingGlassIcon className="w-12 h-12" />
+        <span>لا توجد بيانات</span>
+      </div>
+    );
 
     return (
-      <div className="border rounded-lg overflow-hidden shadow-sm bg-white">
-        <table className="w-full border-collapse">
-          <thead className="bg-gray-50">
+      <div className="rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+        <table className="w-full divide-y divide-gray-200">
+          <thead className="bg-green-50">
             <tr>
               {columns.map((col) => (
                 <th
                   key={col.key}
-                  className="px-6 py-4 text-right text-sm font-semibold text-gray-700 tracking-wide"
+                  className="px-6 py-4 text-right text-sm font-semibold text-green-600 tracking-wide"
                 >
                   {col.title}
                 </th>
@@ -229,7 +271,7 @@ const DropDownListPage = () => {
             {data.map((item) => (
               <tr
                 key={item.id}
-                className="hover:bg-gray-50 transition-colors"
+                className="hover:bg-green-50 transition-colors"
               >
                 {columns.map((col) => (
                   <td
@@ -250,36 +292,26 @@ const DropDownListPage = () => {
   const renderPagination = (total, pageSize, page, tab) => {
     const totalPages = Math.ceil(total / pageSize);
     return (
-      <div className="flex justify-center mt-8">
-        <nav className="inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+      <div className="flex items-center justify-between px-6 py-4 bg-green-50 border-t border-green-100">
+        <span className="text-sm text-green-600">
+          الصفحة {page + 1} من {totalPages}
+        </span>
+        <div className="flex gap-2">
           <button
             onClick={() => handlePageChange(page - 1, tab)}
             disabled={page === 0}
-            className="px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50"
+            className="p-2 rounded-lg border border-green-200 text-green-600 hover:bg-green-100 disabled:opacity-50"
           >
-            السابق
+            <ChevronLeftIcon className="w-5 h-5" />
           </button>
-          {Array.from({ length: totalPages }, (_, i) => (
-            <button
-              key={i}
-              onClick={() => handlePageChange(i, tab)}
-              className={`px-4 py-2 text-sm font-medium ${
-                page === i
-                  ? "text-green-600 bg-green-50 border border-green-500"
-                  : "text-gray-500 bg-white border border-gray-300 hover:bg-gray-50"
-              }`}
-            >
-              {i + 1}
-            </button>
-          ))}
           <button
             onClick={() => handlePageChange(page + 1, tab)}
             disabled={page >= totalPages - 1}
-            className="px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50"
+            className="p-2 rounded-lg border border-green-200 text-green-600 hover:bg-green-100 disabled:opacity-50"
           >
-            التالي
+            <ChevronRightIcon className="w-5 h-5" />
           </button>
-        </nav>
+        </div>
       </div>
     );
   };
@@ -289,6 +321,15 @@ const DropDownListPage = () => {
       case "vehicleCompanies":
         return (
           <>
+            <div className="flex gap-4 mb-4 overflow-x-auto justify-center">
+                  <button 
+                    onClick={toggleAddVehiclePopup} 
+                    className="group bg-gradient-to-r from-green-500 to-green-600 text-white px-2 py-1 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+                  >
+                    <PlusCircleIcon className="w-5 h-5" />
+                    إضافة مركبة جديدة
+                  </button>
+              </div>
             <div className="mb-8 bg-white rounded-xl shadow-sm border border-gray-100">
               <div className="p-6 grid grid-cols-1 gap-4">
                 <input
@@ -309,6 +350,15 @@ const DropDownListPage = () => {
       case "vehicleNames":
         return (
           <>
+            <div className="flex gap-4 mb-4 overflow-x-auto justify-center">
+                  <button 
+                    onClick={toggleAddVehiclePopup} 
+                    className="group bg-gradient-to-r from-green-500 to-green-600 text-white px-2 py-1 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+                  >
+                    <PlusCircleIcon className="w-5 h-5" />
+                    إضافة مركبة جديدة
+                  </button>
+            </div>
             <div className="mb-8 bg-white rounded-xl shadow-sm border border-gray-100">
               <div className="p-6 grid grid-cols-2 gap-4">
                 <input
@@ -342,6 +392,15 @@ const DropDownListPage = () => {
       case "vehicleColors":
         return (
           <>
+            <div className="flex gap-4 mb-4 overflow-x-auto justify-center">
+            <button 
+                  onClick={toggleAddColorPopup} 
+                  className="group bg-gradient-to-r from-green-500 to-green-600 text-white px-2 py-1 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+                >
+                  <PlusCircleIcon className="w-5 h-5" />
+                  إضافة لون جديدة
+                </button>
+            </div>
             <div className="mb-8 bg-white rounded-xl shadow-sm border border-gray-100">
               <div className="p-6 grid grid-cols-1 gap-4">
                 <input
@@ -362,6 +421,15 @@ const DropDownListPage = () => {
       case "trafficAgencies":
         return (
           <>
+            <div className="flex gap-4 mb-4 overflow-x-auto justify-center">
+            <button 
+                  onClick={toggleAddAgencyPopup} 
+                  className="group bg-gradient-to-r from-green-500 to-green-600 text-white px-2 py-1 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+                >
+                  <PlusCircleIcon className="w-5 h-5" />
+                  إضافة مديرية جديدة
+                </button>
+              </div>  
             <div className="mb-8 bg-white rounded-xl shadow-sm border border-gray-100">
               <div className="p-6 grid grid-cols-1 gap-4">
                 <input
@@ -382,6 +450,15 @@ const DropDownListPage = () => {
       case "trafficLocations":
         return (
           <>
+          <div className="flex gap-4 mb-4 overflow-x-auto justify-center">
+          <button 
+                  onClick={toggleAddLocationPopup} 
+                  className="group bg-gradient-to-r from-green-500 to-green-600 text-white px-2 py-1 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+                >
+                  <PlusCircleIcon className="w-5 h-5" />
+                  إضافة موقع جديدة
+                </button>
+          </div>
             <div className="mb-8 bg-white rounded-xl shadow-sm border border-gray-100">
               <div className="p-6 grid grid-cols-2 gap-4">
                 <input
@@ -419,6 +496,30 @@ const DropDownListPage = () => {
 
   return (
     <div className="p-4 max-w-6xl mx-auto">
+      {showAddVehiclePopup && (
+        <AddVehiclePopup 
+          onClose={toggleAddVehiclePopup} 
+          refreshData={() => fetchTabData(activeTab)} 
+        />
+      )}
+      {showAddColorPopup && (
+        <AddColorPopup 
+          onClose={toggleAddColorPopup} 
+          refreshData={() => fetchTabData(activeTab)} 
+        />
+      )}
+      {showAddAgencyPopup && (
+        <AddAgencyPopup 
+          onClose={toggleAddAgencyPopup} 
+          refreshData={() => fetchTabData(activeTab)} 
+        />
+      )}
+      {showAddLocationPopup && (
+        <AddLocationPopup 
+          onClose={toggleAddLocationPopup} 
+          refreshData={() => fetchTabData(activeTab)} 
+        />
+      )}
       <div className="flex gap-4 mb-8 overflow-x-auto justify-center">
         {["vehicleCompanies", "vehicleNames", "vehicleColors", "trafficAgencies", "trafficLocations"].map((tab) => (
           <button
@@ -440,7 +541,7 @@ const DropDownListPage = () => {
           </button>
         ))}
       </div>
-
+        
       <div className="text-center">
         {renderActiveTab()}
       </div>
