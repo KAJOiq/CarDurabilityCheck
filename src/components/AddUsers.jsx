@@ -104,7 +104,7 @@ const AddUsers = ({ setShowAddUser, setUsers }) => {
           <div className="text-right text-red-600 text-sm mb-3">
             <ul>
               {errorMessages.map((err, index) => (
-                <li key={index}>{err} •</li>
+                <li key={index}>• {err}</li>
               ))}
             </ul>
           </div>
