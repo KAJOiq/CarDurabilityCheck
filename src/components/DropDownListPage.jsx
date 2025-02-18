@@ -5,8 +5,7 @@ import AddColorPopup from "./AddColorPopup";
 import AddAgencyPopup from "./AddAgencyPopup";
 import AddLocationPopup from "./AddLocationPopup";
 import Select from "react-select";
-import { MagnifyingGlassIcon, ChevronUpDownIcon, ChevronLeftIcon, ChevronRightIcon, PlusCircleIcon  } from "@heroicons/react/24/outline";
-
+import { MagnifyingGlassIcon, ChevronLeftIcon, ChevronRightIcon, PlusCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
 
 const DropDownListPage = () => {
   const [activeTab, setActiveTab] = useState("vehicleCompanies");
@@ -67,6 +66,10 @@ const DropDownListPage = () => {
     pageSize: 10,
   });
   const [tlTotal, setTlTotal] = useState(0);
+
+  // States to control visibility of select fields
+  const [hideBrandSelect, setHideBrandSelect] = useState(false);
+  const [hideAgencySelect, setHideAgencySelect] = useState(false);
 
   // Fetch all necessary lookup data on mount
   useEffect(() => {
@@ -216,6 +219,7 @@ const DropDownListPage = () => {
 
   const toggleAddVehiclePopup = () => {
     setShowAddVehiclePopup(prev => !prev);
+    setHideBrandSelect(prev => !prev); 
   };
 
   const toggleAddColorPopup = () => {
@@ -227,7 +231,8 @@ const DropDownListPage = () => {
   };
 
   const toggleAddLocationPopup = () => {
-    setShowAddLocationPopup(prev => !prev)
+    setShowAddLocationPopup(prev => !prev);
+    setHideAgencySelect(prev => !prev); 
   }
 
   const renderTable = (data, columns) => {
@@ -316,20 +321,42 @@ const DropDownListPage = () => {
     );
   };
 
+  const handleSelectChange = (selectedOption, tab, fieldName) => {
+    const value = selectedOption ? selectedOption.value : "";
+    switch (tab) {
+      case "vehicleNames":
+        setVnFilters(prev => ({ ...prev, [fieldName]: value }));
+        break;
+      case "trafficLocations":
+        setTlFilters(prev => ({ ...prev, [fieldName]: value }));
+        break;
+    }
+  };
+
+  const vehicleCompaniesOptions = allVehicleCompanies.map(company => ({
+    value: company.id,
+    label: company.name
+  }));
+
+  const trafficAgenciesOptions = allTrafficAgencies.map(agency => ({
+    value: agency.id,
+    label: agency.name
+  }));
+
   const renderActiveTab = () => {
     switch (activeTab) {
       case "vehicleCompanies":
         return (
           <>
             <div className="flex gap-4 mb-4 overflow-x-auto justify-center">
-                  <button 
-                    onClick={toggleAddVehiclePopup} 
-                    className="group bg-gradient-to-r from-green-500 to-green-600 text-white px-2 py-1 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
-                  >
-                    <PlusCircleIcon className="w-5 h-5" />
-                    إضافة مركبة جديدة
-                  </button>
-              </div>
+              <button 
+                onClick={toggleAddVehiclePopup} 
+                className="group bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+              >
+                <PlusCircleIcon className="w-5 h-5" />
+                إضافة مركبة جديدة
+              </button>
+            </div>
             <div className="mb-8 bg-white rounded-xl shadow-sm border border-gray-100">
               <div className="p-6 grid grid-cols-1 gap-4">
                 <input
@@ -351,13 +378,13 @@ const DropDownListPage = () => {
         return (
           <>
             <div className="flex gap-4 mb-4 overflow-x-auto justify-center">
-                  <button 
-                    onClick={toggleAddVehiclePopup} 
-                    className="group bg-gradient-to-r from-green-500 to-green-600 text-white px-2 py-1 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
-                  >
-                    <PlusCircleIcon className="w-5 h-5" />
-                    إضافة مركبة جديدة
-                  </button>
+              <button 
+                onClick={toggleAddVehiclePopup} 
+                className="group bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+              >
+                <PlusCircleIcon className="w-5 h-5" />
+                إضافة مركبة جديدة
+              </button>
             </div>
             <div className="mb-8 bg-white rounded-xl shadow-sm border border-gray-100">
               <div className="p-6 grid grid-cols-2 gap-4">
@@ -369,19 +396,34 @@ const DropDownListPage = () => {
                   placeholder="ابحث باسم المركبة"
                   className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all text-right"
                 />
-                <select
-                  name="brandId"
-                  value={vnFilters.brandId}
-                  onChange={(e) => handleFilterChange(e, "vehicleNames")}
-                  className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all text-right"
-                >
-                  <option value="">اختر الماركة</option>
-                  {allVehicleCompanies.map((company) => (
-                    <option key={company.id} value={company.id}>
-                      {company.name}
-                    </option>
-                  ))}
-                </select>
+                {!hideBrandSelect && ( 
+                  <div className="relative">
+                    <Select
+                      options={vehicleCompaniesOptions}
+                      value={vehicleCompaniesOptions.find(option => option.value === vnFilters.brandId)}
+                      onChange={(selected) => handleSelectChange(selected, "vehicleNames", "brandId")}
+                      placeholder="ابحث واختر الماركة"
+                      isSearchable
+                      className="text-right"
+                      styles={{
+                        control: (base) => ({
+                          ...base,
+                          padding: '0.5rem',
+                          borderRadius: '0.5rem',
+                          borderColor: '#e5e7eb',
+                          '&:hover': {
+                            borderColor: '#059669'
+                          }
+                        }),
+                        menu: (base) => ({
+                          ...base,
+                          textAlign: 'right'
+                        })
+                      }}
+                    />
+                    <MagnifyingGlassIcon className="w-5 h-5 absolute left-3 top-3.5 text-gray-400" />
+                  </div>
+                )}
               </div>
             </div>
             {renderTable(vehicleNames, [{ key: "name", title: "اسم المركبة" }])}
@@ -393,13 +435,13 @@ const DropDownListPage = () => {
         return (
           <>
             <div className="flex gap-4 mb-4 overflow-x-auto justify-center">
-            <button 
-                  onClick={toggleAddColorPopup} 
-                  className="group bg-gradient-to-r from-green-500 to-green-600 text-white px-2 py-1 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
-                >
-                  <PlusCircleIcon className="w-5 h-5" />
-                  إضافة لون جديدة
-                </button>
+              <button 
+                onClick={toggleAddColorPopup} 
+                className="group bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+              >
+                <PlusCircleIcon className="w-5 h-5" />
+                إضافة لون جديدة
+              </button>
             </div>
             <div className="mb-8 bg-white rounded-xl shadow-sm border border-gray-100">
               <div className="p-6 grid grid-cols-1 gap-4">
@@ -422,14 +464,14 @@ const DropDownListPage = () => {
         return (
           <>
             <div className="flex gap-4 mb-4 overflow-x-auto justify-center">
-            <button 
-                  onClick={toggleAddAgencyPopup} 
-                  className="group bg-gradient-to-r from-green-500 to-green-600 text-white px-2 py-1 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
-                >
-                  <PlusCircleIcon className="w-5 h-5" />
-                  إضافة مديرية جديدة
-                </button>
-              </div>  
+              <button 
+                onClick={toggleAddAgencyPopup} 
+                className="group bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+              >
+                <PlusCircleIcon className="w-5 h-5" />
+                إضافة مديرية جديدة
+              </button>
+            </div>  
             <div className="mb-8 bg-white rounded-xl shadow-sm border border-gray-100">
               <div className="p-6 grid grid-cols-1 gap-4">
                 <input
@@ -450,15 +492,15 @@ const DropDownListPage = () => {
       case "trafficLocations":
         return (
           <>
-          <div className="flex gap-4 mb-4 overflow-x-auto justify-center">
-          <button 
-                  onClick={toggleAddLocationPopup} 
-                  className="group bg-gradient-to-r from-green-500 to-green-600 text-white px-2 py-1 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
-                >
-                  <PlusCircleIcon className="w-5 h-5" />
-                  إضافة موقع جديدة
-                </button>
-          </div>
+            <div className="flex gap-4 mb-4 overflow-x-auto justify-center">
+              <button 
+                onClick={toggleAddLocationPopup} 
+                className="group bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+              >
+                <PlusCircleIcon className="w-5 h-5" />
+                إضافة موقع جديدة
+              </button>
+            </div>
             <div className="mb-8 bg-white rounded-xl shadow-sm border border-gray-100">
               <div className="p-6 grid grid-cols-2 gap-4">
                 <input
@@ -469,19 +511,34 @@ const DropDownListPage = () => {
                   placeholder="ابحث باسم الموقع"
                   className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all text-right"
                 />
-                <select
-                  name="agensyId"
-                  value={tlFilters.agensyId}
-                  onChange={(e) => handleFilterChange(e, "trafficLocations")}
-                  className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all text-right"
-                >
-                  <option value="">اختر المديرية</option>
-                  {allTrafficAgencies.map((agency) => (
-                    <option key={agency.id} value={agency.id}>
-                      {agency.name}
-                    </option>
-                  ))}
-                </select>
+                {!hideAgencySelect && (
+                  <div className="relative">
+                    <Select
+                      options={trafficAgenciesOptions}
+                      value={trafficAgenciesOptions.find(option => option.value === tlFilters.agensyId)}
+                      onChange={(selected) => handleSelectChange(selected, "trafficLocations", "agensyId")}
+                      placeholder="ابحث واختر المديرية"
+                      isSearchable
+                      className="text-right"
+                      styles={{
+                        control: (base) => ({
+                          ...base,
+                          padding: '0.5rem',
+                          borderRadius: '0.5rem',
+                          borderColor: '#e5e7eb',
+                          '&:hover': {
+                            borderColor: '#059669'
+                          }
+                        }),
+                        menu: (base) => ({
+                          ...base,
+                          textAlign: 'right'
+                        })
+                      }}
+                    />
+                    <MagnifyingGlassIcon className="w-5 h-5 absolute left-3 top-3.5 text-gray-400" />
+                  </div>
+                )}
               </div>
             </div>
             {renderTable(trafficLocations, [{ key: "name", title: "اسم الموقع" }])}
@@ -527,7 +584,7 @@ const DropDownListPage = () => {
             onClick={() => setActiveTab(tab)}
             className={`px-6 py-2 rounded-lg text-sm font-medium transition-colors ${
               activeTab === tab
-                ? "bg-green-500 text-white shadow-md"
+                ? "bg-blue-500 text-white shadow-md"
                 : "bg-gray-100 text-gray-600 hover:bg-gray-200"
             }`}
           >
