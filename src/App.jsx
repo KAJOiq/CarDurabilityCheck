@@ -11,6 +11,11 @@ import Login from "./components/Login";
 import ReportStatus from "./components/Reports";
 import CreateForm from "./components/CreateForm";
 import ChangePassword from "./components/ChangePassword";
+import DropDownListPage from "./components/DropDownListPage";
+import AddVehiclePopup from "./components/AddVehiclePopup";
+import AddColorPopup from "./components/AddColorPopup";
+import AddAgencyPopup from "./components/AddAgencyPopup";
+import AddLocationPopup from "./components/AddLocationPopup";
 import "./index.css";
 
 const App = () => {
@@ -44,6 +49,11 @@ const App = () => {
             <Route path="/reports" element={<ReportStatus />} />
             <Route path="/create-form" element={<CreateForm />} />
             <Route path="/change-password" element={<ChangePassword />} /> 
+            <Route path="/dropdown-list" element={<DropDownListPage />} />
+            <Route path="/add-vehicle" element={<AddVehiclePopup/>} />
+            <Route path="/add-color" element={<AddColorPopup/>} />
+            <Route path="/add-agency" element={<AddAgencyPopup/>} />
+            <Route path="/add-location" element={<AddLocationPopup/>} />
             <Route path="*" element={<Navigate to="/users" />} />
           </Routes>
         );
