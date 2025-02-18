@@ -6,6 +6,7 @@ import {
   UsersIcon,
   ClipboardDocumentCheckIcon,
   ChartBarSquareIcon,
+  ClipboardDocumentListIcon,
 } from "@heroicons/react/24/outline";
 
 const Header = ({ userName, role, onLogout }) => {
@@ -20,7 +21,7 @@ const Header = ({ userName, role, onLogout }) => {
             to="/dropdown-list"
             className="flex items-center gap-2 hover:text-blue-400 transition duration-200"
           >
-            <ChartBarSquareIcon className="w-6 h-6" />
+            <ClipboardDocumentListIcon className="w-6 h-6" />
             القوائم المنسدلة
           </Link>
         )}
