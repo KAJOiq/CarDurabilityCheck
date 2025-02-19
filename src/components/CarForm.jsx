@@ -1,43 +1,41 @@
 import React, { useRef, useState, useEffect } from "react";
 import logo from "../assets/logo.jpg";
 import imgStatic from "../assets/car.png";
-import QRCode from "qrcode"; // Import QRCode component from the qrcode package
+import QRCode from "qrcode"; 
 
 
-const CarForm = ({ formData }) => {
+const CarForm = ({ searchResults  }) => {
   
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState("");
 
     useEffect(() => {
+      if (!searchResults ) return;
       const qrData = JSON.stringify({
-        customerName: formData.customerName,
-        vehicleModel: formData.vehicleModel,
-        vehicleType: formData.vehicleType,
-        vehicleColor: formData.vehicleColor,
-        vehicleCategory: formData.vehicleCategory,
-        vehicleNumber: formData.vehicleNumber,
-        isGovernment: formData.isGovernment,
-        chassisNumber: formData.chassisNumber,
-        model: formData.model,
-        engineType: formData.engineType,
-        cylinderCount: formData.cylinderCount,
-        receiptNumber: formData.receiptNumber,
-        trafficFormNumber: formData.trafficFormNumber,
-        formType: formData.formType,
-        numberOfAxes: formData.numberOfAxes,
+        customerName: searchResults.carOwnerName,
+        vehicleModel: searchResults.vehicleModel,
+        vehicleType: searchResults.vehicleType,
+        vehicleColor: searchResults.vehicleColor,
+        vehicleCategory: searchResults.vehicleCategory,
+        vehicleNumber: searchResults.vehicleNumber,
+        isGovernment: searchResults.isGovernment,
+        chassisNumber: searchResults.chassisNumber,
+        carModel: searchResults.carModel,
+        engineType: searchResults.engineType,
+        cylinderCount: searchResults.cylinderCount,
+        receiptNumber: searchResults.receiptNumber,
+        trafficFormNumber: searchResults.trafficFormNumber,
+        formType: searchResults.formType,
+        numberOfAxes: searchResults.numberOfAxes,
       });
   
       QRCode.toDataURL(qrData)
-        .then((url) => {
-          if (url !== qrCodeDataUrl) {
-            setQrCodeDataUrl(url); // Set the QR code URL only if it has changed
-          }
-        })
+        .then((url) => setQrCodeDataUrl(url))
         .catch((error) => console.error("Error generating QR code:", error));
-    }, [formData]); // Keep dependencies minimal and specific
+    }, [searchResults]);
   
   
   const handlePrint = () => {
+    if (!searchResults) return;
     const logoBase64 = logo;
     const imgStaticBase64 = imgStatic;
     const printWindow = window.open("_blank");
@@ -248,35 +246,35 @@ const CarForm = ({ formData }) => {
             <div class="vehicle-data">
               <h3><strong>بيانات المركبة</strong></h3>
               <div class="info-container">
-                <div class="info"><strong>اسم المواطن:</strong> <div><strong>${formData.customerName}</strong></div></div>
-                <div class="info"><strong>نوع المركبة:</strong> <div><strong>${formData.vehicleType}</strong></div></div>
-                <div class="info"><strong>طراز المركبة:</strong> <div><strong>${formData.vehicleModel}</strong></div></div>
-                <div class="info"><strong>لون المركبة:</strong> <div><strong>${formData.vehicleColor}</strong></div></div>
-                <div class="info"><strong>رقم المركبة:</strong> <div><strong>${formData.vehicleNumber}</strong></div></div>
-                <div class="info"><strong>رقم الشاصي:</strong> <div><strong>${formData.chassisNumber}</strong></div></div>
-                <div class="info"><strong>الموديل:</strong> <div><strong>${formData.model}</strong></div></div>
-                <div class="info"><strong>نوع المحرك:</strong> <div><strong>${formData.engineType }</strong></div></div>
-                <div class="info"><strong>عدد السلندر:</strong> <div><strong>${formData.cylinderCount}</strong></div></div>
-                <div class="info"><strong>عدد المحاور:</strong> <div><strong>${formData.numberOfAxes}</strong></div></div>
+                <div class="info"><strong>اسم المواطن:</strong> <div><strong>${searchResults.carOwnerName}</strong></div></div>
+                <div class="info"><strong>نوع المركبة:</strong> <div><strong>${searchResults.carBrand}</strong></div></div>
+                <div class="info"><strong>طراز المركبة:</strong> <div><strong>${searchResults.carName}</strong></div></div>
+                <div class="info"><strong>لون المركبة:</strong> <div><strong>${searchResults.carColor}</strong></div></div>
+                <div class="info"><strong>رقم المركبة:</strong> <div><strong>${searchResults.plateNumber}</strong></div></div>
+                <div class="info"><strong>رقم الشاصي:</strong> <div><strong>${searchResults.chassisNumber}</strong></div></div>
+                <div class="info"><strong>الموديل:</strong> <div><strong>${searchResults.carModel}</strong></div></div>
+                <div class="info"><strong>نوع المحرك:</strong> <div><strong>${searchResults.engineType}</strong></div></div>
+                <div class="info"><strong>عدد السلندر:</strong> <div><strong>${searchResults.engineCylindersNumber}</strong></div></div>
+                <div class="info"><strong>عدد المحاور:</strong> <div><strong>${searchResults.engineCylindersNumber}</strong></div></div>
               </div>
             </div>
             <div class="form-data">
               <h3><strong>بيانات الاستمارة</strong></h3>
               <div class="info-container">
-                <div class="info"><strong>رقم استمارة الفحص:</strong> <div><strong>${formData.trafficFormNumber}</strong></div></div>
-                <div class="info"><strong>رقم استمارة المرور:</strong> <div><strong>${formData.trafficFormNumber}</strong></div></div>
-                <div class="info"><strong>رقم وصل القبض:</strong> <div><strong>${formData.receiptNumber}</strong></div></div>
-                <div class="info"><strong>نوع الاستمارة:</strong> <div><strong>${formData.formType}</strong></div></div>
-                <div class="info"><strong>التاريخ:</strong> <div><strong>${formData.date}</strong></div></div>
-                <div class="info"><strong>فئة المركبة:</strong> <div><strong>${formData.vehicleCategory}</strong></div></div>
+                <div class="info"><strong>رقم استمارة الفحص:</strong> <div><strong>${searchResults.applicationId}</strong></div></div>
+                <div class="info"><strong>رقم استمارة المرور:</strong> <div><strong>${searchResults.trafficPoliceApplicationId}</strong></div></div>
+                <div class="info"><strong>رقم وصل القبض:</strong> <div><strong>${searchResults.receiptId}</strong></div></div>
+                <div class="info"><strong>نوع الاستمارة:</strong> <div><strong>${searchResults.vehicleType}</strong></div></div>
+                <div class="info"><strong>التاريخ:</strong> <div><strong>${searchResults.issueDate}</strong></div></div>
+                <div class="info"><strong>فئة المركبة:</strong> <div><strong>${searchResults.category}</strong></div></div>
               </div>
             </div>
           </div>
           <div class="footer-photo-container">
             <img src="${imgStaticBase64}" alt="Car Image" class="main-image" />
               <div class="bottom-images">
-                <img src="${formData.photo1}" alt="Captured Chassis" class="bottom-image" />
-                <img src="${formData.photo2}" alt="Captured Front" class="bottom-image" />
+                <img src="http://localhost:5273${searchResults.cropedChassisImagePath}" alt="Captured Chassis" class="bottom-image" />
+                <img src="http://localhost:5273${searchResults.cropedCarImagePath}" alt="Captured Front" class="bottom-image" />
               </div>
             </div>
           </div>
