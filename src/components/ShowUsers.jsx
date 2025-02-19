@@ -110,6 +110,7 @@ const ShowUsers = () => {
     <div className="p-4 max-w-6xl mx-auto">
       <div className="flex justify-between items-center mb-8">
         <h2 className="text-2xl font-bold text-gray-800">قائمة المستخدمين</h2>
+        {localStorage.getItem("role") === "superadmin" && (
         <button
           className="group bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-lg 
                      hover:from-green-600 hover:to-green-700 transition-all duration-300
@@ -119,6 +120,7 @@ const ShowUsers = () => {
           <UserPlusIcon className="w-5 h-5 transition-transform group-hover:scale-110" />
           <span className="font-semibold text-sm">إضافة مستخدم جديد</span>
         </button>
+        )}
       </div>
 
       <div className="mb-8 bg-white rounded-xl shadow-sm border border-gray-100">
