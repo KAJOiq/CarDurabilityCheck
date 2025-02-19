@@ -10,27 +10,27 @@ const AddVehiclePopup = ({ onClose, refreshData }) => {
   const [form, setForm] = useState({
     BrandName: "",
     CarName: "",
-    TypeId: ""
+    TypeId: "1",
   });
   const [brands, setBrands] = useState([]);
   const [newBrand, setNewBrand] = useState("");
 
   useEffect(() => {
-    const fetchBrands = async () => {
-      try {
-        const response = await fetchData("lookup/find-vehicle-company?brandName=");
-        if (response.isSuccess && Array.isArray(response.results.result)) {
-          setBrands(response.results.result);
-        } else {
-          setError("حدث خطأ في تحميل الماركات");
-        }
-      } catch (err) {
-        setError("انتهت الجلسة! من فضلك قم بإعادة تسجيل الدخول");
-      }
-    };
-
     fetchBrands();
   }, []);
+
+  const fetchBrands = async () => {
+    try {
+      const response = await fetchData("lookup/find-vehicle-company?brandName=");
+      if (response.isSuccess && Array.isArray(response.results.result)) {
+        setBrands(response.results.result);
+      } else {
+        setError("حدث خطأ في تحميل الماركات");
+      }
+    } catch (err) {
+      setError("انتهت الجلسة! من فضلك قم بإعادة تسجيل الدخول");
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -51,17 +51,19 @@ const AddVehiclePopup = ({ onClose, refreshData }) => {
       const formData = new FormData();
       formData.append("BrandName", form.BrandName);
       formData.append("CarName", form.CarName);
-      if (form.TypeId) formData.append("TypeId", form.TypeId); 
+      if (form.TypeId) formData.append("TypeId", form.TypeId);
 
       const response = await fetchData("lookup/add-new-vehicle", {
         method: "POST",
-        body: formData
+        body: formData,
       });
 
       if (response.isSuccess) {
         setSuccess(response.results);
         refreshData();
-        setForm({ BrandName: "", CarName: "", TypeId: "" });
+        fetchBrands(); // تحديث قائمة الماركات بعد الإضافة
+        setForm({ BrandName: "", CarName: "", TypeId: "1" });
+        setNewBrand(""); // إعادة تعيين الحقل
       } else {
         setError(response.errors?.length
           ? response.errors.map((err, index) => (
@@ -80,19 +82,19 @@ const AddVehiclePopup = ({ onClose, refreshData }) => {
   const handleBrandInputChange = (e) => {
     const value = e.target.value;
     setNewBrand(value);
-    if (!brands.some((brand) => brand.name === value)) {
-      setForm((prev) => ({ ...prev, BrandName: value }));
-    }
+    const existingBrand = brands.find((brand) => brand.name === value);
+    setForm((prev) => ({ ...prev, BrandName: existingBrand ? existingBrand.name : value }));
   };
 
   const handleDropdownChange = (selectedOption) => {
+    setNewBrand(selectedOption ? selectedOption.value : "");
     setForm((prev) => ({ ...prev, BrandName: selectedOption ? selectedOption.value : "" }));
   };
 
   const handleTypeChange = (selectedOption) => {
     setForm((prev) => ({
       ...prev,
-      TypeId: selectedOption ? selectedOption.value : ""
+      TypeId: selectedOption ? selectedOption.value : "1",
     }));
   };
 
@@ -100,13 +102,13 @@ const AddVehiclePopup = ({ onClose, refreshData }) => {
     { value: "", label: "اختر ماركة" },
     ...brands.map((brand) => ({
       value: brand.name,
-      label: brand.name
-    }))
+      label: brand.name,
+    })),
   ];
 
   const typeOptions = [
     { value: "1", label: "سيارة/دراجة" },
-    { value: "2", label: "شاحنة" }
+    { value: "2", label: "شاحنة" },
   ];
 
   return (
