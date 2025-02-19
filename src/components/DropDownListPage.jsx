@@ -79,7 +79,7 @@ const DropDownListPage = () => {
         const companiesParams = new URLSearchParams({
           brandName: "",
           page: 0,
-          pageSize: 1000,
+          pageSize: 5000,
         });
         const companiesResponse = await fetchData(
           `lookup/find-vehicle-company?${companiesParams}`

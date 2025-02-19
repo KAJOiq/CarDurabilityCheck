@@ -21,7 +21,7 @@ const AddVehiclePopup = ({ onClose, refreshData }) => {
 
   const fetchBrands = async () => {
     try {
-      const response = await fetchData("lookup/find-vehicle-company?brandName=");
+      const response = await fetchData("lookup/find-vehicle-company?brandName=&page=0&pageSize=5000");
       if (response.isSuccess && Array.isArray(response.results.result)) {
         setBrands(response.results.result);
       } else {
@@ -61,9 +61,9 @@ const AddVehiclePopup = ({ onClose, refreshData }) => {
       if (response.isSuccess) {
         setSuccess(response.results);
         refreshData();
-        fetchBrands(); // تحديث قائمة الماركات بعد الإضافة
+        fetchBrands();
         setForm({ BrandName: "", CarName: "", TypeId: "1" });
-        setNewBrand(""); // إعادة تعيين الحقل
+        setNewBrand(""); 
       } else {
         setError(response.errors?.length
           ? response.errors.map((err, index) => (
