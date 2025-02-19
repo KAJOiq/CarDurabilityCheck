@@ -25,14 +25,13 @@ const CreateForm = ({ formType, setFormType }) => {
     receiptNumber: "",
     trafficFormNumber: "",
     formType: "",
-    numberOfPassengers: "", // Specific for Car
-    load: "", // Specific for Truck
-    attachedLoadType: "", // Specific for Truck
-    attachedChassis: "", // Specific for Truck
-    numberOfAttachedVehicles: "", // Specific for Truck
+    numberOfPassengers: "",
+    load: "", 
+    attachedLoadType: "", 
+    attachedChassis: "", 
+    numberOfAttachedVehicles: "", 
     numberOfAxes: "",
     engineType: "",
-    // isElectrical : false
   });
 
   const navigate = useNavigate();

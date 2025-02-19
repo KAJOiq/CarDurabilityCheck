@@ -14,32 +14,35 @@ const SearchModalForForm = ({ isOpen, onClose, onSearch }) => {
     chassis: {
       label: "بحث برقم الشاصي",
       placeholder: "أدخل رقم الشاصي",
-      param: "chassisNumber"
+      param: "chassisNumber",
+      endpoint: "user/application/find-vehicle"
     }
   };
 
   const handleSearch = async (e) => {
     e.preventDefault();
+    if (!searchTerm) return;
+    
     setIsLoading(true);
     setError(null);
-    
+
     try {
-        const { endpoint } = searchTypes[selectedSearchType];
-        const searchParam = {
-          chassis: "chassisNumber"
-        }[selectedSearchType];
-  
-        const url = `${endpoint}?${searchParam}=${encodeURIComponent(searchTerm)}`;
-        
-        const data = await fetchData(url);
-        
-        onSearch(data);
+      const { endpoint, param } = searchTypes[selectedSearchType];
+      const url = `${endpoint}?${param}=${encodeURIComponent(searchTerm)}`;
+      
+      const data = await fetchData(url);
+      
+      if (data.isSuccess) {
+        onSearch(data.results);
         onClose();
-      } catch (error) {
-        setError(error.message || "فشل البحث، يرجى المحاولة مرة أخرى");
-      } finally {
-        setIsLoading(false);
+      } else {
+        setError(data.errors?.[0]?.message || "المركبة غير مخزونة في النظام");
       }
+    } catch (error) {
+      setError(error.message || "فشل الاتصال بالخادم، يرجى المحاولة لاحقًا");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -47,7 +50,7 @@ const SearchModalForForm = ({ isOpen, onClose, onSearch }) => {
       <div className="bg-white p-6 rounded-xl w-full max-w-md shadow-lg">
         <div className="flex justify-between items-center border-b pb-4 mb-4">
           <h2 className="text-xl font-semibold text-right text-gray-800">
-            البحث برقم الشاصي
+            {searchTypes[selectedSearchType].label}
           </h2>
           <button 
             onClick={onClose}
@@ -66,7 +69,7 @@ const SearchModalForForm = ({ isOpen, onClose, onSearch }) => {
               className="w-full px-4 py-3 border border-gray-300 rounded-lg text-right
                        focus:ring-2 focus:ring-blue-500 focus:border-blue-500
                        placeholder:text-gray-400"
-              placeholder="أدخل رقم الشاصي"
+              placeholder={searchTypes[selectedSearchType].placeholder}
               required
             />
           </div>
@@ -79,6 +82,7 @@ const SearchModalForForm = ({ isOpen, onClose, onSearch }) => {
 
           <div className="flex justify-end gap-3">
             <button
+              type="button"
               onClick={onClose}
               className="px-5 py-2.5 text-gray-600 rounded-lg font-medium
                        hover:bg-gray-100 transition-colors"
@@ -89,11 +93,21 @@ const SearchModalForForm = ({ isOpen, onClose, onSearch }) => {
             <button
               type="submit"
               className={`px-5 py-2.5 bg-blue-600 text-white rounded-lg font-medium
-                       hover:bg-blue-700 transition-colors
+                       hover:bg-blue-700 transition-colors flex items-center gap-2
                        ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
               disabled={isLoading}
             >
-              {isLoading ? "جاري البحث..." : "بحث →"}
+              {isLoading ? (
+                <>
+                  <ArrowPathIcon className="w-4 h-4 animate-spin" />
+                  جاري البحث...
+                </>
+              ) : (
+                <>
+                  بحث
+                  <MagnifyingGlassIcon className="w-4 h-4" />
+                </>
+              )}
             </button>
           </div>
         </form>

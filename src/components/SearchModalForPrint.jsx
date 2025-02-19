@@ -1,5 +1,8 @@
 import React from "react";
 import fetchData from "../utils/fetchData";
+import CarForm from "./CarForm";
+import TruckForm from "./TruckForm";
+import BikeForm from "./BikeForm";
 import { MagnifyingGlassIcon, XMarkIcon, ArrowPathIcon } from "@heroicons/react/24/outline";
 
 const SearchModalForPrint = ({ isOpen, onClose, onSearch }) => {
@@ -7,6 +10,7 @@ const SearchModalForPrint = ({ isOpen, onClose, onSearch }) => {
   const [selectedSearchType, setSelectedSearchType] = React.useState("chassis");
   const [isLoading, setIsLoading] = React.useState(false);
   const [error, setError] = React.useState(null);
+  const [searchResult, setSearchResult] = React.useState(null);
 
   if (!isOpen) return null;
 
@@ -39,6 +43,7 @@ const SearchModalForPrint = ({ isOpen, onClose, onSearch }) => {
       const response = await fetchData(url);
       
       if (response.isSuccess) {
+        setSearchResult(response.results);
         onSearch(response.results);
         onClose();
       } else {
@@ -48,6 +53,21 @@ const SearchModalForPrint = ({ isOpen, onClose, onSearch }) => {
       setError(error.message || "فشل البحث، يرجى المحاولة مرة أخرى");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const renderForm = () => {
+    if (!searchResult) return null;
+
+    switch (searchResult.vehicleType) {
+      case "سيارة":
+        return <CarForm data={searchResult} />;
+      case "شاحنة":
+        return <TruckForm data={searchResult} />;
+      case "دراجة":
+        return <BikeForm data={searchResult} />;
+      default:
+        return null;
     }
   };
 
@@ -140,6 +160,11 @@ const SearchModalForPrint = ({ isOpen, onClose, onSearch }) => {
               </>
             )}
           </button>
+        </div>
+
+        {/* Render the Form based on search result */}
+        <div className="mt-6">
+          {renderForm()}
         </div>
       </div>
     </div>

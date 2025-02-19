@@ -142,17 +142,17 @@ const CertificatesPage = () => {
               }).map(([label, value]) =>
                 label === "صورة السيارة" ? (
                   <div key={label} className="col-span-2">
-        <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
-          <h3 className="font-semibold text-gray-600 mb-3">{label}</h3>
-          <div className="flex justify-center">
-            <img
-              src={`http://localhost:5273${formData.cropedCarImagePath}`}
-              alt="Car Image"
-              className="w-64 h-48 object-contain rounded-lg shadow-md border-2 border-gray-200"
-            />
-          </div>
-        </div>
-      </div>
+                    <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                      <h3 className="font-semibold text-gray-600 mb-3">{label}</h3>
+                      <div className="flex justify-center">
+                        <img
+                          src={`http://localhost:5273${formData.cropedCarImagePath}`}
+                          alt="Car Image"
+                          className="w-64 h-48 object-contain rounded-lg shadow-md border-2 border-gray-200"
+                        />
+                      </div>
+                    </div>
+                  </div>
                 ) : (
                   <div key={label} className="flex justify-between items-center bg-gray-50 p-3 rounded-lg border border-gray-200">
                     <span className="font-semibold text-gray-600">{label}:</span>

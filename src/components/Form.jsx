@@ -4,27 +4,21 @@ import SearchModalForPrint from "./SearchModalForPrint";
 import SearchModalForForm from "./SearchModalForForm";
 import CarForm from "./CarForm";
 import TruckForm from "./TruckForm";
-import BikeForm from "./BikeForm"; 
-
+import BikeForm from "./BikeForm";
 
 const Form = ({ vehicleType, setFormType }) => {
   const [isSearchModalForFormOpen, setIsSearchModalForFormOpen] = useState(false);
   const [isSearchModalForPrintOpen, setIsSearchModalForPrintOpen] = useState(false);
-  const [searchResults, setSearchResults] = useState(null); // State to hold search results
+  const [searchResults, setSearchResults] = useState(null);
 
   const handleSearch = (formData) => {
-    setSearchResults(formData); // Store the search results in the state
-  };
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toISOString().split("T")[0];
+    setSearchResults(formData);
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-slate-100 p-8">
       <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-8 transition-all duration-300 hover:shadow-2xl">
-        {/* Action Buttons */}
+        {/* أزرار البحث */}
         <div className="flex flex-col gap-4 md:flex-row md:justify-end">
           <button
             className="group bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-4 rounded-xl 
@@ -47,7 +41,6 @@ const Form = ({ vehicleType, setFormType }) => {
           </button>
         </div>
 
-        {/* Modals */}
         <SearchModalForForm
           isOpen={isSearchModalForFormOpen}
           onClose={() => setIsSearchModalForFormOpen(false)}
@@ -60,10 +53,11 @@ const Form = ({ vehicleType, setFormType }) => {
           onSearch={handleSearch}
         />
 
-        {/* Display Search Results */}
+        {/* عرض نتائج البحث */}
         {searchResults && (
           <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-right" dir="rtl">
             {Object.entries({
+              "رقم استمارة الفحص": searchResults.applicationId,
               "رقم استمارة المرور": searchResults.trafficPoliceApplicationId,
               "رقم وصل القبض": searchResults.receiptId,
               "اسم المواطن": searchResults.carOwnerName,
@@ -76,44 +70,64 @@ const Form = ({ vehicleType, setFormType }) => {
               "رقم اللوحة": searchResults.plateNumber,
               "رقم الشاصي": searchResults.chassisNumber,
               "نوع المحرك": searchResults.engineType,
-              "عدد السلندر": searchResults.engineCylindersNumber, 
+              "عدد السلندر": searchResults.engineCylindersNumber,
+              "عدد المحاور": searchResults.vehicleAxlesNumber,
               "عدد الركاب": searchResults.seatsNumber,
               "الحمولة": searchResults.loadWeight,
+              "حكومي ؟": searchResults.governmental,
               "فئة المركبة": searchResults.category,
               "تاريخ الإصدار": searchResults.issueDate,
+              "المديرية": searchResults.agency,
               "الموقع": searchResults.location,
-              "صورة السيارة": searchResults.cropedCarImagePath,
-            }).map(([label, value]) =>
-              label === "صورة السيارة" ? (
-                <div key={label} className="col-span-2 flex flex-row items-end">
-                  <span className="font-semibold text-gray-600">{label}:</span>
-                  <img
-                    src={`http://localhost:5273${searchResults.cropedCarImagePath}`}
-                    alt="Car Image"
-                    className="w-48 mt-2 rounded-lg shadow-md border"
-                  />
-                  <span className="font-semibold text-gray-600">{label}:</span>
-                  <img
-                    src={`http://localhost:5273${searchResults.cropedCarImagePath}`}
-                    alt="Car Image"
-                    className="w-48 mt-2 rounded-lg shadow-md border"
-                  />
-                  <span className="font-semibold text-gray-600">{label}:</span>
-                  <img
-                    src={`http://localhost:5273${searchResults.cropedCarImagePath}`}
-                    alt="Car Image"
-                    className="w-48 mt-2 rounded-lg shadow-md border"
-                  />
+
+              
+            }).map(([label, value]) => (
+              <div
+                key={label}
+                className="flex justify-between items-center bg-gray-50 p-3 rounded-lg border border-gray-200"
+              >
+                <span className="font-semibold text-gray-600">{label}:</span>
+                <span className="text-gray-800">{value || "---"}</span>
+              </div>
+            ))}
+
+            {/* عرض صور المركبة */}
+            {searchResults.cropedCarImagePath && (
+              <div className="col-span-2">
+                <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                  <h3 className="font-semibold text-gray-600 mb-3">صورة السيارة</h3>
+                  <div className="flex justify-center">
+                    <img
+                      src={`http://localhost:5273${searchResults.cropedCarImagePath}`}
+                      alt="Car"
+                      className="w-64 h-48 object-contain rounded-lg shadow-md border-2 border-gray-200"
+                    />
+                  </div>
                 </div>
-              ) : (
-                <div key={label} className="flex justify-between items-center bg-gray-50 p-3 rounded-lg border border-gray-200">
-                  <span className="font-semibold text-gray-600">{label}:</span>
-                  <span className="text-gray-800">{value || "---"}</span>
+              </div>
+            )}
+
+            {searchResults.cropedChassisImagePath && (
+              <div className="col-span-2">
+                <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                  <h3 className="font-semibold text-gray-600 mb-3">صورة الشاصي</h3>
+                  <div className="flex justify-center">
+                    <img
+                      src={`http://localhost:5273${searchResults.cropedChassisImagePath}`}
+                      alt="Chassis"
+                      className="w-64 h-48 object-contain rounded-lg shadow-md border-2 border-gray-200"
+                    />
+                  </div>
                 </div>
-              )
+              </div>
             )}
           </div>
         )}
+
+        {/* تضمين النموذج المناسب بناءً على نوع المركبة */}
+        {searchResults && searchResults.vehicleType === "سيارة" && <CarForm searchResults={searchResults} />}
+        {searchResults && searchResults.vehicleType === "شاحنة" && <TruckForm searchResults={searchResults} />}
+        {searchResults && searchResults.vehicleType === "دراجة نارية" && <BikeForm searchResults={searchResults} />}
       </div>
     </div>
   );
