@@ -5,16 +5,6 @@ import QRCode from "qrcode"; // Import QRCode component
 
 
 const BikeForm = ({ formData, photo1, photo2 }) => {
-  const [apiData, setApiData] = useState({
-    inspectionFormNumber: "12345", // Replace with actual form number if necessary
-    date: new Date().toLocaleDateString("ar-IQ", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    }),
-  });
-  
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState("");
 
     useEffect(() => {
