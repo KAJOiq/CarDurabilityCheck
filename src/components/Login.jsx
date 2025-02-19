@@ -39,7 +39,7 @@ const Login = ({ onLogin }) => {
         const { role } = userDetails;
     
         localStorage.setItem("accessToken", accessToken);
-        localStorage.setItem("role", role); // roles: admin, user, supervisor, reporter, checker.
+        localStorage.setItem("role", role); // roles: superAdmin, admin, user, supervisor, reporter, checker.
         localStorage.setItem("userName", userName);
         
         onLogin(userName);

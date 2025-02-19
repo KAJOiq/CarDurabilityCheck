@@ -37,6 +37,26 @@ const App = () => {
 
   const renderRoutes = () => {
     switch (role) {
+      case "superadmin":
+        return (
+          <Routes>
+            <Route path="/entry" element={<Form formType="entry" />} />
+            <Route path="/view-data" element={<ViewData />} />
+            <Route path="/certificates" element={<CertificatesPage />} />
+            <Route path="/users" element={<ShowUsers />} />
+            <Route path="/add-user" element={<AddUsers />} />
+            <Route path="/delete-user" element={<DeleteUsers />} />
+            <Route path="/reports" element={<ReportStatus />} />
+            <Route path="/create-form" element={<CreateForm />} />
+            <Route path="/change-password" element={<ChangePassword />} /> 
+            <Route path="/dropdown-list" element={<DropDownListPage />} />
+            <Route path="/add-vehicle" element={<AddVehiclePopup/>} />
+            <Route path="/add-color" element={<AddColorPopup/>} />
+            <Route path="/add-agency" element={<AddAgencyPopup/>} />
+            <Route path="/add-location" element={<AddLocationPopup/>} />
+            <Route path="*" element={<Navigate to="/users" />} />
+          </Routes>
+        );
       case "admin":
         return (
           <Routes>

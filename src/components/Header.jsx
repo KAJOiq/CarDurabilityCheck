@@ -16,7 +16,7 @@ const Header = ({ userName, role, onLogout }) => {
     <header className="bg-gray-900 text-white w-full p-4 flex justify-between items-center shadow-lg">
       <h1 className="text-2xl font-bold text-right">نظام فحص المتانة</h1>
       <nav className="flex items-center gap-6 text-lg">
-      {(role === "admin") && (
+      {(role === "superadmin" || role === "admin") && (
           <Link
             to="/dropdown-list"
             className="flex items-center gap-2 hover:text-blue-400 transition duration-200"
@@ -25,7 +25,7 @@ const Header = ({ userName, role, onLogout }) => {
             القوائم المنسدلة
           </Link>
         )}
-      {(role === "admin" || role === "reporter") && (
+      {(role === "superadmin" || role === "admin" || role === "reporter") && (
           <Link
             to="/reports"
             className="flex items-center gap-2 hover:text-blue-400 transition duration-200"
@@ -34,7 +34,7 @@ const Header = ({ userName, role, onLogout }) => {
             التقارير
           </Link>
         )}
-        {(role === "admin" || role === "checker") && (
+        {(role === "superadmin" || role === "admin" || role === "checker") && (
           <Link
             to="/certificates"
             className="flex items-center gap-2 hover:text-blue-400 transition duration-200"
@@ -43,7 +43,7 @@ const Header = ({ userName, role, onLogout }) => {
             شهادات الفحص
           </Link>
         )}
-        {(role === "admin" || role === "user") && (
+        {(role === "superadmin" || role === "admin" || role === "user") && (
           <Link
             to="/entry"
             className="flex items-center gap-2 hover:text-blue-400 transition duration-200"
@@ -52,7 +52,7 @@ const Header = ({ userName, role, onLogout }) => {
             الاستمارات
           </Link>
         )}
-         {role === "admin" && (
+         {(role === "superadmin" || role === "admin") && (
           <Link
             to="/users"
             className="flex items-center gap-2 hover:text-blue-400 transition duration-200"
