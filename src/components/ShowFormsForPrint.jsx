@@ -22,7 +22,7 @@ const Form = ({ vehicleType, setFormType }) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-slate-100 p-8">
       <div className="max-w-6xl mx-auto bg-white rounded-2xl shadow-2xl p-8 transition-all duration-300 hover:shadow-3xl">
-        <div className="flex flex-col gap-4 md:flex-row md:justify-end mb-8">
+        <div className="flex flex-col gap-4 md:flex-row md:justify-center mb-8" >
           <button
             className="group bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 
                       text-white px-4 py-2 rounded-xl shadow-lg hover:shadow-xl transition-all

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
-import Form from "./components/Form";
+import Form from "./components/ShowFormsForPrint";
 import Header from "./components/Header";
 import ViewData from "./components/ViewData";
 import CertificatesPage from "./components/CertificatesPage";
