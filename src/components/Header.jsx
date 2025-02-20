@@ -52,7 +52,7 @@ const Header = ({ userName, role, onLogout }) => {
 
           {(role === "superadmin" || role === "admin" || role === "user") && (
             <Link
-              to="/entry"
+              to="/forms"
               className="group flex items-center gap-1 hover:text-purple-400 transition-all duration-300"
             >
               <DocumentTextIcon className="w-6 h-6 text-purple-400 group-hover:-translate-y-1 transition-transform" />

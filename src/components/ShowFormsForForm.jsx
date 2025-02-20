@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import SearchModalForPrint from "./SearchModalForPrint";
+import SearchModalForForm from "./SearchModalForForm";
 import CarForm from "./CarForm";
 import TruckForm from "./TruckForm";
 import BikeForm from "./BikeForm";
 
-const ShowFormsForPrint = () => {
-  const [isSearchModalForPrintOpen, setIsSearchModalForPrintOpen] = useState(false);
+const ShowFormsForForm = () => {
+  const [isSearchModalForFormOpen, setIsSearchModalForFormOpen] = useState(false);
   const [searchResults, setSearchResults] = useState(null);
 
   const handleSearch = (formData) => {
@@ -18,24 +18,24 @@ const ShowFormsForPrint = () => {
   };
 
   return (
-      <div className="max-w-6xl mx-auto bg-white rounded-2xl shadow-2xl p-8 transition-all duration-300 hover:shadow-3xl">
-        <div className="flex flex-col gap-4 md:flex-row md:justify-end mb-8" >
-          <button
-            className="group bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 
-                      text-white px-4 py-2 rounded-xl shadow-lg hover:shadow-xl transition-all
-                      flex items-center gap-3 transform hover:scale-105"
-            onClick={() => setIsSearchModalForPrintOpen(true)}
-          >
-            <MagnifyingGlassIcon className="h-6 w-6 text-white/90 group-hover:text-white" />
-            <span className="text-md font-semibold">البحث عن استمارة لطباعتها</span>
-          </button>
-        </div>
-
-        <SearchModalForPrint
-          isOpen={isSearchModalForPrintOpen}
-          onClose={() => setIsSearchModalForPrintOpen(false)}
-          onSearch={handleSearch}
-        />
+        <div className="max-w-6xl mx-auto bg-white rounded-2xl shadow-2xl p-8 transition-all duration-300 hover:shadow-3xl">
+            <div className="flex flex-col gap-4 md:flex-row md:justify-start mb-8" >
+                <button
+                    className="group bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 
+                            text-white px-4 py-2 rounded-xl shadow-lg hover:shadow-xl transition-all
+                            flex items-center gap-3 transform hover:scale-105"
+                    onClick={() => setIsSearchModalForFormOpen(true)}
+                >
+                    <MagnifyingGlassIcon className="h-6 w-6 text-white/90 group-hover:text-white" />
+                    <span className="text-md font-semibold">إنشاء استمارة جديدة</span>
+                </button> 
+            </div>
+                
+            <SearchModalForForm
+                isOpen={isSearchModalForFormOpen}
+                onClose={() => setIsSearchModalForFormOpen(false)}
+                onSearch={handleSearch}
+                />
 
         {searchResults && (
           <div className="space-y-8" dir="rtl">
@@ -134,13 +134,13 @@ const ShowFormsForPrint = () => {
           </div>
         )}
 
-        <div className="mt-8" dir="rtl">
-          {searchResults?.vehicleType === "سيارة" && <CarForm searchResults={searchResults} />}
-          {searchResults?.vehicleType === "شاحنة" && <TruckForm searchResults={searchResults} />}
-          {searchResults?.vehicleType === "دراجة" && <BikeForm searchResults={searchResults} />}
+            <div className="mt-8" dir="rtl">
+            {searchResults?.vehicleType === "سيارة" && <CarForm searchResults={searchResults} />}
+            {searchResults?.vehicleType === "شاحنة" && <TruckForm searchResults={searchResults} />}
+            {searchResults?.vehicleType === "دراجة" && <BikeForm searchResults={searchResults} />}
+            </div>
         </div>
-      </div>
   );
 };
 
-export default ShowFormsForPrint;
+export default ShowFormsForForm;

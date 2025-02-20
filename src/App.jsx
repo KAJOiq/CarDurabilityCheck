@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
-import Form from "./components/ShowFormsForPrint";
 import Header from "./components/Header";
 import ViewData from "./components/ViewData";
 import CertificatesPage from "./components/CertificatesPage";
@@ -16,7 +15,10 @@ import AddVehiclePopup from "./components/AddVehiclePopup";
 import AddColorPopup from "./components/AddColorPopup";
 import AddAgencyPopup from "./components/AddAgencyPopup";
 import AddLocationPopup from "./components/AddLocationPopup";
+import ShowFormsForForm from "./components/ShowFormsForForm";
+import ShowFormsForPrint from "./components/ShowFormsForPrint";
 import "./index.css";
+import ShowForms from "./components/ShowForms";
 
 const App = () => {
   const [userName, setUserName] = useState(localStorage.getItem("userName") || "");
@@ -40,7 +42,7 @@ const App = () => {
       case "superadmin":
         return (
           <Routes>
-            <Route path="/entry" element={<Form formType="entry" />} />
+            <Route path="/forms" element={<ShowForms/>}/>
             <Route path="/view-data" element={<ViewData />} />
             <Route path="/certificates" element={<CertificatesPage />} />
             <Route path="/users" element={<ShowUsers />} />
@@ -60,7 +62,7 @@ const App = () => {
       case "admin":
         return (
           <Routes>
-            <Route path="/entry" element={<Form formType="entry" />} />
+            <Route path="/forms" element={<ShowForms/>}/>
             <Route path="/view-data" element={<ViewData />} />
             <Route path="/certificates" element={<CertificatesPage />} />
             <Route path="/users" element={<ShowUsers />} />
@@ -80,10 +82,10 @@ const App = () => {
       case "user":
         return (
           <Routes>
-            <Route path="/entry" element={<Form formType="entry" />} />
+            <Route path="/forms" element={<ShowForms/>}/>
             <Route path="/create-form" element={<CreateForm />} />
             <Route path="/change-password" element={<ChangePassword />} /> 
-            <Route path="*" element={<Navigate to="/entry" />} />
+            <Route path="*" element={<Navigate to="/forms" />} />
           </Routes>
         );
       case "reporter":
