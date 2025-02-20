@@ -15,8 +15,6 @@ import AddVehiclePopup from "./components/AddVehiclePopup";
 import AddColorPopup from "./components/AddColorPopup";
 import AddAgencyPopup from "./components/AddAgencyPopup";
 import AddLocationPopup from "./components/AddLocationPopup";
-import ShowFormsForForm from "./components/ShowFormsForForm";
-import ShowFormsForPrint from "./components/ShowFormsForPrint";
 import "./index.css";
 import ShowForms from "./components/ShowForms";
 
