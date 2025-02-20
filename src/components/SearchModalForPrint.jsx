@@ -23,9 +23,9 @@ const SearchModalForPrint = ({ isOpen, onClose, onSearch }) => {
       param: "applicationId"
     },
     citizen: {
-      label: "بحث بإسم المواطن",
-      placeholder: "أدخل اسم المواطن",
-      param: "carOwnerName"
+      label: "بحث برقم الوصل",
+      placeholder: "أدخل رقم الوصل",
+      param: "ReceiptId"
     }
   };
 
