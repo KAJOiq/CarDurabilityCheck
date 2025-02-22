@@ -157,8 +157,8 @@ const ShowForms = () => {
       )}
 
       <div className="mt-8" dir="rtl">
-        {searchResults?.vehicleType === "سيارة" && <CarForm searchResults={searchResults} />}
-        {searchResults?.vehicleType === "شاحنة" && <TruckForm searchResults={searchResults} />}
+        {searchResults?.vehicleType === "1" && <CarForm searchResults={searchResults} />}
+        {searchResults?.vehicleType === "2" && <TruckForm searchResults={searchResults} />}
         {searchResults?.vehicleType === "دراجة" && <BikeForm searchResults={searchResults} />}
       </div>
     </div>
