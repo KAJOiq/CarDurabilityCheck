@@ -1,7 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
-import getCroppedImg from "../utils/cropImage";
 
 const CameraComponent = ({ setPhoto }) => {
   const videoRef = useRef(null);
@@ -11,15 +10,46 @@ const CameraComponent = ({ setPhoto }) => {
   const [cameraEnabled, setCameraEnabled] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [imageSrc, setImageSrc] = useState(null);
-  const [focusDistance, setFocusDistance] = useState(100); // Default to 100% focus
+  const [focusDistance, setFocusDistance] = useState(100);
   const [focusSupported, setFocusSupported] = useState(false);
   const [brightness, setBrightness] = useState(100);
   const [brightnessSupported, setBrightnessSupported] = useState(false);
-  const [focusRange, setFocusRange] = useState({ min: 0, max: 100 }); // Default range
+  const [focusRange, setFocusRange] = useState({ min: 0, max: 100 });
   const [manualFocusEnabled, setManualFocusEnabled] = useState(false);
   const [manualBrightnessEnabled, setManualBrightnessEnabled] = useState(false);
 
-  // Start the camera to display the live feed
+  const dataURLtoFile = (dataURL, filename) => {
+    if (!dataURL || typeof dataURL !== 'string') {
+      throw new Error('Invalid dataURL');
+    }
+
+    const arr = dataURL.split(',');
+    if (arr.length < 2 || !arr[0].startsWith('data:image')) {
+      throw new Error('Invalid dataURL format');
+    }
+
+    const mime = arr[0].match(/:(.*?);/)[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new File([u8arr], filename, { type: mime });
+  };
+
+  const getCroppedImg = (imageSrc, cropper) => {
+    return new Promise((resolve) => {
+      const canvas = cropper.getCroppedCanvas();
+      if (canvas) {
+        const dataURL = canvas.toDataURL('image/png');
+        resolve(dataURL);
+      } else {
+        resolve(null);
+      }
+    });
+  };
+
   const startCamera = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -31,11 +61,9 @@ const CameraComponent = ({ setPhoto }) => {
         const track = stream.getVideoTracks()[0];
         const capabilities = track.getCapabilities();
 
-        // Check if focus is supported
         if (capabilities.focusDistance) {
           setFocusSupported(true);
           setFocusRange({ min: capabilities.focusDistance.min, max: capabilities.focusDistance.max });
-          // Set initial focus to auto
           track
             .applyConstraints({
               advanced: [{ focusMode: "continuous" }],
@@ -48,10 +76,8 @@ const CameraComponent = ({ setPhoto }) => {
             });
         }
 
-        // Check if brightness is supported
         if (capabilities.brightness) {
           setBrightnessSupported(true);
-          // Set initial brightness to the middle of the supported range
           const initialBrightness = (capabilities.brightness.min + capabilities.brightness.max) / 2;
           setBrightness(initialBrightness);
           track
@@ -73,7 +99,6 @@ const CameraComponent = ({ setPhoto }) => {
     }
   };
 
-  // Stop the camera
   const stopCamera = () => {
     if (mediaStreamRef.current) {
       mediaStreamRef.current.getTracks().forEach((track) => track.stop());
@@ -81,7 +106,6 @@ const CameraComponent = ({ setPhoto }) => {
     }
   };
 
-  // Adjust camera focus
   const adjustFocus = (percentage) => {
     const stream = mediaStreamRef.current;
     if (stream) {
@@ -110,7 +134,6 @@ const CameraComponent = ({ setPhoto }) => {
     }
   };
 
-  // Adjust camera brightness
   const adjustBrightness = (value) => {
     const stream = mediaStreamRef.current;
     if (stream) {
@@ -129,7 +152,6 @@ const CameraComponent = ({ setPhoto }) => {
     }
   };
 
-  // Capture image and save it to localStorage
   const captureImage = () => {
     const canvas = canvasRef.current;
     const video = videoRef.current;
@@ -145,29 +167,35 @@ const CameraComponent = ({ setPhoto }) => {
       const imageUrl = canvas.toDataURL("image/png");
       setImageSrc(imageUrl);
       setIsEditing(true);
-
-      // Save the full image to localStorage
-      const savedImages = JSON.parse(localStorage.getItem("fullImages")) || [];
-      savedImages.push(imageUrl);
-      localStorage.setItem("fullImages", JSON.stringify(savedImages));
-
-      console.log("Image saved to localStorage");
     }
   };
 
-  // Save the cropped photo
   const saveCroppedPhoto = async () => {
-    const cropper = cropperRef.current.cropper;
-    const croppedImage = await getCroppedImg(imageSrc, cropper);
-    setPhoto(croppedImage);
-    setIsEditing(false);
+    try {
+      const cropper = cropperRef.current.cropper;
+      const croppedImageDataURL = await getCroppedImg(imageSrc, cropper);
 
-    // Save cropped image to localStorage
-    const savedCroppedImages = JSON.parse(localStorage.getItem("croppedImages")) || [];
-    savedCroppedImages.push(croppedImage);
-    localStorage.setItem("croppedImages", JSON.stringify(savedCroppedImages));
+      if (!croppedImageDataURL) {
+        throw new Error('Failed to crop image');
+      }
 
-    console.log("Cropped image saved to localStorage");
+      if (!croppedImageDataURL.startsWith('data:image')) {
+        throw new Error('Invalid dataURL format');
+      }
+
+      const croppedImageFile = dataURLtoFile(croppedImageDataURL, 'croppedImage.png');
+      const fullImageFile = dataURLtoFile(imageSrc, 'fullImage.png');
+
+      setPhoto({
+        fullImage: fullImageFile,
+        croppedImage: croppedImageFile,
+      });
+
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Error saving cropped photo:', error);
+      alert('فشل في حفظ الصورة المقصوصة: ' + error.message);
+    }
   };
 
   useEffect(() => {
@@ -217,26 +245,26 @@ const CameraComponent = ({ setPhoto }) => {
   }, [manualBrightnessEnabled]);
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center p-4 bg-gray-50 rounded-lg shadow-md">
       <video
         ref={videoRef}
         autoPlay
         playsInline
-        className="border rounded w-full h-80 mt-4"
+        className="border-2 border-gray-300 rounded-lg w-full max-w-md h-64 object-cover"
       ></video>
 
       <canvas ref={canvasRef} style={{ display: "none" }}></canvas>
 
       {focusSupported && (
-        <div className="flex flex-col items-center mt-4">
-          <label className="mb-2">
+        <div className="w-full max-w-md mt-4">
+          <label className="flex items-center justify-between mb-2">
+            <span className="text-sm font-medium text-gray-700">التركيز اليدوي</span>
             <input
               type="checkbox"
               checked={manualFocusEnabled}
               onChange={(e) => setManualFocusEnabled(e.target.checked)}
-              className="mr-2"
+              className="form-checkbox h-5 w-5 text-blue-600"
             />
-            Enable Manual Focus
           </label>
           {manualFocusEnabled && (
             <input
@@ -247,22 +275,22 @@ const CameraComponent = ({ setPhoto }) => {
               step={0.1}
               value={focusDistance}
               onChange={(e) => adjustFocus(Number(e.target.value))}
-              className="w-full"
+              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
             />
           )}
         </div>
       )}
 
       {brightnessSupported && (
-        <div className="flex flex-col items-center mt-4">
-          <label className="mb-2">
+        <div className="w-full max-w-md mt-4">
+          <label className="flex items-center justify-between mb-2">
+            <span className="text-sm font-medium text-gray-700">السطوع اليدوي</span>
             <input
               type="checkbox"
               checked={manualBrightnessEnabled}
               onChange={(e) => setManualBrightnessEnabled(e.target.checked)}
-              className="mr-2"
+              className="form-checkbox h-5 w-5 text-blue-600"
             />
-            Enable Manual Brightness
           </label>
           {manualBrightnessEnabled && (
             <input
@@ -273,7 +301,7 @@ const CameraComponent = ({ setPhoto }) => {
               step={1}
               value={brightness}
               onChange={(e) => adjustBrightness(Number(e.target.value))}
-              className="w-full"
+              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
             />
           )}
         </div>
@@ -281,10 +309,10 @@ const CameraComponent = ({ setPhoto }) => {
 
       <button
         type="button"
-        className={`px-6 py-2 rounded mt-4 ${
+        className={`px-6 py-2 rounded-lg mt-4 text-white font-semibold transition-all ${
           cameraEnabled
-            ? "bg-green-500 text-white hover:bg-green-600"
-            : "bg-gray-400 text-gray-700 cursor-not-allowed"
+            ? "bg-green-500 hover:bg-green-600"
+            : "bg-gray-400 cursor-not-allowed"
         }`}
         onClick={captureImage}
         disabled={!cameraEnabled}
@@ -293,11 +321,11 @@ const CameraComponent = ({ setPhoto }) => {
       </button>
 
       {isEditing && (
-        <>
-          <div className="relative w-full h-64 mt-4">
+        <div className="w-full max-w-md mt-4">
+          <div className="relative w-full h-64 bg-gray-200 rounded-lg overflow-hidden">
             <Cropper
               src={imageSrc}
-              style={{ height: "120%", width: "100%" }}
+              style={{ height: "100%", width: "100%" }}
               aspectRatio={NaN}
               guides={false}
               ref={cropperRef}
@@ -306,14 +334,14 @@ const CameraComponent = ({ setPhoto }) => {
           </div>
           <button
             type="button"
-            className="px-6 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 mt-20"
+            className="w-full px-6 py-2 mt-4 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition-all"
             onClick={saveCroppedPhoto}
           >
             حفظ الصورة الملتقطة
           </button>
-        </>
+        </div>
       )}
-  </div>
+    </div>
   );
 };
 

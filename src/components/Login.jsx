@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserIcon, LockClosedIcon, ArrowPathIcon } from "@heroicons/react/24/outline";
 import FetchData from "../utils/fetchData";
@@ -9,6 +9,14 @@ const Login = ({ onLogin }) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const sessionExpiredMessage = localStorage.getItem("sessionExpired");
+    if (sessionExpiredMessage) {
+      setErrorMessage(sessionExpiredMessage);
+      localStorage.removeItem("sessionExpired");
+    }
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
