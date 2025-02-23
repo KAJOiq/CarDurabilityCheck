@@ -83,11 +83,7 @@ const ReviewData = ({ formData }) => {
             </div>
             <div className="flex flex-row-reverse justify-between items-center">
               <span className="font-medium text-gray-600">رقم المركبة</span>
-              <span className="text-gray-800">
-                {formData.PlateNumber && formData.PlateNumber.length === 7
-                  ? formData.PlateNumber
-                  : "رقم اللوحة غير صحيح"}
-              </span>
+              <span className="text-gray-800">{formData.PlateNumber}</span>
             </div>
             <div className="flex flex-row-reverse justify-between items-center">
               <span className="font-medium text-gray-600">الاستخدام</span>
@@ -222,7 +218,7 @@ const CreateForm = () => {
   const [plateNumber, setPlateNumber] = useState(''); // الرقم
 
   const handlePlateNumberChange = () => {
-    if (plateNumber.length === 5 && provinceCode && plateLetter) {
+    if (plateNumber.length === 5) {
       const fullPlateNumber = `${provinceCode}${plateLetter}${plateNumber}`;
       setFormData((prev) => ({
         ...prev,
@@ -656,9 +652,6 @@ const CreateForm = () => {
                       }}
                       maxLength={5} 
                     />
-                    {plateNumber.length < 5 && (
-                      <p className="text-red-500 text-sm mt-1">يجب إدخال 5 أرقام بالضبط.</p>
-                    )}
                   </div>
                 </div>
 
@@ -677,27 +670,118 @@ const CreateForm = () => {
                   onChange={handleChange}
                   required
                 />
-                {formData.VehicleType === "2" && (
-                <div>
-                  <label className="block text-right mb-2 font-medium text-gray-700">تفاصيل المقطورة</label>
-                  <input
-                    type="text"
-                    name="TrailerData"
-                    value={formData.TrailerData[0]?.details || ""}
-                    onChange={(e) => {
-                      const updatedTrailerData = [{ details: e.target.value }];
-                      setFormData(prev => ({
-                        ...prev,
-                        TrailerData: updatedTrailerData
-                      }));
-                    }}
-                    className="w-full p-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="أدخل تفاصيل المقطورة"
-                  />
-                </div>
-    )}
+{formData.VehicleType === "2" && (
+  <div>
+    <label className="block text-right mb-2 font-medium text-gray-700">تفاصيل المقطورات</label>
+    
+    {formData.TrailerData.map((trailer, index) => (
+      <div key={index} className="mb-4 p-2 border rounded-lg">
+        <label className="block text-right text-gray-700">رقم شاصي المقطورة</label>
+        <input
+          type="text"
+          name={`TrailerChassisNumber-${index}`}
+          value={trailer.TrailerChassisNumber || ""}
+          onChange={(e) => {
+            const updatedTrailerData = [...formData.TrailerData];
+            updatedTrailerData[index].TrailerChassisNumber = e.target.value;
+            setFormData(prev => ({
+              ...prev,
+              TrailerData: updatedTrailerData
+            }));
+          }}
+          className="w-full p-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="أدخل رقم شاصي المقطورة"
+        />
+
+        <label className="block text-right text-gray-700 mt-2">عدد المحاور</label>
+        <input
+          type="number"
+          name={`TrailerAxlesNumber-${index}`}
+          value={trailer.TrailerAxlesNumber || ""}
+          onChange={(e) => {
+            const updatedTrailerData = [...formData.TrailerData];
+            updatedTrailerData[index].TrailerAxlesNumber = e.target.value;
+            setFormData(prev => ({
+              ...prev,
+              TrailerData: updatedTrailerData
+            }));
+          }}
+          className="w-full p-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="أدخل عدد المحاور"
+        />
+
+        <label className="block text-right text-gray-700 mt-2">الحمولة</label>
+        <input
+          type="number"
+          name={`LoadWeight-${index}`}
+          value={trailer.LoadWeight || ""}
+          onChange={(e) => {
+            const updatedTrailerData = [...formData.TrailerData];
+            updatedTrailerData[index].LoadWeight = e.target.value;
+            setFormData(prev => ({
+              ...prev,
+              TrailerData: updatedTrailerData
+            }));
+          }}
+          className="w-full p-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="ادخل وزن الحمولة"
+        />
+
+        <label className="block text-right text-gray-700 mt-2">الفئة</label>
+        <input
+          type="text"
+          name={`Category-${index}`}
+          value={trailer.Category || ""}
+          onChange={(e) => {
+            const updatedTrailerData = [...formData.TrailerData];
+            updatedTrailerData[index].Category = e.target.value;
+            setFormData(prev => ({
+              ...prev,
+              TrailerData: updatedTrailerData
+            }));
+          }}
+          className="w-full p-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="أدخل فئة المقطورة"
+        />
+
+        <button
+          onClick={() => {
+            const updatedTrailerData = formData.TrailerData.filter((_, i) => i !== index);
+            setFormData(prev => ({
+              ...prev,
+              TrailerData: updatedTrailerData
+            }));
+          }}
+          className="mt-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+        >
+          حذف المقطورة
+        </button>
+      </div>
+    ))}
+
+    <button
+      onClick={() => {
+        const newTrailer = {
+          TrailerChassisNumber: "",
+          TrailerAxlesNumber: "",
+          LoadWeight: "",
+          Category: ""
+        };
+        setFormData(prev => ({
+          ...prev,
+          TrailerData: [...prev.TrailerData, newTrailer]
+        }));
+      }}
+      className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+    >
+      إضافة مقطورة جديدة
+    </button>
+  </div>
+)}
+
               </div>
             )}
+
       {currentStep === 3 && (
         <div className="space-y-4">
           <div className="bg-gray-100 p-4 rounded-lg">
