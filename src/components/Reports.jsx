@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PrintingReports from './PrintingReports';
 import fetchData from '../utils/fetchData';
-import Select from 'react-select';
+import Select from 'react-select'; 
 import { 
   ClipboardDocumentIcon,
   ClipboardDocumentCheckIcon,
@@ -9,11 +9,9 @@ import {
   CalendarIcon,
   MapPinIcon,
   DocumentTextIcon,
-  CogIcon,
-  PrinterIcon
+  CogIcon
 } from '@heroicons/react/24/outline';
 
-// Mock data for vehicle and engine types
 const mockData = {
   الكل: { الكل: 0 },
   سيارة: { وقود: 0, هجين: 0, كهربائي: 0 },
@@ -21,33 +19,31 @@ const mockData = {
   دراجة: { وقود: 0, هجين: 0, كهربائي: 0 },
 };
 
-// Status items configuration
 const statusItemsConfig = [
   {
     id: 1,
     title: 'عدد الاستمارات الحكومية',
     value: 0,
     icon: BuildingOffice2Icon,
-    color: 'bg-gradient-to-r from-orange-400 to-orange-500',
+    color: 'bg-orange-100 text-orange-600',
   },
   {
     id: 2,
     title: 'عدد شهادات الفحص',
     value: 0,
     icon: ClipboardDocumentCheckIcon,
-    color: 'bg-gradient-to-r from-green-400 to-green-500',
+    color: 'bg-green-100 text-green-600',
   },
   {
     id: 3,
     title: 'مجموع عدد الاستمارات',
     value: 0,
     icon: ClipboardDocumentIcon,
-    color: 'bg-gradient-to-r from-blue-400 to-blue-500',
+    color: 'bg-yellow-100 text-yellow-600',
   },
 ];
 
 const ReportStatus = () => {
-  // State variables
   const [formType, setFormType] = useState('الكل');
   const [engineType, setEngineType] = useState('الكل');
   const [startDate, setStartDate] = useState('');
@@ -55,7 +51,7 @@ const ReportStatus = () => {
   const [selectedAgency, setSelectedAgency] = useState(null);
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [agencies, setAgencies] = useState([]);
-  const [locations, setLocations] = useState([]);
+  const [locations, setLocations] = useState([]); 
   const [filteredStatusItems, setFilteredStatusItems] = useState(statusItemsConfig);
 
   useEffect(() => {
@@ -101,7 +97,7 @@ const ReportStatus = () => {
 
       fetchLocations();
     } else {
-      setLocations([]);
+      setLocations([]); 
     }
   }, [selectedAgency]);
 
@@ -233,7 +229,7 @@ const ReportStatus = () => {
                 onChange={(selectedOption) => setSelectedLocation(selectedOption)}
                 placeholder="اختر الموقع"
                 className="w-full"
-                isDisabled={!selectedAgency}
+                isDisabled={!selectedAgency} 
               />
             </div>
 
