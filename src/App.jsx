@@ -42,13 +42,13 @@ const App = () => {
         return (
           <Routes>
             <Route path="/forms" element={<ShowForms/>}/>
-            <Route path="/view-data" element={<ViewData />} />
+            {/* <Route path="/view-data" element={<ViewData />} /> */}
             <Route path="/certificates" element={<CertificatesPage />} />
             <Route path="/users" element={<ShowUsers />} />
             <Route path="/add-user" element={<AddUsers />} />
             <Route path="/delete-user" element={<DeleteUsers />} />
             <Route path="/reports" element={<ReportStatus />} />
-            <Route path="/create-form" element={<CreateForm />} />
+            {/* <Route path="/create-form" element={<CreateForm />} /> */}
             <Route path="/change-password" element={<ChangePassword />} /> 
             <Route path="/dropdown-list" element={<DropDownListPage />} />
             {/* <Route path="/add-vehicle" element={<AddVehiclePopup/>} /> */}
