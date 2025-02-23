@@ -23,7 +23,7 @@ const SearchModalForForm = ({ isOpen, onClose, onSearch }) => {
       const data = await fetchData(url);
       
       if (data.isSuccess) {
-        onSearch(data.results);
+        navigate("/create-form-version", { state: { vehicleData: data.results } });
         onClose();
       } else {
         setError(data.errors?.[0]?.message || "المركبة غير مخزونة في النظام");

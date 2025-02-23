@@ -17,6 +17,7 @@ import AddAgencyPopup from "./components/AddAgencyPopup";
 import AddLocationPopup from "./components/AddLocationPopup";
 import "./index.css";
 import ShowForms from "./components/ShowForms";
+import CreateFormVersion from "./components/CreateFormVersion";
 
 const App = () => {
   const [userName, setUserName] = useState(localStorage.getItem("userName") || "");
@@ -82,6 +83,7 @@ const App = () => {
           <Routes>
             <Route path="/forms" element={<ShowForms/>}/>
             <Route path="/create-form" element={<CreateForm />} />
+            <Route path="/create-form-version" element={<CreateFormVersion />} />
             <Route path="/change-password" element={<ChangePassword />} /> 
             <Route path="*" element={<Navigate to="/forms" />} />
           </Routes>
