@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PrintingReports from './PrintingReports';
 import fetchData from '../utils/fetchData';
+import Select from 'react-select';
 import { 
   ClipboardDocumentIcon,
   ClipboardDocumentCheckIcon,
@@ -8,7 +9,8 @@ import {
   CalendarIcon,
   MapPinIcon,
   DocumentTextIcon,
-  CogIcon
+  CogIcon,
+  PrinterIcon
 } from '@heroicons/react/24/outline';
 
 // Mock data for vehicle and engine types
@@ -19,13 +21,6 @@ const mockData = {
   دراجة: { وقود: 0, هجين: 0, كهربائي: 0 },
 };
 
-// Location mapping (LocationId to Location Name)
-const locationMapping = {
-  1: 'BGD1',
-  2: 'BGD2',
-  3: 'BGD3',
-};
-
 // Status items configuration
 const statusItemsConfig = [
   {
@@ -33,21 +28,21 @@ const statusItemsConfig = [
     title: 'عدد الاستمارات الحكومية',
     value: 0,
     icon: BuildingOffice2Icon,
-    color: 'bg-orange-100 text-orange-600',
+    color: 'bg-gradient-to-r from-orange-400 to-orange-500',
   },
   {
     id: 2,
     title: 'عدد شهادات الفحص',
     value: 0,
     icon: ClipboardDocumentCheckIcon,
-    color: 'bg-green-100 text-green-600',
+    color: 'bg-gradient-to-r from-green-400 to-green-500',
   },
   {
     id: 3,
     title: 'مجموع عدد الاستمارات',
     value: 0,
     icon: ClipboardDocumentIcon,
-    color: 'bg-yellow-100 text-yellow-600',
+    color: 'bg-gradient-to-r from-blue-400 to-blue-500',
   },
 ];
 
@@ -57,22 +52,76 @@ const ReportStatus = () => {
   const [engineType, setEngineType] = useState('الكل');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [locationId, setLocationId] = useState(1);
+  const [selectedAgency, setSelectedAgency] = useState(null);
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [agencies, setAgencies] = useState([]);
+  const [locations, setLocations] = useState([]);
   const [filteredStatusItems, setFilteredStatusItems] = useState(statusItemsConfig);
+
+  // جلب قائمة المديريات
+  useEffect(() => {
+    const fetchAgencies = async () => {
+      try {
+        const response = await fetchData("lookup/find-traffic-agencies?page=0&pageSize=5000", {
+          method: "GET",
+        });
+
+        if (response.isSuccess) {
+          setAgencies(response.results.result);
+        } else {
+          console.error("فشل في جلب المديريات");
+        }
+      } catch (error) {
+        console.error("حدث خطأ أثناء جلب المديريات:", error);
+      }
+    };
+
+    fetchAgencies();
+  }, []);
+
+  // جلب قائمة المواقع عند اختيار مديرية
+  useEffect(() => {
+    if (selectedAgency) {
+      const fetchLocations = async () => {
+        try {
+          const response = await fetchData(
+            `lookup/find-traffic-locations?agensyId=${selectedAgency.value}&page=0&pageSize=5000`,
+            {
+              method: "GET",
+            }
+          );
+
+          if (response.isSuccess) {
+            setLocations(response.results.result);
+          } else {
+            console.error("فشل في جلب المواقع");
+          }
+        } catch (error) {
+          console.error("حدث خطأ أثناء جلب المواقع:", error);
+        }
+      };
+
+      fetchLocations();
+    } else {
+      setLocations([]);
+    }
+  }, [selectedAgency]);
 
   // Fetch data when filters change
   useEffect(() => {
     handleApplyFilter();
-  }, [formType, engineType, startDate, endDate, locationId]);
+  }, [formType, engineType, startDate, endDate, selectedAgency, selectedLocation]);
 
   // Apply filters and fetch data from the API
   const handleApplyFilter = async () => {
     try {
       const vehicleType = formType === 'الكل' ? '' : formType;
       const motorType = engineType === 'الكل' ? '' : engineType;
+      const agencyId = selectedAgency?.value || '';
+      const locationId = selectedLocation?.value || '';
 
       const response = await fetchData(
-        `Reporter/applications-reporter?VehicleType=${vehicleType}&EngineType=${motorType}&LocationId=${locationId}&StartDate=${startDate}&EndDate=${endDate}`,
+        `Reporter/applications-reporter?VehicleType=${vehicleType}&EngineType=${motorType}&AgencyId=${agencyId}&LocationId=${locationId}&StartDate=${startDate}&EndDate=${endDate}`,
         {
           method: 'GET',
           headers: { 'accept': '*/*' },
@@ -106,7 +155,8 @@ const ReportStatus = () => {
       value: item.value,
       formType: formType,
       engineType: engineType,
-      location: locationMapping[locationId] || '--',
+      agency: selectedAgency?.label || '--',
+      location: selectedLocation?.label || '--',
       dateRange: `${startDate || '--'} إلى ${endDate || '--'}`,
     }));
   };
@@ -116,12 +166,11 @@ const ReportStatus = () => {
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8">
         {/* Filter Section */}
         <div className="w-full lg:w-80 bg-white p-6 rounded-2xl shadow-xl border border-gray-100/50 backdrop-blur-sm">
-        <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2 text-right">
+          <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2 text-right">
             <DocumentTextIcon className="w-6 h-6 text-blue-600" />
             فلاتر البحث
-        </h2>
+          </h2>
 
-          
           <div className="space-y-6">
             {/* Vehicle Type Filter */}
             <div className="space-y-2">
@@ -161,23 +210,33 @@ const ReportStatus = () => {
               </div>
             </div>
 
+            {/* Agency Filter */}
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700">المديرية</label>
+              <Select
+                options={agencies.map((agency) => ({
+                  value: agency.id,
+                  label: agency.name,
+                }))}
+                onChange={(selectedOption) => setSelectedAgency(selectedOption)}
+                placeholder="اختر المديرية"
+                className="w-full"
+              />
+            </div>
+
             {/* Location Filter */}
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700">الموقع</label>
-              <div className="relative">
-                <select
-                  className="w-full pl-4 pr-10 py-3 border-2 border-gray-200 rounded-xl 
-                    focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all
-                    text-right appearance-none bg-white"
-                  value={locationId}
-                  onChange={(e) => setLocationId(Number(e.target.value))}
-                >
-                  {Object.entries(locationMapping).map(([id, name]) => (
-                    <option key={id} value={id}>{name}</option>
-                  ))}
-                </select>
-                <MapPinIcon className="w-5 h-5 text-gray-400 absolute left-3 top-3.5 pointer-events-none" />
-              </div>
+              <Select
+                options={locations.map((location) => ({
+                  value: location.id,
+                  label: location.name,
+                }))}
+                onChange={(selectedOption) => setSelectedLocation(selectedOption)}
+                placeholder="اختر الموقع"
+                className="w-full"
+                isDisabled={!selectedAgency}
+              />
             </div>
 
             {/* Date Range Filter */}
