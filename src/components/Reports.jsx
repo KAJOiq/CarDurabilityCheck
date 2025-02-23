@@ -58,7 +58,6 @@ const ReportStatus = () => {
   const [locations, setLocations] = useState([]);
   const [filteredStatusItems, setFilteredStatusItems] = useState(statusItemsConfig);
 
-  // جلب قائمة المديريات
   useEffect(() => {
     const fetchAgencies = async () => {
       try {
@@ -79,7 +78,6 @@ const ReportStatus = () => {
     fetchAgencies();
   }, []);
 
-  // جلب قائمة المواقع عند اختيار مديرية
   useEffect(() => {
     if (selectedAgency) {
       const fetchLocations = async () => {
