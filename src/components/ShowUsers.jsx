@@ -177,6 +177,7 @@ const ShowUsers = () => {
               <option value="reporter">reporter</option>
               <option value="checker">checker</option>
               <option value="supervisor">supervisor</option>
+              <option value="superadmin">superadmin</option>
             </select>
           </div>
         </div>
@@ -259,7 +260,7 @@ const ShowUsers = () => {
         </nav>
       </div>
 
-      {showAddUser && <AddUsers setShowAddUser={setShowAddUser} setUsers={handleAddUser} />}
+      {showAddUser && <AddUsers setShowAddUser={setShowAddUser} setUsers={handleAddUser} refreshUsers={refreshUsers}/>}
       {showUpdateUser && <UpdateUsers userId={userIdToUpdate} closeModal={() => setShowUpdateUser(false)} refreshUsers={refreshUsers} />}
     </div>
   );
