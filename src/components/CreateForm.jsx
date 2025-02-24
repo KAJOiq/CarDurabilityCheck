@@ -438,8 +438,8 @@ const CreateForm = () => {
                     required
                   >
                     <option value="">اختر النوع</option>
-                    <option value="1">سيارة</option>
-                    <option value="2">شاحنة</option>
+                    <option value="سيارة">سيارة</option>
+                    <option value="شاحنة">شاحنة</option>
                     <option value="دراجة">دراجة</option>
                   </select>
                 </div>
