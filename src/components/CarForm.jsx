@@ -98,9 +98,9 @@ const CarForm = ({ searchResults }) => {
               <span>تاريخ الاصدار</span>
             </div>
             <div class="flex flex-col text-black-800 font-bold text-right">
-              <span>: ${searchResults.applicationId}-${searchResults.applicationId}</span>
+              <span>: ${searchResults.location}-${searchResults.applicationId}</span>
               <span>: ${searchResults.receiptId}</span>
-              <span>: ${searchResults.receiptId}</span>
+              <span>: ${searchResults.agency}</span>
               <span>: ${formatDate(searchResults.issueDate)}</span>
             </div>
           </div>
@@ -108,8 +108,8 @@ const CarForm = ({ searchResults }) => {
       </div>
 
       <!-- Vehicle Data Section -->
-      <div class="border border-black rounded-lg p-1 mt-2">
-        <h3 class="bg-gray-200 text-center font-bold py-1">بيانات المركبة</h3>
+      <div class="border border-black rounded-lg p-1 mt-1">
+        <h3 class="bg-gray-200 text-center font-bold py-0.5">بيانات المركبة</h3>
         <div class="grid grid-cols-2 gap-2 text-md">
           ${[
             ["اسم المالك", searchResults.carOwnerName],
@@ -121,6 +121,7 @@ const CarForm = ({ searchResults }) => {
             ["الموديل", searchResults.carModel],
             ["نوع المحرك", searchResults.engineType],
             ["عدد السلندر", searchResults.engineCylindersNumber],
+            ["عدد المحاور", searchResults.vehicleAxlesNumber],
             ["عدد الركاب", searchResults.seatsNumber],
           ]
             .map(
@@ -153,18 +154,17 @@ const CarForm = ({ searchResults }) => {
               : "صورة المركبة"}
           </div>
          
-          </div>
- <div class="border border-black  rounded-lg p-2 min-h-40" >
-      <span class="font-bold text-md text-center w-1/3">الفاحص : 
-      </span> 
         </div>
         <div class="border border-black  rounded-lg p-2 min-h-40" >
-       <span class="font-bold text-md text-center w-1/3">الفاحص :</span> 
+          <span class="font-bold text-md text-center w-1/3">الفاحص : 
+          </span> 
+        </div>
+        <div class="border border-black  rounded-lg p-2 min-h-40" >
+          <span class="font-bold text-md text-center w-1/3">الفاحص :
+        </span> 
         </div>
         </div>
         
-     
-
         </div>
         
     </body>
