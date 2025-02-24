@@ -9,16 +9,30 @@ const CarForm = ({ searchResults }) => {
     if (!searchResults) return;
 
     const qrData = JSON.stringify({
-      carOwnerName: searchResults.carOwnerName,
-      carBrand: searchResults.carBrand,
-      carName: searchResults.carName,
-      carColor: searchResults.carColor,
-      plateNumber: searchResults.plateNumber,
-      chassisNumber: searchResults.chassisNumber,
-      carModel: searchResults.carModel,
-      engineType: searchResults.engineType,
-      engineCylindersNumber: searchResults.engineCylindersNumber,
-      seatsNumber: searchResults.seatsNumber,
+      ADDID: searchResults.applicationId, 
+      ISSD: searchResults.issueDate, 
+      TFPN: searchResults.trafficPoliceApplicationId,
+      RID: searchResults.receiptId, 
+      CON: searchResults.carOwnerName, 
+      IG: searchResults.governmental, 
+      CN: searchResults.chassisNumber, 
+      PN: searchResults.plateNumber, 
+      CYC: searchResults.engineCylindersNumber, 
+      VAXN: searchResults.vehicleAxlesNumber,
+      COM: searchResults.carModel,  
+      SEAN: searchResults.seatsNumber,
+      VN: searchResults.carName,
+      VC: searchResults.carColor,
+      VB: searchResults.carBrand,
+      VT: searchResults.vehicleType, 
+      USE: searchResults.usage,
+      AGN: searchResults.agency, 
+      LN: searchResults.location,
+      VID: searchResults.vehicleID,
+      ENT: searchResults.engineType, 
+      IIC: searchResults.isInspectionCertified,
+      SN: searchResults.stickerNumber,
+      SP: searchResults.stickerProvider,
     });
 
     QRCode.toDataURL(qrData)
@@ -129,9 +143,9 @@ const CarForm = ({ searchResults }) => {
           </div>
          <div class="border border-white grid grid-rows-2 rounded-lg p-2" >
           <div class="w-full max-w-100 h-auto p-0" dir="rtl" >
-            ${searchResults.cropedCarImagePath
-              ? `<img src="http://localhost:5273${searchResults.cropedCarImagePath}" class="object-contain w-full h-full rounded-md p-0.5 border border-black" />`
-              : "صورة المركبة"}
+            ${searchResults.cropedChassisImagePath
+              ? `<img src="http://localhost:5273${searchResults.cropedChassisImagePath}" class="object-contain w-full h-full rounded-md p-0.5 border border-black" />`
+              : "صورة الشاصي"}
              </div>  
              <div class="w-full max-w-100 h-auto p-0 dir="rtl"">
             ${searchResults.cropedCarImagePath

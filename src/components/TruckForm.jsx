@@ -10,28 +10,30 @@ const TruckForm = ({ searchResults }) => {
     useEffect(() => {
       if (!searchResults ) return;
       const qrData = JSON.stringify({
-        "رقم استمارة الفحص": searchResults.applicationId,
-              "رقم استمارة المرور": searchResults.trafficPoliceApplicationId,
-              "رقم وصل القبض": searchResults.receiptId,
-              "اسم المواطن": searchResults.carOwnerName,
-              "نوع الاستمارة": searchResults.vehicleType,
-              "الاستخدام": searchResults.usage,
-              "نوع المركبة": searchResults.carBrand,
-              "طراز المركبة": searchResults.carName,
-              "لون المركبة": searchResults.carColor,
-              "الموديل": searchResults.carModel,
-              "رقم اللوحة": searchResults.plateNumber,
-              "رقم الشاصي": searchResults.chassisNumber,
-              "نوع المحرك": searchResults.engineType,
-              "عدد السلندر": searchResults.engineCylindersNumber,
-              "عدد المحاور": searchResults.vehicleAxlesNumber,
-              "عدد الركاب": searchResults.seatsNumber,
-              "الحمولة": searchResults.loadWeight,
-              "حكومي ؟": searchResults.governmental,
-              "فئة المركبة": searchResults.category,
-              "تاريخ الإصدار": searchResults.issueDate,
-              "المديرية": searchResults.agency,
-              "الموقع": searchResults.location,
+        ADDID: searchResults.applicationId, 
+        ISSD: searchResults.issueDate, 
+        TFPN: searchResults.trafficPoliceApplicationId,
+        RID: searchResults.receiptId, 
+        CON: searchResults.carOwnerName, 
+        IG: searchResults.governmental, 
+        CN: searchResults.chassisNumber, 
+        PN: searchResults.plateNumber, 
+        CYC: searchResults.engineCylindersNumber, 
+        VAXN: searchResults.vehicleAxlesNumber,
+        COM: searchResults.carModel,  
+        SEAN: searchResults.seatsNumber,
+        VN: searchResults.carName,
+        VC: searchResults.carColor,
+        VB: searchResults.carBrand,
+        VT: searchResults.vehicleType, 
+        USE: searchResults.usage,
+        AGN: searchResults.agency, 
+        LN: searchResults.location,
+        VID: searchResults.vehicleID,
+        ENT: searchResults.engineType, 
+        IIC: searchResults.isInspectionCertified,
+        SN: searchResults.stickerNumber,
+        SP: searchResults.stickerProvider,
       });
   
       QRCode.toDataURL(qrData)
@@ -160,35 +162,26 @@ const TruckForm = ({ searchResults }) => {
         ["رقم المركبة", searchResults.plateNumber],
         ["رقم الشاصي", searchResults.chassisNumber],
 
-        /* [
-          `<div class="flex justify-between w-full py-0.5 border border-black">
-            <span class="font-extrabold text-sm text-center w-1/4 border border-black">رقم المركبة</span>
-            <span class="font-semibold text-sm w-2/4 px-1 border border-black">${formData.plateNumber || "---"}</span>
-            <span class="font-extrabold text-center text-sm w-1/4 border border-black">رقم الشاصي</span>
-            <span class="font-semibold text-sm w-2/4 px-1 border border-black">${formData.chassisNumber || "---"}</span>
-          </div>`,
-          null,
-        ],
- */
-        [
+         // بيانات الملحق الأول
+         [
           `<div class="border-black">
             <h3 class="bg-gray-200 text-center font-semibold text-sm">بيانات الملحق الأول</h3>
             ${[
               [
                 `<div class="flex justify-between w-full py-0.5 border-black">
                   <span class="font-bold text-center text-md w-1/3">نوع الحمل</span>
-                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.category || "---"}</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.trailers[0]?.category || "---"}</span>
                   <span class="font-bold text-center text-md w-1/3">شاصي الحمل</span>
-                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.chassisNumbertrailer || "---"}</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.trailers[0]?.chassisNumber || "---"}</span>
                 </div>`,
                 null,
               ],
               [
                 `<div class="flex justify-between w-full border-black">
                   <span class="font-bold text-center text-md w-1/3">عدد المحاور</span>
-                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.numberOfAxes || "---"}</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.trailers[0]?.axelsNumber || "---"}</span>
                   <span class="font-bold text-center text-md w-1/3">الحمولة</span>
-                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.loadWeight || "---"}</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.trailers[0]?.loadWeight || "---"}</span>
                 </div>`,
                 null,
               ],
@@ -196,6 +189,8 @@ const TruckForm = ({ searchResults }) => {
           </div>`,
           null
         ],
+
+        // بيانات الملحق الثاني
         [
           `<div class="border-black">
             <h3 class="bg-gray-200 text-center font-semibold text-sm">بيانات الملحق الثاني</h3>
@@ -203,18 +198,18 @@ const TruckForm = ({ searchResults }) => {
               [
                 `<div class="flex justify-between w-full py-0.5 border-black">
                   <span class="font-bold text-center text-md w-1/3">نوع الحمل</span>
-                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.category || "---"}</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.trailers[1]?.category || "---"}</span>
                   <span class="font-bold text-center text-md w-1/3">شاصي الحمل</span>
-                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.chassisNumbertrailer || "---"}</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.trailers[1]?.chassisNumber || "---"}</span>
                 </div>`,
                 null,
               ],
               [
                 `<div class="flex justify-between w-full border-black">
                   <span class="font-bold text-center text-md w-1/3">عدد المحاور</span>
-                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.numberOfAxes || "---"}</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.trailers[1]?.axelsNumber || "---"}</span>
                   <span class="font-bold text-center text-md w-1/3">الحمولة</span>
-                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.loadWeight || "---"}</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.trailers[1]?.loadWeight || "---"}</span>
                 </div>`,
                 null,
               ],
@@ -222,6 +217,8 @@ const TruckForm = ({ searchResults }) => {
           </div>`,
           null
         ],
+
+        // بيانات الملحق الثالث
         [
           `<div class="border-black">
             <h3 class="bg-gray-200 text-center font-semibold text-sm">بيانات الملحق الثالث</h3>
@@ -229,18 +226,18 @@ const TruckForm = ({ searchResults }) => {
               [
                 `<div class="flex justify-between w-full py-0.5 border-black">
                   <span class="font-bold text-center text-md w-1/3">نوع الحمل</span>
-                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.category || "---"}</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.trailers[2]?.category || "---"}</span>
                   <span class="font-bold text-center text-md w-1/3">شاصي الحمل</span>
-                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.chassisNumbertrailer || "---"}</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.trailers[2]?.chassisNumber || "---"}</span>
                 </div>`,
                 null,
               ],
               [
                 `<div class="flex justify-between w-full border-black">
                   <span class="font-bold text-center text-md w-1/3">عدد المحاور</span>
-                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.numberOfAxes || "---"}</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.trailers[2]?.axelsNumber || "---"}</span>
                   <span class="font-bold text-center text-md w-1/3">الحمولة</span>
-                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.loadWeight || "---"}</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.trailers[2]?.loadWeight || "---"}</span>
                 </div>`,
                 null,
               ],
@@ -267,9 +264,9 @@ const TruckForm = ({ searchResults }) => {
             
              <div class="border border-black grid grid-rows-2 rounded-lg p-2" >
               <div class="w-full max-w-100 h-auto p-0" dir="rtl" >
-                ${searchResults.cropedCarImagePath
-                  ? `<img src="http://localhost:5273${searchResults.cropedCarImagePath}" class="object-contain w-full h-full rounded-md p-0.5 border border-black" />`
-                  : "صورة المركبة"}
+                ${searchResults.cropedChassisImagePath
+                  ? `<img src="http://localhost:5273${searchResults.cropedChassisImagePath}" class="object-contain w-full h-full rounded-md p-0.5 border border-black" />`
+                  : "صورة الشاصي"}
                  </div>  
                  <div class="w-full max-w-100 h-auto p-0 dir="rtl"">
                 ${searchResults.cropedCarImagePath

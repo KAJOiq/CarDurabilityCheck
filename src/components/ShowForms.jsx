@@ -84,9 +84,9 @@ const ShowForms = () => {
                 "عدد السلندر": searchResults.engineCylindersNumber,
                 "عدد المحاور": searchResults.vehicleAxlesNumber,
                 "عدد الركاب": searchResults.seatsNumber,
-                "الحمولة": searchResults.loadWeight,
+                //"الحمولة": searchResults.loadWeight,
                 "الحكومية": searchResults.governmental ? "نعم" : "لا",
-                "الفئة": searchResults.category,
+                //"الفئة": searchResults.category,
                 "تاريخ الإصدار": formatArabicDate(searchResults.issueDate),
                 "المديرية": searchResults.agency,
                 "الموقع": searchResults.location,
@@ -110,7 +110,7 @@ const ShowForms = () => {
                     <div className="grid grid-cols-2 gap-4">
                       {Object.entries({
                         "رقم الشاصي": trailer.chassisNumber,
-                        "عدد السلندر": trailer.cylindersNumber,
+                        "عدد المحاور": trailer.axelsNumber,
                         "الحمولة": trailer.loadWeight,
                         "الفئة": trailer.category,
                       }).map(([label, value]) => (
@@ -157,8 +157,8 @@ const ShowForms = () => {
       )}
 
       <div className="mt-8" dir="rtl">
-        {searchResults?.vehicleType === "1" && <CarForm searchResults={searchResults} />}
-        {searchResults?.vehicleType === "2" && <TruckForm searchResults={searchResults} />}
+        {searchResults?.vehicleType === "سيارة" && <CarForm searchResults={searchResults} />}
+        {searchResults?.vehicleType === "شاحنة" && <TruckForm searchResults={searchResults} />}
         {searchResults?.vehicleType === "دراجة" && <BikeForm searchResults={searchResults} />}
       </div>
     </div>
