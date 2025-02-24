@@ -17,7 +17,6 @@ import fetchData from "../utils/fetchData";
 import DropDownListTemplate from "./DropDownListTemplate";
 import Select from 'react-select';
 
-
 const ReviewData = ({ formData }) => {
     return (
       <div className="space-y-6 text-right">
