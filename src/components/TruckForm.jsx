@@ -43,7 +43,10 @@ const TruckForm = ({ searchResults }) => {
         .catch((error) => console.error("Error generating QR code:", error));
     }, [searchResults]); 
   
-  
+    const formatDate = (dateString) => {
+      const date = new Date(dateString);
+      return date.toISOString().split("T")[0];
+    };
   const handlePrint = () => {
     if (!searchResults) return;
     const logoBase64 = logo;
@@ -51,251 +54,244 @@ const TruckForm = ({ searchResults }) => {
     const printWindow = window.open("_blank");
     printWindow.document.open();
     printWindow.document.write(`
-      <!DOCTYPE html>
-      <html lang="ar">
-        <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>طباعة الاستمارة</title>
-          <style>
+     <!DOCTYPE html>
+      <html lang="ar" dir="rtl">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>شهادة فحص المركبة</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <style>
+           @media print {
+          @page {
+            size: A4 portrait;
+          }
             body {
               font-family: Arial, sans-serif;
               direction: rtl;
-              text-align: right;
-              margin: 0;
-              font-size: 9px;
-              padding: 0 5px;
             }
-            h2 {
-              text-align: center;
-              font-size: 12px;
-            }
-            .grid {
-              display: grid;
-              grid-template-columns: 1fr 1fr;
-              gap: 10px;
-            }
-            .field {
-              margin-bottom: 6px;
-              padding: 6px;
-              border-radius: 6px;
-            }
-            .img {
-              max-width: 90%;
-              height: auto;
-              margin-top: 10px;
-              display: block;
-              margin-left: auto;
-              margin-right: auto;
-            }
-            .header {
-              position: relative;
-              width: 100%;
-              height: 140px;
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-            }
-            .logo-container {
-              position: absolute;
-              top: 0;
-              left: 50%;
-              transform: translateX(-50%);
-              text-align: center;
-            }
-            .logo-container img {
-              max-width: 100px;
-            }
-            .title-container {
-              position: absolute;
-              top: 20px;
-              right: 15px;
-              text-align: right;
-            }
-            .title-container .title {
-              font-size: 24px;
-              font-weight: bold;
-            }
-            .title-container .subtitle {
-              font-size: 18px;
-              font-weight: bold;
-            }
-            .form-data,
-            .vehicle-data {
-              padding: 8px;
-              border-radius: 6px;
-              margin-bottom: 12px;
-              background-color: #f4f7fb;
-              border: 1px solid #ccc;
-              box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
-            }
-            .form-data h3,
-            .vehicle-data h3 {
-              margin-bottom: 6px;
-              background-color: #e5e7eb;
-              padding: 6px;
-              border-radius: 4px;
-              font-size: 16px;
-              font-weight: bold;
-              color: #333;
-            }
-            .form-data h3 strong,
-            .vehicle-data h3 strong {
-              font-size: 22px;
-              font-weight: bold;
-            }
-            .form-data .info-container,
-            .vehicle-data .info-container {
-              display: flex;
-              flex-wrap: wrap;
-              justify-content: space-between;
-            }
-            .info {
-              width: 48%;
-              margin-bottom: 6px;
-            }
-            .info strong {
-              font-size: 16px;
-              font-weight: bold;
-              color: rgb(0, 0, 0);
-            }
-            .footer-photo-container {
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              margin-top: 8px;
-            }
-            .footer-photo-container img {
-              margin: 0 10px;
-            }
-            .main-image {
-              max-width: 65%;
-              height: auto;
-              margin-top: 15px;
-              transform: translateX(-160px);
-            }
-            .bottom-images {
-              display: flex;
-              flex-direction: Row;
-              gap: 20px;
-              transform: translateX(300px);
-            }
-            .bottom-image {
-              max-width: 160px;
-              height: auto;
-              margin-top: 15px;
-              transform: translateY(255px);
-            }
-            .footer-text {
-              display: flex;
-              justify-content: space-between;
-              width: 100%;
-              margin-top: 20px;
-              text-align: center;
-              font-size: 12px;
-              font-weight: bold;
-            }
-            .footer-text div {
-              width: 23%;
-            }
-            .qr-code-container {
-              position: absolute;
-              left: 15px;
-              top: 10px;
-            }
-            .qr-code-container img {
-              max-width: 100px;
-              height: auto;
-            }
-            @media print {
-              body {
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-                font-size: 9px;
-              }
-              .header {
-                height: 110px;
-              }
-              .logo-container img {
-                max-width: 100px;
-              }
-              .form-data h3, .vehicle-data h3 {
-                font-size: 11px;
-              }
-              .info {
-                font-size: 10px;
-              }
-              .info strong {
-                font-size: 12px;
-                color:rgb(0, 0, 0);
-              }
-              .bottom-image {
-                max-width: 130px;
-              }
-              .main-image {
-                max-width: 95%;
-              }
-            }
-          </style>
-        </head>
-        <body>
-          <div class="header">
-            <div class="title-container">
-              <div class="title"><strong>جمهورية العراق</strong></div>
-              <div class="subtitle"><strong>وزارة الداخلية</strong></div>
+          }
+        </style>
+      </head>
+      <body class="bg-white w-[210mm] h-[148mm] p-6 text-right">
+      <!-- Header -->
+      <div class="flex items-center justify-between border-b-2 border-black pb-2 w-full" dir="rtl">
+        <!-- Left-side Titles -->
+        <div class="flex flex-col items-center w-1/4 text-sm space-y-2">
+          <h1 class="text-2xl font-bold text-black-800">جمهورية العراق</h1>
+          <h1 class="text-xl font-bold text-black-800">وزارة الداخلية</h1>
+        </div>
+      
+        <!-- Centered Section (QR Code and Logo) -->
+        <div class="relative flex items-center justify-center w-1/2">
+          <!-- QR Code (Left) -->
+          <div class="w-24 mb-2 absolute right-0 mr-4">
+            <img src="${qrCodeDataUrl}" alt="QR Code" class="w-auto h-auto" />
+          </div>
+      
+          <!-- Logo (Centered) -->
+          <div class="mb-2 mx-auto absolute left-6 ml-10">
+            <img src="${logoBase64}" alt="Logo" class="w-24 h-auto" />
+          </div>
+        </div>
+      
+        <!-- Right-side Details -->
+        <div class="flex flex-col items-start w-2/5 text-sm text-right font-semibold">
+          <!-- كل سطر راح يكون grid مكون من عمودين -->
+          <div class="grid grid-cols-2 w-full"> <!-- زيادة المسافة الأفقية هنا -->
+            <!-- العمود الأول للنصوص الثابتة -->
+            <div class="flex flex-col text-black-800"> <!-- زيادة المسافة الجانبية هنا -->
+              <span>رقم استمارة الفحص</span> 
+              <span>رقم وصل القبض</span>
+              <span>اسم الموقع</span>
+              <span>تاريخ الاصدار</span>
             </div>
-            <div class="logo-container">
-              <img src="${logoBase64}" alt="Logo" />
-            </div>
-            <div class="qr-code-container">
-              <img src="${qrCodeDataUrl}" alt="QR Code" width="120" />
+      
+            <!-- العمود الثاني للقيم المتغيرة -->
+            <div class="flex flex-col text-black-800 font-bold text-right">
+              <span>: ${searchResults.location}-${searchResults.applicationId}</span>
+              <span>: ${searchResults.receiptId}</span>
+              <span>: ${searchResults.agency}</span>
+              <span>: ${formatDate(searchResults.issueDate)}</span>
+           
             </div>
           </div>
-          <hr />
-          <div class="grid">
-            <div class="vehicle-data">
-              <h3><strong>بيانات المركبة</strong></h3>
-              <div class="info-container">
-                <div class="info"><strong>اسم المواطن:</strong> <div><strong>${searchResults.carOwnerName}</strong></div></div>
-                <div class="info"><strong>نوع المركبة:</strong> <div><strong>${searchResults.carBrand}</strong></div></div>
-                <div class="info"><strong>طراز المركبة:</strong> <div><strong>${searchResults.carName}</strong></div></div>
-                <div class="info"><strong>لون المركبة:</strong> <div><strong>${searchResults.carColor}</strong></div></div>
-                <div class="info"><strong>رقم المركبة:</strong> <div><strong>${searchResults.plateNumber}</strong></div></div>
-                <div class="info"><strong>رقم الشاصي:</strong> <div><strong>${searchResults.chassisNumber}</strong></div></div>
-                <div class="info"><strong>الموديل:</strong> <div><strong>${searchResults.carModel}</strong></div></div>
-                <div class="info"><strong>نوع المحرك:</strong> <div><strong>${searchResults.engineType}</strong></div></div>
-                <div class="info"><strong>عدد السلندر:</strong> <div><strong>${searchResults.engineCylindersNumber}</strong></div></div>
-                <div class="info"><strong>عدد المحاور:</strong> <div><strong>${searchResults.engineCylindersNumber}</strong></div></div>
+        </div>
+      
+      </div>
+           <!-- Main Content with Grid -->
+<div class="grid grid-cols-3 gap-2 mt-2">
+  <!-- Vehicle Data (Left) -->
+  <div class="border border-black rounded-lg p-1 relative col-span-2" dir="rtl">
+    <h3 class="bg-gray-200 text-center font-bold">بيانات المركبة</h3>
+    <div class="text-sm">
+      ${[
+        [
+          `<div class="flex justify-between w-full py-0.5 border-black">
+            <span class="font-bold text-center text-md w-1/3">نوع المركبة</span>
+            <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.carBrand || "---"}</span>
+            <span class="font-bold text-center text-md w-1/3">طراز المركبة</span>
+            <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.carName || "---"}</span>
+          </div>`,
+          null,
+        ],
+
+        [
+          `<div class="flex justify-between w-full py-0.5 border-black">
+            <span class="font-bold text-center text-md w-1/3">لون المركبة</span>
+            <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.carColor || "---"}</span>
+            <span class="font-bold text-center text-md w-1/3">نوع المحرك</span>
+            <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.engineType || "---"}</span>
+          </div>`,
+          null,
+        ],
+        [
+          `<div class="flex justify-between w-full py-0.5 border-black">
+            <span class="font-bold text-center text-md w-1/3">الاستخدام</span>
+            <span class="font-bold text-md w-1/2 px-1 border border-black rounded">${searchResults.usage || "---"}</span>
+            <span class="font-bold text-center text-md w-1/3">الموديل</span>
+            <span class="font-bold text-md w-1/2 px-1 border border-black rounded">${searchResults.carModel || "---"}</span>
+            <span class="font-bold text-center text-md w-1/3">عدد السلندر</span>
+            <span class="font-bold text-md w-1/2 px-1 border border-black rounded">${searchResults.engineCylindersNumber || "---"}</span>
+          </div>`,
+          null,
+        ],
+        
+        ["رقم المركبة", searchResults.plateNumber],
+        ["رقم الشاصي", searchResults.chassisNumber],
+
+        /* [
+          `<div class="flex justify-between w-full py-0.5 border border-black">
+            <span class="font-extrabold text-sm text-center w-1/4 border border-black">رقم المركبة</span>
+            <span class="font-semibold text-sm w-2/4 px-1 border border-black">${formData.plateNumber || "---"}</span>
+            <span class="font-extrabold text-center text-sm w-1/4 border border-black">رقم الشاصي</span>
+            <span class="font-semibold text-sm w-2/4 px-1 border border-black">${formData.chassisNumber || "---"}</span>
+          </div>`,
+          null,
+        ],
+ */
+        [
+          `<div class="border-black">
+            <h3 class="bg-gray-200 text-center font-semibold text-sm">بيانات الملحق الأول</h3>
+            ${[
+              [
+                `<div class="flex justify-between w-full py-0.5 border-black">
+                  <span class="font-bold text-center text-md w-1/3">نوع الحمل</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.category || "---"}</span>
+                  <span class="font-bold text-center text-md w-1/3">شاصي الحمل</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.chassisNumbertrailer || "---"}</span>
+                </div>`,
+                null,
+              ],
+              [
+                `<div class="flex justify-between w-full border-black">
+                  <span class="font-bold text-center text-md w-1/3">عدد المحاور</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.numberOfAxes || "---"}</span>
+                  <span class="font-bold text-center text-md w-1/3">الحمولة</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.loadWeight || "---"}</span>
+                </div>`,
+                null,
+              ],
+            ].map(([content]) => content).join('')}
+          </div>`,
+          null
+        ],
+        [
+          `<div class="border-black">
+            <h3 class="bg-gray-200 text-center font-semibold text-sm">بيانات الملحق الثاني</h3>
+            ${[
+              [
+                `<div class="flex justify-between w-full py-0.5 border-black">
+                  <span class="font-bold text-center text-md w-1/3">نوع الحمل</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.category || "---"}</span>
+                  <span class="font-bold text-center text-md w-1/3">شاصي الحمل</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.chassisNumbertrailer || "---"}</span>
+                </div>`,
+                null,
+              ],
+              [
+                `<div class="flex justify-between w-full border-black">
+                  <span class="font-bold text-center text-md w-1/3">عدد المحاور</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.numberOfAxes || "---"}</span>
+                  <span class="font-bold text-center text-md w-1/3">الحمولة</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.loadWeight || "---"}</span>
+                </div>`,
+                null,
+              ],
+            ].map(([content]) => content).join('')}
+          </div>`,
+          null
+        ],
+        [
+          `<div class="border-black">
+            <h3 class="bg-gray-200 text-center font-semibold text-sm">بيانات الملحق الثالث</h3>
+            ${[
+              [
+                `<div class="flex justify-between w-full py-0.5 border-black">
+                  <span class="font-bold text-center text-md w-1/3">نوع الحمل</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.category || "---"}</span>
+                  <span class="font-bold text-center text-md w-1/3">شاصي الحمل</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.chassisNumbertrailer || "---"}</span>
+                </div>`,
+                null,
+              ],
+              [
+                `<div class="flex justify-between w-full border-black">
+                  <span class="font-bold text-center text-md w-1/3">عدد المحاور</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.numberOfAxes || "---"}</span>
+                  <span class="font-bold text-center text-md w-1/3">الحمولة</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.loadWeight || "---"}</span>
+                </div>`,
+                null,
+              ],
+            ].map(([content]) => content).join('')}
+          </div>`,
+          null
+        ],
+      ]
+        .map(([label, value]) =>
+          value !== null
+            ? `
+              <div class="flex justify-between items-center py-0.5 border-black">
+                <span class="font-bold text-center text-md w-1/3">${label} :</span>
+                <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${value || "---"}</span>
               </div>
-            </div>
-            <div class="form-data">
-              <h3><strong>بيانات الاستمارة</strong></h3>
-              <div class="info-container">
-               <div class="info"><strong>رقم استمارة الفحص:</strong> <div><strong>${searchResults.applicationId}</strong></div></div>
-                <div class="info"><strong>رقم استمارة المرور:</strong> <div><strong>${searchResults.trafficPoliceApplicationId}</strong></div></div>
-                <div class="info"><strong>رقم وصل القبض:</strong> <div><strong>${searchResults.receiptId}</strong></div></div>
-                <div class="info"><strong>نوع الاستمارة:</strong> <div><strong>${searchResults.vehicleType}</strong></div></div>
-                <div class="info"><strong>التاريخ:</strong> <div><strong>${searchResults.issueDate}</strong></div></div>
-                <div class="info"><strong>نوع الحمل:</strong> <div><strong>${searchResults.category}</strong></div></div>
+            `
+            : label
+        )
+        .join("")}
+    </div>
+
+  </div>
+          <!-- Vehicle Image -->
+            
+             <div class="border border-black grid grid-rows-2 rounded-lg p-2" >
+              <div class="w-full max-w-100 h-auto p-0" dir="rtl" >
+                ${searchResults.cropedCarImagePath
+                  ? `<img src="http://localhost:5273${searchResults.cropedCarImagePath}" class="object-contain w-full h-full rounded-md p-0.5 border border-black" />`
+                  : "صورة المركبة"}
+                 </div>  
+                 <div class="w-full max-w-100 h-auto p-0 dir="rtl"">
+                ${searchResults.cropedCarImagePath
+                  ? `<img src="http://localhost:5273${searchResults.cropedCarImagePath}" class="object-contain w-full h-full rounded-md p-0.5 border border-black" />`
+                  : "صورة المركبة"}
               </div>
+
             </div>
+           
+
           </div>
-          <div class="footer-photo-container">
-            <img src="${imgStaticBase64}" alt="Car Image" class="main-image" />
-              <div class="bottom-images">
-                <img src="http://localhost:5273${searchResults.cropedChassisImagePath}" alt="Captured Chassis" class="bottom-image" />
-                <img src="http://localhost:5273${searchResults.cropedCarImagePath}" alt="Captured Front" class="bottom-image" />
-              </div>
-            </div>
-          </div>
-          <div class="footer-text">
-            <div>الفاحص الاول</div>
-            <div>الفاحص الثاني</div>
-            <div>الفاحص الثالث</div>
-            <div>ضابط الكشف الفني</div>
-          </div>
+    <div class="border border-black rounded-lg p-2 w-full mt-4 mx-auto">
+    <div class="h-auto p-0 w-full">
+        <img src="${imgStaticBase64}" 
+             class="w-full h-auto object-scale-down mx-auto" 
+             style="max-width: 90% !important;
+                    display: block !important;
+                    margin: 0 auto !important;" />
+    </div>
+</div>
         </body>
-      </html>
+        </html>
     `);
     printWindow.document.close();
 
@@ -305,11 +301,9 @@ const TruckForm = ({ searchResults }) => {
     }, 500);  // Adjust the 500 milliseconds as needed
   };
 
-
   return (
     <div>
       <button
- 
         className="bg-blue-500 text-white px-6 py-3 rounded-2xl hover:bg-blue-700"
         onClick={handlePrint}
       >

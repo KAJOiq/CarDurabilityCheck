@@ -1,310 +1,176 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import logo from "../assets/logo.jpg";
-import imgStatic from "../assets/car.png";
 import QRCode from "qrcode"; 
-
-
-const CarForm = ({ searchResults  }) => {
-  
+import imgStatic from "../assets/car.png";
+const CarForm = ({ searchResults }) => {
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState("");
 
-    useEffect(() => {
-      if (!searchResults ) return;
-      const qrData = JSON.stringify({
-        customerName: searchResults.carOwnerName,
-        vehicleModel: searchResults.vehicleModel,
-        vehicleType: searchResults.vehicleType,
-        vehicleColor: searchResults.vehicleColor,
-        vehicleCategory: searchResults.vehicleCategory,
-        vehicleNumber: searchResults.vehicleNumber,
-        isGovernment: searchResults.isGovernment,
-        chassisNumber: searchResults.chassisNumber,
-        carModel: searchResults.carModel,
-        engineType: searchResults.engineType,
-        cylinderCount: searchResults.cylinderCount,
-        receiptNumber: searchResults.receiptNumber,
-        trafficFormNumber: searchResults.trafficFormNumber,
-        formType: searchResults.formType,
-        numberOfAxes: searchResults.numberOfAxes,
-      });
-  
-      QRCode.toDataURL(qrData)
-        .then((url) => setQrCodeDataUrl(url))
-        .catch((error) => console.error("Error generating QR code:", error));
-    }, [searchResults]);
-  
-  
+  useEffect(() => {
+    if (!searchResults) return;
+
+    const qrData = JSON.stringify({
+      carOwnerName: searchResults.carOwnerName,
+      carBrand: searchResults.carBrand,
+      carName: searchResults.carName,
+      carColor: searchResults.carColor,
+      plateNumber: searchResults.plateNumber,
+      chassisNumber: searchResults.chassisNumber,
+      carModel: searchResults.carModel,
+      engineType: searchResults.engineType,
+      engineCylindersNumber: searchResults.engineCylindersNumber,
+      seatsNumber: searchResults.seatsNumber,
+    });
+
+    QRCode.toDataURL(qrData)
+      .then((url) => setQrCodeDataUrl(url))
+      .catch((error) => console.error("Error generating QR code:", error));
+  }, [searchResults]);
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toISOString().split("T")[0];
+  };
+
   const handlePrint = () => {
     if (!searchResults) return;
-    const logoBase64 = logo;
     const imgStaticBase64 = imgStatic;
     const printWindow = window.open("_blank");
     printWindow.document.open();
     printWindow.document.write(`
-      <!DOCTYPE html>
-      <html lang="ar">
-        <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>طباعة الاستمارة</title>
-          <style>
-            body {
-              font-family: Arial, sans-serif;
-              direction: rtl;
-              text-align: right;
-              margin: 0;
-              font-size: 9px;
-              padding: 0 20px;
-            }
-            h2 {
-              text-align: center;
-              font-size: 12px;
-            }
-            .grid {
-              display: grid;
-              grid-template-columns: 1fr 1fr;
-              gap: 10px;
-            }
-            .field {
-              margin-bottom: 6px;
-              padding: 6px;
-              border-radius: 6px;
-            }
-            .img {
-              max-width: 90%;
-              height: auto;
-              margin-top: 10px;
-              display: block;
-              margin-left: auto;
-              margin-right: auto;
-            }
-            .header {
-              position: relative;
-              width: 100%;
-              height: 140px;
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-            }
-            .logo-container {
-              position: absolute;
-              top: 0;
-              left: 50%;
-              transform: translateX(-50%);
-              text-align: center;
-            }
-            .logo-container img {
-              max-width: 100px;
-            }
-            .title-container {
-              position: absolute;
-              top: 20px;
-              right: 15px;
-              text-align: right;
-            }
-            .title-container .title {
-              font-size: 24px;
-              font-weight: bold;
-            }
-            .title-container .subtitle {
-              font-size: 18px;
-              font-weight: bold;
-            }
-            .form-data,
-            .vehicle-data {
-              padding: 8px;
-              border-radius: 6px;
-              margin-bottom: 12px;
-              background-color: #f4f7fb;
-              border: 1px solid #ccc;
-              box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
-            }
-            .form-data h3,
-            .vehicle-data h3 {
-              margin-bottom: 6px;
-              background-color: #e5e7eb;
-              padding: 6px;
-              border-radius: 4px;
-              font-size: 16px;
-              font-weight: bold;
-              color: #333;
-            }
-            .form-data h3 strong,
-            .vehicle-data h3 strong {
-              font-size: 22px;
-              font-weight: bold;
-            }
-            .form-data .info-container,
-            .vehicle-data .info-container {
-              display: flex;
-              flex-wrap: wrap;
-              justify-content: space-between;
-            }
-            .info {
-              width: 48%;
-              margin-bottom: 6px;
-            }
-            .info strong {
-              font-size: 16px;
-              font-weight: bold;
-              color: rgb(0, 0, 0);
-            }
-            .footer-photo-container {
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              margin-top: 8px;
-            }
-            .footer-photo-container img {
-              margin: 0 10px;
-            }
-            .main-image {
-              max-width: 65%;
-              height: auto;
-              margin-top: 15px;
-              transform: translateX(-130px);
-            }
-            .bottom-images {
-              display: flex;
-              flex-direction: column;
-              gap: 20px;
-              transform: translateX(135px);
-            }
-            .bottom-image {
-              max-width: 160px;
-              height: auto;
-              margin-top: 15px;
-              transform: translateY(120px);
-            }
-            .footer-text {
-              display: flex;
-              justify-content: space-between;
-              width: 100%;
-              margin-top: 50px;
-              text-align: center;
-              font-size: 12px;
-              font-weight: bold;
-            }
-            .footer-text div {
-              width: 23%;
-            }
-            .qr-code-container {
-              position: absolute;
-              left: 15px;
-              top: 10px;
-            }
-            .qr-code-container img {
-              max-width: 100px;
-              height: auto;
-            }
-            @media print {
-              body {
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-                font-size: 9px;
-              }
-              .header {
-                height: 120px;
-              }
-              .logo-container img {
-                max-width: 100px;
-              }
-              .form-data h3, .vehicle-data h3 {
-                font-size: 11px;
-              }
-              .info {
-                font-size: 10px;
-              }
-              .info strong {
-                font-size: 12px;
-                color:rgb(0, 0, 0);
-              }
-              .bottom-image {
-                max-width: 240px;
-              }
-              .main-image {
-                max-width: 100%;
-              }
-            }
-          </style>
-        </head>
-        <body>
-          <div class="header">
-            <div class="title-container">
-              <div class="title"><strong>جمهورية العراق</strong></div>
-              <div class="subtitle"><strong>وزارة الداخلية</strong></div>
-            </div>
-            <div class="logo-container">
-              <img src="${logoBase64}" alt="Logo" />
-            </div>
-            <div class="qr-code-container">
-              <img src="${qrCodeDataUrl}" alt="QR Code" width="120" />
-              </div>
+    <!DOCTYPE html>
+    <html lang="ar" dir="rtl">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>شهادة فحص المركبة</title>
+      <script src="https://cdn.tailwindcss.com"></script>
+      <style>
+        @media print {
+          @page {
+            size: A4 portrait;
+          }
+          body {
+            font-family: Arial, sans-serif;
+            direction: rtl;
+          }
+        }
+      </style>
+    </head>
+    <body class="bg-white w-[210mm] h-[148mm] p-6 text-right">
+      <!-- Header -->
+      <div class="flex items-center justify-between border-b-2 border-black pb-2 w-full" dir="rtl">
+        <div class="flex flex-col items-center w-1/4 text-sm space-y-2">
+          <h1 class="text-2xl font-bold text-black-800">جمهورية العراق</h1>
+          <h1 class="text-xl font-bold text-black-800">وزارة الداخلية</h1>
+        </div>
+
+        <!-- Center QR and Logo -->
+        <div class="relative flex items-center justify-center w-1/2">
+          <div class="w-24 mb-2 absolute right-0 mr-4">
+            <img src="${qrCodeDataUrl}" alt="QR Code" class="w-auto h-auto" />
           </div>
-          <hr />
-          <div class="grid">
-            <div class="vehicle-data">
-              <h3><strong>بيانات المركبة</strong></h3>
-              <div class="info-container">
-                <div class="info"><strong>اسم المواطن:</strong> <div><strong>${searchResults.carOwnerName}</strong></div></div>
-                <div class="info"><strong>نوع المركبة:</strong> <div><strong>${searchResults.carBrand}</strong></div></div>
-                <div class="info"><strong>طراز المركبة:</strong> <div><strong>${searchResults.carName}</strong></div></div>
-                <div class="info"><strong>لون المركبة:</strong> <div><strong>${searchResults.carColor}</strong></div></div>
-                <div class="info"><strong>رقم المركبة:</strong> <div><strong>${searchResults.plateNumber}</strong></div></div>
-                <div class="info"><strong>رقم الشاصي:</strong> <div><strong>${searchResults.chassisNumber}</strong></div></div>
-                <div class="info"><strong>الموديل:</strong> <div><strong>${searchResults.carModel}</strong></div></div>
-                <div class="info"><strong>نوع المحرك:</strong> <div><strong>${searchResults.engineType}</strong></div></div>
-                <div class="info"><strong>عدد السلندر:</strong> <div><strong>${searchResults.engineCylindersNumber}</strong></div></div>
-                <div class="info"><strong>عدد المحاور:</strong> <div><strong>${searchResults.engineCylindersNumber}</strong></div></div>
-              </div>
+          <div class="mb-2 mx-auto absolute left-6 ml-10">
+            <img src="${logo}" alt="Logo" class="w-24 h-auto" />
+          </div>
+        </div>
+
+        <!-- Right-side Details -->
+        <div class="flex flex-col items-start w-2/5 text-sm text-right font-semibold">
+          <div class="grid grid-cols-2 w-full">
+            <div class="flex flex-col text-black-800">
+              <span>رقم استمارة الفحص</span> 
+              <span>رقم وصل القبض</span>
+              <span>اسم الموقع</span>
+              <span>تاريخ الاصدار</span>
             </div>
-            <div class="form-data">
-              <h3><strong>بيانات الاستمارة</strong></h3>
-              <div class="info-container">
-                <div class="info"><strong>رقم استمارة الفحص:</strong> <div><strong>${searchResults.applicationId}</strong></div></div>
-                <div class="info"><strong>رقم استمارة المرور:</strong> <div><strong>${searchResults.trafficPoliceApplicationId}</strong></div></div>
-                <div class="info"><strong>رقم وصل القبض:</strong> <div><strong>${searchResults.receiptId}</strong></div></div>
-                <div class="info"><strong>نوع الاستمارة:</strong> <div><strong>${searchResults.vehicleType}</strong></div></div>
-                <div class="info"><strong>التاريخ:</strong> <div><strong>${searchResults.issueDate}</strong></div></div>
-                <div class="info"><strong>فئة المركبة:</strong> <div><strong>${searchResults.category}</strong></div></div>
-              </div>
+            <div class="flex flex-col text-black-800 font-bold text-right">
+              <span>: ${searchResults.applicationId}-${searchResults.applicationId}</span>
+              <span>: ${searchResults.receiptId}</span>
+              <span>: ${searchResults.receiptId}</span>
+              <span>: ${formatDate(searchResults.issueDate)}</span>
             </div>
           </div>
-          <div class="footer-photo-container">
-            <img src="${imgStaticBase64}" alt="Car Image" class="main-image" />
-              <div class="bottom-images">
-                <img src="http://localhost:5273${searchResults.cropedChassisImagePath}" alt="Captured Chassis" class="bottom-image" />
-                <img src="http://localhost:5273${searchResults.cropedCarImagePath}" alt="Captured Front" class="bottom-image" />
-              </div>
-            </div>
+        </div>
+      </div>
+
+      <!-- Vehicle Data Section -->
+      <div class="border border-black rounded-lg p-1 mt-2">
+        <h3 class="bg-gray-200 text-center font-bold py-1">بيانات المركبة</h3>
+        <div class="grid grid-cols-2 gap-2 text-md">
+          ${[
+            ["اسم المالك", searchResults.carOwnerName],
+            ["نوع المركبة", searchResults.carBrand],
+            ["طراز المركبة", searchResults.carName],
+            ["لون المركبة", searchResults.carColor],
+            ["رقم المركبة", searchResults.plateNumber],
+            ["رقم الشاصي", searchResults.chassisNumber],
+            ["الموديل", searchResults.carModel],
+            ["نوع المحرك", searchResults.engineType],
+            ["عدد السلندر", searchResults.engineCylindersNumber],
+            ["عدد الركاب", searchResults.seatsNumber],
+          ]
+            .map(
+              ([label, value]) =>
+                `
+                <div class="flex items-center py-0.5 border-black">
+                  <span class="font-bold text-md w-1/3">${label} :</span>
+                  <span class="font-bold text-md w-2/3 px-1 border border-black rounded">${value || "---"}</span>
+                </div>
+                `
+            )
+            .join("")}
+            
+        </div>
+      </div>
+      <div class="border border-black grid grid-cols-2 rounded-lg p-2" >
+      <!-- Vehicle Image -->
+        <div class="w-full max-w-100 h-auto p-0 dir="ltr"">
+             <img src="${imgStaticBase64}" class="object-contain w-full h-full rounded-md p-0.5 border border-white" />
           </div>
-          <div class="footer-text">
-            <div>الفاحص الاول</div>
-            <div>الفاحص الثاني</div>
-            <div>الفاحص الثالث</div>
-            <div>ضابط الكشف الفني</div>
+         <div class="border border-white grid grid-rows-2 rounded-lg p-2" >
+          <div class="w-full max-w-100 h-auto p-0" dir="rtl" >
+            ${searchResults.cropedCarImagePath
+              ? `<img src="http://localhost:5273${searchResults.cropedCarImagePath}" class="object-contain w-full h-full rounded-md p-0.5 border border-black" />`
+              : "صورة المركبة"}
+             </div>  
+             <div class="w-full max-w-100 h-auto p-0 dir="rtl"">
+            ${searchResults.cropedCarImagePath
+              ? `<img src="http://localhost:5273${searchResults.cropedCarImagePath}" class="object-contain w-full h-full rounded-md p-0.5 border border-black" />`
+              : "صورة المركبة"}
           </div>
-        </body>
-      </html>
+         
+          </div>
+ <div class="border border-black  rounded-lg p-2 min-h-40" >
+      <span class="font-bold text-md text-center w-1/3">الفاحص : 
+      </span> 
+        </div>
+        <div class="border border-black  rounded-lg p-2 min-h-40" >
+       <span class="font-bold text-md text-center w-1/3">الفاحص :</span> 
+        </div>
+        </div>
+        
+     
+
+        </div>
+        
+    </body>
+    </html>
     `);
     printWindow.document.close();
-    
-    // Add a delay of 500 milliseconds (0.5 seconds) before calling print()
+
     setTimeout(() => {
       printWindow.print();
-    }, 500);  // Adjust the 500 milliseconds as needed
+    }, 500);
   };
 
   return (
     <div>
       <button
- 
         className="bg-blue-500 text-white px-6 py-3 rounded-2xl hover:bg-blue-600"
         onClick={handlePrint}
       >
         طباعة الاستمارة
       </button>
-
     </div>
   );
 };

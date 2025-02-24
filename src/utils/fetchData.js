@@ -13,7 +13,7 @@ const fetchData = async (url, options = {}, headers = {}) => {
     });
 
     if (response.status === 401) {
-      localStorage.setItem("sessionExpired", "انتهت صلاحية الجلسة، يرجى تسجيل الدخول.");
+      localStorage.setItem("sessionExpired", "انتهت صلاحية الجلسة، يرجى تسجيل الدخول");
 
       localStorage.removeItem("accessToken");
       localStorage.removeItem("role");
