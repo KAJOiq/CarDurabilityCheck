@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import logo from "../assets/logo.jpg";
 import QRCode from "qrcode"; 
-import imgStatic from "../assets/car.png";
+import imgStatic from "../assets/car.jpeg";
 const CarForm = ({ searchResults }) => {
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState("");
 

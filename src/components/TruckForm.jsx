@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import logo from "../assets/logo.jpg";
 import imgStatic from "../assets/truck.png";
-import QRCode from "qrcode"; // Import QRCode component
+import QRCode from "qrcode"; 
 
 
 const TruckForm = ({ searchResults }) => {
