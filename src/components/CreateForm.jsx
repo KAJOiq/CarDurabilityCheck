@@ -356,6 +356,16 @@ const CreateForm = () => {
   
   const yearOptions = generateYears();
 
+  const usageOptions = [
+    { value: "اجرة", label: "أجرة" },
+    { value: "خصوصي", label: "خصوصي" },
+    { value: "حمل", label: "حمل" },
+    { value: "زراعية", label: "زراعية" },
+    { value: "انشائية", label: "إنشائية" },
+    { value: "تخصصية", label: "تخصصية" },
+    { value: "فحص مؤقت", label: "فحص مؤقت" },
+  ];
+
   return (
     <Dialog open={true} onClose={() => {}} className="relative z-50">
       <div className="fixed inset-0 bg-black/30 backdrop-blur-lg" />
@@ -663,13 +673,33 @@ const CreateForm = () => {
                   required
                 />
                 
-                <InputField
-                  label="الاستخدام"
-                  name="Usage"
-                  value={formData.Usage}
-                  onChange={handleChange}
-                  required
+                <div>
+                <label className="block text-right mb-2 font-medium text-gray-700">نوع التسجيل</label>
+                <Select
+                  options={usageOptions}
+                  placeholder="اختر الموديل"
+                  value={usageOptions.find(option => option.value === formData.CarModel)}
+                  onChange={(selectedOption) => {
+                    if (selectedOption) {
+                      handleChange({
+                        target: {
+                          name: 'Usage',
+                          value: selectedOption.value,
+                        },
+                      });
+                    }
+                  }}
+                  styles={{
+                    control: (provided) => ({
+                      ...provided,
+                      border: '1px solid #e2e8f0',
+                      borderRadius: '0.5rem',
+                      padding: '0.25rem',
+                    }),
+                  }}
                 />
+                </div>
+
 {formData.VehicleType === "2" && (
   <div>
     <label className="block text-right mb-2 font-medium text-gray-700">تفاصيل المقطورات</label>
