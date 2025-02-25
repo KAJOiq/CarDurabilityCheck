@@ -234,12 +234,12 @@ const CreateForm = () => {
       [name]: type === "checkbox" ? checked : value
     }));
   
-    if (name === "VehicleType" && value === "2") {
+    if (name === "VehicleType" && value === "شاحنة") {
       setFormData(prev => ({
         ...prev,
         TrailerData: [{}] 
       }));
-    } else if (name === "VehicleType" && value !== "2") {
+    } else if (name === "VehicleType" && value !== "شاحنة") {
       setFormData(prev => ({
         ...prev,
         TrailerData: [] 
@@ -367,11 +367,11 @@ const CreateForm = () => {
   ];
 
   return (
-    <Dialog open={true} onClose={() => {}} className="relative z-50">
+    <Dialog open={true} onClose={() => {}} dir="rtl" className="relative z-50">
       <div className="fixed inset-0 bg-black/30 backdrop-blur-lg" />
       
-      <div className="fixed inset-0 flex items-center justify-center p-4">
-        <Dialog.Panel className="w-full max-w-4xl bg-white rounded-2xl shadow-xl flex flex-col max-h-[90vh]">
+      <div className="fixed inset-0 flex items-center justify-center p-6">
+        <Dialog.Panel className="w-full max-w-6xl bg-white rounded-2xl shadow-xl flex flex-col max-h-[90vh]">
           <div className="p-6 border-b flex justify-between items-center">
             <Dialog.Title className="text-2xl font-bold text-gray-800">إنشاء استمارة جديدة</Dialog.Title>
             <button onClick={() => navigate('/forms')} className="p-2 hover:bg-gray-100 rounded-lg transition-all">
@@ -380,41 +380,21 @@ const CreateForm = () => {
           </div>
 
           {/* Steps indicator */}
-          <div className="p-6 border-b bg-gray-50">
-            <div className="flex justify-center items-center">
-              {steps.map((step, index) => (
-                <React.Fragment key={index}>
-                  <div className="flex flex-col items-center relative">
-                    <div
-                      className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer
-                        ${
-                          currentStep > index + 1
-                            ? 'bg-green-500 text-white shadow-lg hover:bg-green-600'
-                            : currentStep === index + 1
-                            ? 'bg-blue-500 text-white shadow-lg hover:bg-blue-600'
-                            : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
-                        }`}
-                    >
-                      {index + 1}
-                    </div>
-                    <span
-                      className={`text-xs font-medium transition-all duration-300 mt-2
-                        ${
-                          currentStep === index + 1
-                            ? 'text-blue-600 font-semibold'
-                            : 'text-gray-500'
-                        }`}
-                    >
-                      {step.title}
-                    </span>
-                    {index < steps.length - 1 && (
-                      <div className="absolute top-5 left-full transform translate-x-4 w-24 h-0.5 bg-gray-300"></div>
-                    )}
-                  </div>
-                  {index < steps.length - 1 && <div className="mx-8"></div>}
-                </React.Fragment>
-              ))}
-            </div>
+          <div className="p-2 border-b bg-gray-50 flex justify-center gap-3 flex-wrap">
+            {steps.map((step, index) => (
+              <div key={index} className="flex items-center">
+                <button
+                  className={`px-3 py-1 rounded-lg text-xs font-medium cursor-pointer transition-all whitespace-nowrap
+                    ${currentStep > index + 1 ? "bg-green-500 text-white" : 
+                      currentStep === index + 1 ? "bg-blue-500 text-white" : 
+                      "bg-gray-200 text-gray-600"}`}
+                  onClick={() => setCurrentStep(index + 1)}
+                >
+                  {step.title}
+                </button>
+                {index < steps.length - 1 && <div className="w-8 h-0.5 bg-gray-300 mx-2"></div>}
+              </div>
+            ))}
           </div>
 
           {/* Form content */}
@@ -483,23 +463,6 @@ const CreateForm = () => {
             {currentStep === 2 && (
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                <label className="block text-right mb-2 font-medium text-gray-700">طراز المركبة</label>
-                <DropDownListTemplate
-                  endpoint="find-vehicle-name"
-                  queryParams={{ brandId: formData.CarBrandId, page: 0, pageSize: 5000 }}
-                  labelKey="name"
-                  valueKey="id"
-                  onSelect={(item) => {
-                    setFormData((prev) => ({
-                      ...prev,
-                      CarNameId: item.id, 
-                    }));
-                  }}
-                  placeholder="اختر طراز المركبة"
-                  disabled={!formData.CarBrandId} 
-                />
-                </div>
-                <div>
                 <label className="block text-right mb-2 font-medium text-gray-700">نوع المركبة</label>
                 <DropDownListTemplate
                   endpoint="find-vehicle-company"
@@ -516,6 +479,25 @@ const CreateForm = () => {
                   disabled={false}
                 />
                 </div>
+
+                <div>
+                <label className="block text-right mb-2 font-medium text-gray-700">طراز المركبة</label>
+                <DropDownListTemplate
+                  endpoint="find-vehicle-name"
+                  queryParams={{ brandId: formData.CarBrandId, page: 0, pageSize: 5000 }}
+                  labelKey="name"
+                  valueKey="id"
+                  onSelect={(item) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      CarNameId: item.id, 
+                    }));
+                  }}
+                  placeholder="اختر طراز المركبة"
+                  disabled={!formData.CarBrandId} 
+                />
+                </div>
+
                 <div>
                 <label className="block text-right mb-2 font-medium text-gray-700">لون المركبة</label>
                 <DropDownListTemplate
@@ -673,11 +655,12 @@ const CreateForm = () => {
                   required
                 />
                 
+                {!formData.Governmental && (
                 <div>
                 <label className="block text-right mb-2 font-medium text-gray-700">نوع التسجيل</label>
                 <Select
                   options={usageOptions}
-                  placeholder="اختر الموديل"
+                  placeholder="اختر نوع التسجيل"
                   value={usageOptions.find(option => option.value === formData.CarModel)}
                   onChange={(selectedOption) => {
                     if (selectedOption) {
@@ -699,8 +682,9 @@ const CreateForm = () => {
                   }}
                 />
                 </div>
+                )}
 
-{formData.VehicleType === "2" && (
+{formData.VehicleType === "شاحنة" && (
   <div>
     <label className="block text-right mb-2 font-medium text-gray-700">تفاصيل المقطورات</label>
     
