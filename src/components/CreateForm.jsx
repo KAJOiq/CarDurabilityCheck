@@ -129,7 +129,7 @@ const ReviewData = ({ formData }) => {
       </div>
 
       {/* بطاقة بيانات المقطورة */}
-      {formData.VehicleType === "2" && (
+      {formData.VehicleType === "شاحنة" && (
         <div className="bg-white p-6 rounded-lg shadow-md">
           <div className="flex items-center space-x-3 mb-4">
             <LinkIcon className="w-8 h-8 text-yellow-500" />
@@ -417,11 +417,11 @@ const CreateForm = () => {
       <div className="fixed inset-0 bg-black/30 backdrop-blur-lg" />
       
       <div className="fixed inset-0 flex items-center justify-center p-6">
-        <Dialog.Panel className="w-full max-w-6xl bg-white rounded-2xl shadow-xl flex flex-col max-h-[90vh]">
+        <Dialog.Panel className="w-full max-w-7xl bg-white rounded-2xl shadow-xl flex flex-col max-h-[90vh]">
           <div className="p-6 border-b flex justify-between items-center">
             <Dialog.Title className="text-2xl font-bold text-gray-800">إنشاء استمارة جديدة</Dialog.Title>
             <button onClick={() => navigate('/forms')} className="p-2 hover:bg-gray-100 rounded-lg transition-all">
-              <XMarkIcon className="w-6 h-6 text-gray-600" />
+              <XMarkIcon className="w-7 h-7 text-gray-600" />
             </button>
           </div>
 
