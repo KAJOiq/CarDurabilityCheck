@@ -73,7 +73,7 @@ const ShowForms = () => {
                 "رقم الوصل": searchResults.receiptId || "---",
                 "اسم المواطن": searchResults.carOwnerName,
                 "نوع الاستمارة": searchResults.vehicleType,
-                "الاستخدام": searchResults.usage,
+                "نوع التسجيل": searchResults.usage,
                 "الماركة": searchResults.carBrand,
                 "الطراز": searchResults.carName,
                 "اللون": searchResults.carColor,

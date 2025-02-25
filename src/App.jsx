@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import Header from "./components/Header";
-import ViewData from "./components/ViewData";
 import CertificatesPage from "./components/CertificatesPage";
 import ShowUsers from "./components/ShowUsers";
 import AddUsers from "./components/AddUsers";
