@@ -8,6 +8,8 @@ import {
     TruckIcon,
     CogIcon,
     LinkIcon,
+    LockClosedIcon,
+    LockOpenIcon,
 } from "@heroicons/react/24/outline";
 import InputField from "./InputField";
 import CheckboxField from "./CheckboxField";
@@ -148,7 +150,25 @@ const CreateFormVersion = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formErrors, setFormErrors] = useState([]);
-  const [isModified, setIsModified] = useState(false); 
+  const [lockedFields, setLockedFields] = useState(true); // قفل جميع الحقول بشكل افتراضي
+
+  // البيانات الأصلية التي تم جلبها من البحث برقم الشاصي
+  const [originalData, setOriginalData] = useState({
+    CarBrandId: "",
+    CarNameId: "",
+    CarColorId: "",
+    ChassisNumber: "",
+    CarModel: "",
+    PlateNumber: "",
+    EngineType: "",
+    EngineCylindersNumber: "",
+    VehicleAxlesNumber: "",
+    SeatsNumber: "",
+    Usage: "",
+    VehicleID: "", // إضافة VehicleID
+  });
+
+  // البيانات الحالية
   const [formData, setFormData] = useState({
     CarOwnerName: "",
     VehicleType: "",
@@ -166,7 +186,8 @@ const CreateFormVersion = () => {
     SeatsNumber: "",
     PlateNumber: "",
     Governmental: false,
-    TrailerData: []
+    TrailerData: [],
+    VehicleID: "", // إضافة VehicleID
   });
 
   const [carFullImage, setCarFullImage] = useState(null);
@@ -180,22 +201,34 @@ const CreateFormVersion = () => {
     { title: "تفاصيل المركبة", fields: ['CarBrandId', 'CarNameId', 'CarColorId', 'ChassisNumber', 'PlateNumber', 'CarModel', 'EngineCylindersNumber', 'VehicleAxlesNumber', 'EngineType', 'SeatsNumber', 'Usage', 'Governmental'] },
     { title: "صورة السيارة", fields: ['carFullImage', 'carCroppedImage'] },
     { title: "صورة الشاصي", fields: ['chassisFullImage', 'chassisCroppedImage'] },
-    { title: "صورة وصل القبض", fields: ['receiptIdImage']},
-    { title: "المراجعة النهائية" }
-  ];
-
-  const engineTypeOptions = [
-    { value: 'وقود', label: 'وقود' },
-    { value: 'كهربائي', label: 'كهربائي' },
-    { value: 'هجين', label: 'هجين' },
+    { title: "صورة وصل القبض", fields: ['receiptIdImage'] },
+    { title: "المراجعة النهائية" },
   ];
 
   useEffect(() => {
     if (location.state?.vehicleData) {
       const { vehicleData } = location.state;
+
+      // تعيين البيانات الأصلية
+      setOriginalData({
+        CarBrandId: vehicleData.carBrand,
+        CarNameId: vehicleData.carName,
+        CarColorId: vehicleData.carColor,
+        ChassisNumber: vehicleData.chassisNumber,
+        CarModel: vehicleData.carModel,
+        PlateNumber: vehicleData.plateNumber,
+        EngineType: vehicleData.engineType,
+        EngineCylindersNumber: vehicleData.engineCylindersNumber,
+        VehicleAxlesNumber: vehicleData.vehicleAxlesNumber,
+        SeatsNumber: vehicleData.seatsNumber,
+        Usage: vehicleData.usage,
+        VehicleID: vehicleData.vehicleID, // تعيين VehicleID
+      });
+
+      // تعيين البيانات الحالية
       setFormData((prev) => ({
         ...prev,
-        VehicleID: vehicleData.vehicleID,
+        VehicleID: vehicleData.vehicleID, // تعيين VehicleID
         VehicleType: vehicleData.vehicleType,
         CarBrandId: vehicleData.carBrand,
         CarNameId: vehicleData.carName,
@@ -208,54 +241,37 @@ const CreateFormVersion = () => {
         EngineCylindersNumber: vehicleData.engineCylindersNumber,
         Usage: vehicleData.usage,
         SeatsNumber: vehicleData.seatsNumber,
-        TrailerData: vehicleData.trailers
+        TrailerData: vehicleData.trailers,
       }));
     }
   }, [location.state]);
 
-  const provinceOptions = [
-    { value: '11', label: 'بغداد 11' },
-    { value: '12', label: 'نينوى 12' },
-    { value: '13', label: 'ميسان 13' },
-    { value: '14', label: 'البصرة 14' },
-    { value: '15', label: 'الأنبار 15' },
-    { value: '16', label: 'القادسية 16' },
-    { value: '17', label: 'المثنى 17' },
-    { value: '18', label: 'بابل 18' },
-    { value: '19', label: 'كربلاء 19' },
-    { value: '20', label: 'ديالى 20' },
-    { value: '21', label: 'السليمانية 21' },
-    { value: '22', label: 'أربيل 22' },
-    { value: '23', label: 'حلبجة 23' },
-    { value: '24', label: 'دهوك 24' },
-    { value: '25', label: 'كركوك 25' },
-    { value: '26', label: 'صلاح الدين 26' },
-    { value: '27', label: 'ذي قار 27' },
-    { value: '28', label: 'النجف 28' },
-    { value: '29', label: 'واسط 29' }
-];
-
-  const [provinceCode, setProvinceCode] = useState(''); // رمز المحافظة
-  const [plateLetter, setPlateLetter] = useState(''); // الحرف
-  const [plateNumber, setPlateNumber] = useState(''); // الرقم
-
-  const handlePlateNumberChange = () => {
-    if (plateNumber.length === 5) {
-      const fullPlateNumber = `${provinceCode}${plateLetter}${plateNumber}`;
-      setFormData((prev) => ({
-        ...prev,
-        PlateNumber: fullPlateNumber,
-      }));
-    }
+  const toggleLock = () => {
+    setLockedFields((prev) => !prev); // فتح أو إغلاق جميع الحقول
   };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+    const newValue = type === "checkbox" ? checked : value;
+
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: newValue,
     }));
-    setIsModified(true); 
+  };
+
+  const handleCarImage = ({ fullImage, croppedImage }) => {
+    setCarFullImage(fullImage);
+    setCarCroppedImage(croppedImage);
+  };
+
+  const handleChassisImage = ({ fullImage, croppedImage }) => {
+    setChassisFullImage(fullImage);
+    setChassisCroppedImage(croppedImage);
+  };
+
+  const handleReceiptIdImage = ({ fullImage, croppedImage }) => {
+    setReceiptIdImage(fullImage);
   };
 
   const handleSubmit = async () => {
@@ -263,31 +279,31 @@ const CreateFormVersion = () => {
       setIsSubmitting(true);
       const formDataToSend = new FormData();
 
-      Object.entries(formData).forEach(([key, value]) => {
-        if (value !== null && value !== "") {
-          formDataToSend.append(key, value);
-        }
-      });
+      // إضافة البيانات العامة
+      formDataToSend.append("TrafficPoliceApplicationId", formData.TrafficPoliceApplicationId);
+      formDataToSend.append("ReceiptId", formData.ReceiptId);
+      formDataToSend.append("CarOwnerName", formData.CarOwnerName);
+      formDataToSend.append("Governmental", formData.Governmental);
+      formDataToSend.append("VehicleID", formData.VehicleID);
 
-      if (carCroppedImage) {
-        formDataToSend.append('ApplicationImages', carCroppedImage, 'carCroppedImage.png');
-      }
-      if (carFullImage) {
-        formDataToSend.append('ApplicationImages', carFullImage, 'carFullImage.png');
-      }
-      if (chassisCroppedImage) {
-        formDataToSend.append('ApplicationImages', chassisCroppedImage, 'chassisCroppedImage.png');
-      }
-      if (chassisFullImage) {
-        formDataToSend.append('ApplicationImages', chassisFullImage, 'chassisFullImage.png');
-      }
-      if (receiptIdImage) {
-        formDataToSend.append('ApplicationImages', receiptIdImage, 'receiptIdImage.png');
+      // إضافة الصور
+      if (carCroppedImage) formDataToSend.append("ApplicationImages", carCroppedImage, "carCroppedImage.png");
+      if (carFullImage) formDataToSend.append("ApplicationImages", carFullImage, "carFullImage.png");
+      if (chassisCroppedImage) formDataToSend.append("ApplicationImages", chassisCroppedImage, "chassisCroppedImage.png");
+      if (chassisFullImage) formDataToSend.append("ApplicationImages", chassisFullImage, "chassisFullImage.png");
+      if (receiptIdImage) formDataToSend.append("ApplicationImages", receiptIdImage, "receiptIdImage.png");
+
+      // إضافة بيانات المركبة إذا تم فتح القفل
+      if (!lockedFields) {
+        formDataToSend.append("PlateNumber", formData.PlateNumber);
+        formDataToSend.append("CarColorId", formData.CarColorId);
+        formDataToSend.append("VehicleAxlesNumber", formData.VehicleAxlesNumber);
+        formDataToSend.append("EngineCylindersNumber", formData.EngineCylindersNumber);
       }
 
-      const endpoint = isModified
-        ? "user/application/create-application-to-different-version"
-        : "user/application/create-application-to-same-version";
+      const endpoint = lockedFields
+        ? "user/application/create-application-to-same-version"
+        : "user/application/create-application-to-different-version";
 
       const result = await fetchData(endpoint, {
         method: 'POST',
@@ -306,32 +322,6 @@ const CreateFormVersion = () => {
       setIsSubmitting(false);
     }
   };
-
-  const handleCarImage = ({ fullImage, croppedImage }) => {
-    setCarCroppedImage(croppedImage); // File
-    setCarFullImage(fullImage); // File
-  };
-  
-  const handleChassisImage = ({ fullImage, croppedImage }) => {
-    setChassisCroppedImage(croppedImage); // File
-    setChassisFullImage(fullImage); // File
-  };
-  
-  const handleReceiptIdImage = ({ fullImage, croppedImage }) => {
-    setReceiptIdImage(fullImage); // File
-  };
-
-  const generateYears = () => {
-    const currentYear = new Date().getFullYear();
-    const years = [];
-    for (let year = currentYear; year >= 1800; year--) {
-      years.push({ value: year, label: year.toString() });
-    }
-    return years;
-  };
-  
-  const yearOptions = generateYears();
-
 
   return (
     <Dialog open={true} onClose={() => {}} className="relative z-50">
@@ -426,356 +416,171 @@ const CreateFormVersion = () => {
             )}
 
             {currentStep === 2 && (
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                <label className="block text-right mb-2 font-medium text-gray-700">طراز المركبة</label>
-                <DropDownListTemplate
-                  endpoint="find-vehicle-name"
-                  queryParams={{ brandId: formData.CarBrandId, page: 0, pageSize: 5000 }}
-                  labelKey="name"
-                  valueKey="id"
-                  onSelect={(item) => {
-                    setFormData((prev) => ({
-                      ...prev,
-                      CarNameId: item.id, 
-                    }));
-                  }}
-                  placeholder="اختر طراز المركبة"
-                  disabled={!formData.CarBrandId} 
-                />
-                </div>
-                <div>
-                <label className="block text-right mb-2 font-medium text-gray-700">نوع المركبة</label>
-                <DropDownListTemplate
-                  endpoint="find-vehicle-company"
-                  queryParams={{ page: 0, pageSize: 5000 }}
-                  labelKey="name"
-                  valueKey="id"
-                  onSelect={(item) => {
-                    setFormData((prev) => ({
-                      ...prev,
-                      CarBrandId: item.id, 
-                    }));
-                  }}
-                  placeholder="اختر نوع المركبة"
-                  disabled={false}
-                />
-                </div>
-                <div>
-                <label className="block text-right mb-2 font-medium text-gray-700">لون المركبة</label>
-                <DropDownListTemplate
-                  endpoint="find-vehicles-colors"
-                  queryParams={{page: 0, pageSize: 5000 }}
-                  labelKey="color"
-                  valueKey="id"
-                  onSelect={(item) => {
-                    setFormData((prev) => ({
-                      ...prev,
-                      CarColorId: item.id, 
-                    }));
-                  }}
-                  placeholder="اختر لون المركبة"
-                  disabled={false} 
-                />
+              <div className="space-y-6">
+                <div className="flex justify-between items-center">
+                  <h3 className="text-xl font-bold text-gray-800">تفاصيل المركبة</h3>
+                  <button
+                    onClick={toggleLock}
+                    className="p-2 hover:bg-gray-100 rounded-lg"
+                  >
+                    {lockedFields ? (
+                      <LockClosedIcon className="w-6 h-6 text-gray-600" />
+                    ) : (
+                      <LockOpenIcon className="w-6 h-6 text-gray-600" />
+                    )}
+                  </button>
                 </div>
 
-                <div>
-                  <label className="block text-right mb-2 font-medium text-gray-700">نوع المحرك</label>
-                  <Select
-                    options={engineTypeOptions}
-                    placeholder="اختر نوع المحرك"
-                    value={engineTypeOptions.find(option => option.value === formData.EngineType)}
-                    onChange={(selectedOption) => {
-                      if (selectedOption) {
-                        handleChange({
-                          target: {
-                            name: 'EngineType',
-                            value: selectedOption.value,
-                          },
-                        });
-                      }
-                    }}
-                    styles={{
-                      control: (provided) => ({
-                        ...provided,
-                        border: '1px solid #e2e8f0',
-                        borderRadius: '0.5rem',
-                        padding: '0.25rem',
-                      }),
-                    }}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-right mb-2 font-medium text-gray-700">نوع المركبة</label>
+                    <DropDownListTemplate
+                      endpoint="find-vehicle-company"
+                      queryParams={{ page: 0, pageSize: 5000 }}
+                      labelKey="name"
+                      valueKey="id"
+                      onSelect={(item) => {
+                        setFormData((prev) => ({
+                          ...prev,
+                          CarBrandId: item.id,
+                        }));
+                      }}
+                      placeholder="اختر نوع المركبة"
+                      disabled={true} // دائمًا مقفل
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-right mb-2 font-medium text-gray-700">طراز المركبة</label>
+                    <DropDownListTemplate
+                      endpoint="find-vehicle-name"
+                      queryParams={{ brandId: formData.CarBrandId, page: 0, pageSize: 5000 }}
+                      labelKey="name"
+                      valueKey="id"
+                      onSelect={(item) => {
+                        setFormData((prev) => ({
+                          ...prev,
+                          CarNameId: item.id,
+                        }));
+                      }}
+                      placeholder="اختر طراز المركبة"
+                      disabled={true} // دائمًا مقفل
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-right mb-2 font-medium text-gray-700">لون المركبة</label>
+                    <DropDownListTemplate
+                      endpoint="find-vehicles-colors"
+                      queryParams={{ page: 0, pageSize: 5000 }}
+                      labelKey="color"
+                      valueKey="id"
+                      onSelect={(item) => {
+                        setFormData((prev) => ({
+                          ...prev,
+                          CarColorId: item.id,
+                        }));
+                      }}
+                      placeholder="اختر لون المركبة"
+                      disabled={lockedFields} // يمكن تعديله إذا فُتح القفل
+                    />
+                  </div>
+                  <InputField
+                    label="رقم الشاصي"
+                    name="ChassisNumber"
+                    value={formData.ChassisNumber}
+                    onChange={handleChange}
+                    disabled={true} // دائمًا مقفل
+                  />
+                  <InputField
+                    label="الموديل"
+                    name="CarModel"
+                    value={formData.CarModel}
+                    onChange={handleChange}
+                    disabled={true} // دائمًا مقفل
+                  />
+                  <InputField
+                    label="رقم المركبة"
+                    name="PlateNumber"
+                    value={formData.PlateNumber}
+                    onChange={handleChange}
+                    disabled={lockedFields} // يمكن تعديله إذا فُتح القفل
+                  />
+                  <InputField
+                    label="نوع المحرك"
+                    name="EngineType"
+                    value={formData.EngineType}
+                    onChange={handleChange}
+                    disabled={true} // دائمًا مقفل
+                  />
+                  <InputField
+                    label="عدد السلندر"
+                    name="EngineCylindersNumber"
+                    value={formData.EngineCylindersNumber}
+                    onChange={handleChange}
+                    disabled={lockedFields} // يمكن تعديله إذا فُتح القفل
+                  />
+                  <InputField
+                    label="عدد المحاور"
+                    name="VehicleAxlesNumber"
+                    value={formData.VehicleAxlesNumber}
+                    onChange={handleChange}
+                    disabled={lockedFields} // يمكن تعديله إذا فُتح القفل
+                  />
+                  <InputField
+                    label="عدد الركاب"
+                    name="SeatsNumber"
+                    value={formData.SeatsNumber}
+                    onChange={handleChange}
+                    disabled={true} // دائمًا مقفل
+                  />
+                  <InputField
+                    label="الاستخدام"
+                    name="Usage"
+                    value={formData.Usage}
+                    onChange={handleChange}
+                    disabled={true} // دائمًا مقفل
                   />
                 </div>
-
-                <InputField
-                  label="عدد السلندر"
-                  name="EngineCylindersNumber"
-                  value={formData.EngineCylindersNumber}
-                  onChange={handleChange}
-                  required
-                />
-
-                <InputField
-                  label="عدد المحاور"
-                  name="VehicleAxlesNumber"
-                  value={formData.VehicleAxlesNumber}
-                  onChange={handleChange}
-                  required
-                />
-
-                <InputField
-                  label="رقم الشاصي"
-                  name="ChassisNumber"
-                  value={formData.ChassisNumber}
-                  onChange={handleChange}
-                  required
-                />
-                <div>
-                <label className="block text-right mb-2 font-medium text-gray-700">الموديل</label>
-                <Select
-                  options={yearOptions}
-                  placeholder="اختر الموديل"
-                  value={yearOptions.find(option => option.value === formData.CarModel)}
-                  onChange={(selectedOption) => {
-                    if (selectedOption) {
-                      handleChange({
-                        target: {
-                          name: 'CarModel',
-                          value: selectedOption.value,
-                        },
-                      });
-                    }
-                  }}
-                  styles={{
-                    control: (provided) => ({
-                      ...provided,
-                      border: '1px solid #e2e8f0',
-                      borderRadius: '0.5rem',
-                      padding: '0.25rem',
-                    }),
-                  }}
-                />
-                </div>
-
-                <div className="grid grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-right mb-2 font-medium text-gray-700">رمز المحافظة</label>
-                    <Select
-                      options={provinceOptions}
-                      placeholder="اختر المحافظة"
-                      value={provinceOptions.find(option => option.value === provinceCode)}
-                      onChange={(selectedOption) => {
-                        setProvinceCode(selectedOption.value);
-                        handlePlateNumberChange();
-                      }}
-                      styles={{
-                        control: (provided) => ({
-                          ...provided,
-                          border: '1px solid #e2e8f0',
-                          borderRadius: '0.5rem',
-                          padding: '0.25rem',
-                        }),
-                      }}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-right mb-2 font-medium text-gray-700">الحرف</label>
-                    <input
-                      type="text"
-                      className="w-full p-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="أدخل الحرف"
-                      value={plateLetter}
-                      onChange={(e) => {
-                        setPlateLetter(e.target.value.toUpperCase());
-                        handlePlateNumberChange();
-                      }}
-                      maxLength={1} 
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-right mb-2 font-medium text-gray-700">الرقم</label>
-                    <input
-                      type="text"
-                      className="w-full p-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="أدخل الرقم"
-                      value={plateNumber}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        if (value.length <= 5) {
-                          setPlateNumber(value);
-                          handlePlateNumberChange();
-                        }
-                      }}
-                      maxLength={5} 
-                    />
-                  </div>
-                </div>
-
-                <InputField
-                  label="عدد الركاب"
-                  name="SeatsNumber"
-                  value={formData.SeatsNumber}
-                  onChange={handleChange}
-                  required
-                />
-                
-                <InputField
-                  label="الاستخدام"
-                  name="Usage"
-                  value={formData.Usage}
-                  onChange={handleChange}
-                  required
-                />
-{formData.VehicleType === "2" && (
-  <div>
-    <label className="block text-right mb-2 font-medium text-gray-700">تفاصيل المقطورات</label>
-    
-    {formData.TrailerData.map((trailer, index) => (
-      <div key={index} className="mb-4 p-2 border rounded-lg">
-        <label className="block text-right text-gray-700">رقم شاصي المقطورة</label>
-        <input
-          type="text"
-          name={`TrailerChassisNumber-${index}`}
-          value={trailer.TrailerChassisNumber || ""}
-          onChange={(e) => {
-            const updatedTrailerData = [...formData.TrailerData];
-            updatedTrailerData[index].TrailerChassisNumber = e.target.value;
-            setFormData(prev => ({
-              ...prev,
-              TrailerData: updatedTrailerData
-            }));
-          }}
-          className="w-full p-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="أدخل رقم شاصي المقطورة"
-        />
-
-        <label className="block text-right text-gray-700 mt-2">عدد المحاور</label>
-        <input
-          type="number"
-          name={`TrailerAxlesNumber-${index}`}
-          value={trailer.TrailerAxlesNumber || ""}
-          onChange={(e) => {
-            const updatedTrailerData = [...formData.TrailerData];
-            updatedTrailerData[index].TrailerAxlesNumber = e.target.value;
-            setFormData(prev => ({
-              ...prev,
-              TrailerData: updatedTrailerData
-            }));
-          }}
-          className="w-full p-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="أدخل عدد المحاور"
-        />
-
-        <label className="block text-right text-gray-700 mt-2">الحمولة</label>
-        <input
-          type="number"
-          name={`LoadWeight-${index}`}
-          value={trailer.LoadWeight || ""}
-          onChange={(e) => {
-            const updatedTrailerData = [...formData.TrailerData];
-            updatedTrailerData[index].LoadWeight = e.target.value;
-            setFormData(prev => ({
-              ...prev,
-              TrailerData: updatedTrailerData
-            }));
-          }}
-          className="w-full p-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="ادخل وزن الحمولة"
-        />
-
-        <label className="block text-right text-gray-700 mt-2">الفئة</label>
-        <input
-          type="text"
-          name={`Category-${index}`}
-          value={trailer.Category || ""}
-          onChange={(e) => {
-            const updatedTrailerData = [...formData.TrailerData];
-            updatedTrailerData[index].Category = e.target.value;
-            setFormData(prev => ({
-              ...prev,
-              TrailerData: updatedTrailerData
-            }));
-          }}
-          className="w-full p-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="أدخل فئة المقطورة"
-        />
-
-        <button
-          onClick={() => {
-            const updatedTrailerData = formData.TrailerData.filter((_, i) => i !== index);
-            setFormData(prev => ({
-              ...prev,
-              TrailerData: updatedTrailerData
-            }));
-          }}
-          className="mt-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
-        >
-          حذف المقطورة
-        </button>
-      </div>
-    ))}
-
-    <button
-      onClick={() => {
-        const newTrailer = {
-          TrailerChassisNumber: "",
-          TrailerAxlesNumber: "",
-          LoadWeight: "",
-          Category: ""
-        };
-        setFormData(prev => ({
-          ...prev,
-          TrailerData: [...prev.TrailerData, newTrailer]
-        }));
-      }}
-      className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-    >
-      إضافة مقطورة جديدة
-    </button>
-  </div>
-)}
-
               </div>
             )}
 
-      {currentStep === 3 && (
-        <div className="space-y-4">
-          <div className="bg-gray-100 p-4 rounded-lg">
-            <h3 className="text-lg font-semibold mb-2 text-gray-700">صورة مقدمة السيارة</h3>
-            <CameraComponent setPhoto={handleCarImage} />
-          </div>
-        </div>
-      )}
+            {currentStep === 3 && (
+              <div className="space-y-4">
+                <div className="bg-gray-100 p-4 rounded-lg">
+                  <h3 className="text-lg font-semibold mb-2 text-gray-700">صورة مقدمة السيارة</h3>
+                  <CameraComponent setPhoto={handleCarImage} />
+                </div>
+              </div>
+            )}
 
-      {currentStep === 4 && (
-        <div className="space-y-4">
-          <div className="bg-gray-100 p-4 rounded-lg">
-            <h3 className="text-lg font-semibold mb-2 text-gray-700">صورة الشاصي</h3>
-            <CameraComponent setPhoto={handleChassisImage} />
-          </div>
-        </div>
-      )}
+            {currentStep === 4 && (
+              <div className="space-y-4">
+                <div className="bg-gray-100 p-4 rounded-lg">
+                  <h3 className="text-lg font-semibold mb-2 text-gray-700">صورة الشاصي</h3>
+                  <CameraComponent setPhoto={handleChassisImage} />
+                </div>
+              </div>
+            )}
 
-      {currentStep === 5 && (
-        <div className="space-y-4">
-          {!formData.Governmental && (
-            <div className="bg-gray-100 p-4 rounded-lg">
-              <h3 className="text-lg font-semibold mb-2 text-gray-700">صورة وصل القبض</h3>
-              <CameraComponent setPhoto={handleReceiptIdImage} />
-            </div>
-          )}
-        </div>
-      )}
+            {currentStep === 5 && (
+              <div className="space-y-4">
+                {!formData.Governmental && (
+                  <div className="bg-gray-100 p-4 rounded-lg">
+                    <h3 className="text-lg font-semibold mb-2 text-gray-700">صورة وصل القبض</h3>
+                    <CameraComponent setPhoto={handleReceiptIdImage} />
+                  </div>
+                )}
+              </div>
+            )}
 
             {currentStep === 6 && (
               <ReviewData formData={formData} />
             )}
           </div>
 
-
           <div className="p-6 border-t flex justify-between bg-white">
             <button
               type="button"
-              onClick={() => setCurrentStep(p => p > 1 ? p - 1 : 1)}
+              onClick={() => setCurrentStep((p) => (p > 1 ? p - 1 : 1))}
               disabled={currentStep === 1}
               className="px-4 py-2 bg-gray-100 rounded-lg disabled:opacity-50 flex items-center hover:bg-gray-200"
             >
@@ -785,7 +590,7 @@ const CreateFormVersion = () => {
             {currentStep < steps.length ? (
               <button
                 type="button"
-                onClick={() => setCurrentStep(p => p + 1)}
+                onClick={() => setCurrentStep((p) => p + 1)}
                 className="px-4 py-2 bg-blue-500 text-white rounded-lg flex items-center hover:bg-blue-600"
               >
                 التالي
