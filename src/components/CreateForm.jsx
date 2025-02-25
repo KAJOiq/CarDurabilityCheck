@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Dialog } from "@headlessui/react";
 import { 
   XMarkIcon, 
@@ -16,6 +16,9 @@ import { useNavigate } from "react-router-dom";
 import DropDownListTemplate from "./DropDownListTemplate";
 import fetchData from "../utils/fetchData";
 import Select from 'react-select';
+import CarForm from "./CarForm";
+import TruckForm from "./TruckForm";
+import BikeForm from "./BikeForm";
 
 const ReviewData = ({ formData }) => {
   return (
@@ -44,6 +47,10 @@ const ReviewData = ({ formData }) => {
               <span className="text-gray-800">{formData.ReceiptId}</span>
             </div>
           )}
+          <div className="flex flex-row-reverse justify-between items-center">
+              <span className="font-medium text-gray-600">رقم استمارة المرور</span>
+              <span className="text-gray-800">{formData.TrafficPoliceApplicationId}</span>
+            </div>
         </div>
       </div>
 
@@ -227,6 +234,10 @@ const CreateForm = () => {
     }
   };
 
+  useEffect(() => {
+    handlePlateNumberChange();
+  }, [provinceCode, plateLetter, plateNumber]);
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
@@ -304,7 +315,7 @@ const CreateForm = () => {
         formDataToSend.append('ApplicationImages', receiptIdImage, 'receiptIdImage.png');
       }
   
-      if (formData.VehicleType === '2' && formData.TrailerData.length > 0) {
+      if (formData.VehicleType === 'شاحنة' && formData.TrailerData.length > 0) {
         formDataToSend.append('TrailerData', JSON.stringify(formData.TrailerData));
       }
   
@@ -548,7 +559,7 @@ const CreateForm = () => {
                   name="EngineCylindersNumber"
                   value={formData.EngineCylindersNumber}
                   onChange={handleChange}
-                  required
+                  disabled={formData.EngineType === 'كهربائي'} 
                 />
 
                 <InputField
