@@ -20,155 +20,188 @@ import DropDownListTemplate from "./DropDownListTemplate";
 import Select from 'react-select';
 
 const ReviewData = ({ formData }) => {
-    return (
-      <div className="space-y-6 text-right">
-        <h3 className="text-2xl font-bold text-gray-800 mb-6">البيانات المدخلة</h3>
-  
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <div className="flex flex-row-reverse items-center space-x-3 space-x-reverse mb-4">
-            <UserCircleIcon className="w-8 h-8 text-blue-500" />
-            <h4 className="text-xl font-semibold text-gray-700">بيانات المواطن</h4>
+  return (
+    <div dir="rtl" className="space-y-6 text-right p-6">
+      <h3 className="text-2xl font-bold text-gray-800 mb-6">البيانات المدخلة</h3>
+
+      <div className="bg-white p-6 rounded-lg shadow-md">
+        <div className="flex items-center space-x-3 mb-4">
+          <UserCircleIcon className="w-8 h-8 text-blue-500" />
+          <h4 className="text-xl font-semibold text-gray-700">بيانات المواطن</h4>
+        </div>
+        <div className="space-y-3">
+          <div className="flex justify-between items-center">
+            <span className="font-medium text-gray-600">اسم المواطن</span>
+            <span className="text-gray-800">{formData.CarOwnerName}</span>
+          </div>
+          <div className="flex justify-between items-center">
+            <span className="font-medium text-gray-600">حكومي</span>
+            <span className="text-gray-800">
+              {formData.Governmental ? "نعم" : "لا"}
+            </span>
+          </div>
+          {!formData.Governmental && (
+            <div className="flex justify-between items-center">
+              <span className="font-medium text-gray-600">رقم وصل القبض</span>
+              <span className="text-gray-800">{formData.ReceiptId}</span>
+            </div>
+          )}
+          <div className="flex justify-between items-center">
+            <span className="font-medium text-gray-600">رقم استمارة المرور</span>
+            <span className="text-gray-800">{formData.TrafficPoliceApplicationId}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* بطاقة بيانات المركبة */}
+      <div className="bg-white p-6 rounded-lg shadow-md">
+        <div className="flex items-center space-x-3 mb-4">
+          <TruckIcon className="w-8 h-8 text-green-500" />
+          <h4 className="text-xl font-semibold text-gray-700">بيانات المركبة</h4>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-3">
+            <div className="flex justify-between items-center">
+              <span className="font-medium text-gray-600">نوع الاستمارة</span>
+              <span className="text-gray-800">{formData.VehicleType}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="font-medium text-gray-600">نوع المركبة</span>
+              <span className="text-gray-800">{formData.CarBrandId}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="font-medium text-gray-600">طراز المركبة</span>
+              <span className="text-gray-800">{formData.CarNameId}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="font-medium text-gray-600">لون المركبة</span>
+              <span className="text-gray-800">{formData.CarColorId}</span>
+            </div>
           </div>
           <div className="space-y-3">
-            <div className="flex flex-row-reverse justify-between items-center">
-              <span className="font-medium text-gray-600">اسم المواطن</span>
-              <span className="text-gray-800">{formData.CarOwnerName}</span>
+            <div className="flex justify-between items-center">
+              <span className="font-medium text-gray-600">رقم الشاصي</span>
+              <span className="text-gray-800">{formData.ChassisNumber}</span>
             </div>
-            <div className="flex flex-row-reverse justify-between items-center">
-              <span className="font-medium text-gray-600">حكومي</span>
-              <span className="text-gray-800">
-                {formData.Governmental ? "نعم" : "لا"}
-              </span>
+            <div className="flex justify-between items-center">
+              <span className="font-medium text-gray-600">الموديل</span>
+              <span className="text-gray-800">{formData.CarModel}</span>
             </div>
-            {!formData.Governmental && (
-              <div className="flex flex-row-reverse justify-between items-center">
-                <span className="font-medium text-gray-600">رقم وصل القبض</span>
-                <span className="text-gray-800">{formData.ReceiptId}</span>
-              </div>
-            )}
-          </div>
-        </div>
-  
-        {/* بطاقة بيانات المركبة */}
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <div className="flex flex-row-reverse items-center space-x-3 space-x-reverse mb-4">
-            <TruckIcon className="w-8 h-8 text-green-500" />
-            <h4 className="text-xl font-semibold text-gray-700">بيانات المركبة</h4>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-3">
-              <div className="flex flex-row-reverse justify-between items-center">
-                <span className="font-medium text-gray-600">نوع الاستمارة</span>
-                <span className="text-gray-800">{formData.VehicleType}</span>
-              </div>
-              <div className="flex flex-row-reverse justify-between items-center">
-                <span className="font-medium text-gray-600">نوع المركبة</span>
-                <span className="text-gray-800">{formData.CarBrandId}</span>
-              </div>
-              <div className="flex flex-row-reverse justify-between items-center">
-                <span className="font-medium text-gray-600">طراز المركبة</span>
-                <span className="text-gray-800">{formData.CarNameId}</span>
-              </div>
-              <div className="flex flex-row-reverse justify-between items-center">
-                <span className="font-medium text-gray-600">لون المركبة</span>
-                <span className="text-gray-800">{formData.CarColorId}</span>
-              </div>
+            <div className="flex justify-between items-center">
+              <span className="font-medium text-gray-600">رقم المركبة</span>
+              <span className="text-gray-800">{formData.PlateNumber}</span>
             </div>
-            <div className="space-y-3">
-              <div className="flex flex-row-reverse justify-between items-center">
-                <span className="font-medium text-gray-600">رقم الشاصي</span>
-                <span className="text-gray-800">{formData.ChassisNumber}</span>
-              </div>
-              <div className="flex flex-row-reverse justify-between items-center">
-                <span className="font-medium text-gray-600">الموديل</span>
-                <span className="text-gray-800">{formData.CarModel}</span>
-              </div>
-              <div className="flex flex-row-reverse justify-between items-center">
-                <span className="font-medium text-gray-600">رقم المركبة</span>
-                <span className="text-gray-800">{formData.PlateNumber}</span>
-              </div>
-              <div className="flex flex-row-reverse justify-between items-center">
-                <span className="font-medium text-gray-600">الاستخدام</span>
-                <span className="text-gray-800">{formData.Usage}</span>
-              </div>
+            <div className="flex justify-between items-center">
+              <span className="font-medium text-gray-600">نوع التسجيل</span>
+              <span className="text-gray-800">{formData.Usage}</span>
             </div>
           </div>
         </div>
-  
-        {/* بطاقة بيانات المحرك */}
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <div className="flex flex-row-reverse items-center space-x-3 space-x-reverse mb-4">
-            <CogIcon className="w-8 h-8 text-purple-500" />
-            <h4 className="text-xl font-semibold text-gray-700">بيانات المحرك</h4>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-3">
-              <div className="flex flex-row-reverse justify-between items-center">
-                <span className="font-medium text-gray-600">نوع المحرك</span>
-                <span className="text-gray-800">{formData.EngineType}</span>
-              </div>
-              <div className="flex flex-row-reverse justify-between items-center">
-                <span className="font-medium text-gray-600">عدد السلندر</span>
-                <span className="text-gray-800">{formData.EngineCylindersNumber}</span>
-              </div>
-            </div>
-            <div className="space-y-3">
-              <div className="flex flex-row-reverse justify-between items-center">
-                <span className="font-medium text-gray-600">عدد المحاور</span>
-                <span className="text-gray-800">{formData.VehicleAxlesNumber}</span>
-              </div>
-              <div className="flex flex-row-reverse justify-between items-center">
-                <span className="font-medium text-gray-600">عدد الركاب</span>
-                <span className="text-gray-800">{formData.SeatsNumber}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-  
-        {/* بطاقة بيانات المقطورة */}
-        {formData.VehicleType === "2" && (
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <div className="flex flex-row-reverse items-center space-x-3 space-x-reverse mb-4">
-              <LinkIcon className="w-8 h-8 text-yellow-500" />
-              <h4 className="text-xl font-semibold text-gray-700">بيانات المقطورة</h4>
-            </div>
-            <div className="space-y-3">
-              <div className="flex flex-row-reverse justify-between items-center">
-                <span className="font-medium text-gray-600">تفاصيل المقطورة</span>
-                <span className="text-gray-800">{formData.TrailerData[0]?.details}</span>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
-    );
-  };  
 
+      {/* بطاقة بيانات المحرك */}
+      <div className="bg-white p-6 rounded-lg shadow-md">
+        <div className="flex items-center space-x-3 mb-4">
+          <CogIcon className="w-8 h-8 text-purple-500" />
+          <h4 className="text-xl font-semibold text-gray-700">بيانات المحرك</h4>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-3">
+            <div className="flex justify-between items-center">
+              <span className="font-medium text-gray-600">نوع المحرك</span>
+              <span className="text-gray-800">{formData.EngineType}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="font-medium text-gray-600">عدد السلندر</span>
+              <span className="text-gray-800">{formData.EngineCylindersNumber}</span>
+            </div>
+          </div>
+          <div className="space-y-3">
+            <div className="flex justify-between items-center">
+              <span className="font-medium text-gray-600">عدد المحاور</span>
+              <span className="text-gray-800">{formData.VehicleAxlesNumber}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="font-medium text-gray-600">عدد الركاب</span>
+              <span className="text-gray-800">{formData.SeatsNumber}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* بطاقة بيانات المقطورة */}
+      {formData.VehicleType === "شاحنة" && (
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <div className="flex items-center space-x-3 mb-4">
+            <LinkIcon className="w-8 h-8 text-yellow-500" />
+            <h4 className="text-xl font-semibold text-gray-700">بيانات المقطورة</h4>
+          </div>
+          <div className="space-y-3">
+            <div className="flex justify-between items-center">
+              <span className="font-medium text-gray-600">تفاصيل المقطورة</span>
+              <span className="text-gray-800">{formData.TrailerData[0]?.details}</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* قسم عرض الصور */}
+      <div className="bg-white p-6 rounded-lg shadow-md">
+        <div className="flex items-center space-x-3 mb-4">
+          <CameraIcon className="w-8 h-8 text-blue-500" />
+          <h4 className="text-xl font-semibold text-gray-700">الصور المرفوعة</h4>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-3">
+            <div className="flex flex-col items-center">
+              <span className="font-medium text-gray-600">صورة الشاصي</span>
+              {formData.chassisCroppedImage ? (
+                <img
+                  src={URL.createObjectURL(formData.chassisCroppedImage)}
+                  alt="صورة الشاصي"
+                  className="w-full h-auto rounded-lg"
+                />
+              ) : (
+                <span className="text-gray-500">لا توجد صورة</span>
+              )}
+            </div>
+          </div>
+          <div className="space-y-3">
+            <div className="flex flex-col items-center">
+              <span className="font-medium text-gray-600">صورة السيارة</span>
+              {formData.carCroppedImage ? (
+                <img
+                  src={URL.createObjectURL(formData.carCroppedImage)}
+                  alt="صورة السيارة"
+                  className="w-full h-auto rounded-lg"
+                />
+              ) : (
+                <span className="text-gray-500">لا توجد صورة</span>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 const CreateFormVersion = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formErrors, setFormErrors] = useState([]);
-  const [lockedFields, setLockedFields] = useState(true); // قفل جميع الحقول بشكل افتراضي
+  const [lockedFields, setLockedFields] = useState(true); 
+  
+  // States for photos
+  const [carFullImage, setCarFullImage] = useState(null);
+  const [carCroppedImage, setCarCroppedImage] = useState(null);
+  const [chassisFullImage, setChassisFullImage] = useState(null);
+  const [chassisCroppedImage, setChassisCroppedImage] = useState(null);
+  const [receiptIdImage, setReceiptIdImage] = useState(null);
 
-  // البيانات الأصلية التي تم جلبها من البحث برقم الشاصي
-  const [originalData, setOriginalData] = useState({
-    CarBrandId: "",
-    CarNameId: "",
-    CarColorId: "",
-    ChassisNumber: "",
-    CarModel: "",
-    PlateNumber: "",
-    EngineType: "",
-    EngineCylindersNumber: "",
-    VehicleAxlesNumber: "",
-    SeatsNumber: "",
-    Usage: "",
-    VehicleID: "", // إضافة VehicleID
-  });
+    // Form data structure
 
-  // البيانات الحالية
   const [formData, setFormData] = useState({
     CarOwnerName: "",
     VehicleType: "",
@@ -187,29 +220,64 @@ const CreateFormVersion = () => {
     PlateNumber: "",
     Governmental: false,
     TrailerData: [],
-    VehicleID: "", // إضافة VehicleID
+    VehicleID: "", 
   });
-
-  const [carFullImage, setCarFullImage] = useState(null);
-  const [carCroppedImage, setCarCroppedImage] = useState(null);
-  const [chassisFullImage, setChassisFullImage] = useState(null);
-  const [chassisCroppedImage, setChassisCroppedImage] = useState(null);
-  const [receiptIdImage, setReceiptIdImage] = useState(null);
 
   const steps = [
     { title: "تفاصيل الاستمارة", fields: ['CarOwnerName', 'VehicleType', 'ReceiptId', 'TrafficPoliceApplicationId'] },
     { title: "تفاصيل المركبة", fields: ['CarBrandId', 'CarNameId', 'CarColorId', 'ChassisNumber', 'PlateNumber', 'CarModel', 'EngineCylindersNumber', 'VehicleAxlesNumber', 'EngineType', 'SeatsNumber', 'Usage', 'Governmental'] },
     { title: "صورة السيارة", fields: ['carFullImage', 'carCroppedImage'] },
     { title: "صورة الشاصي", fields: ['chassisFullImage', 'chassisCroppedImage'] },
-    { title: "صورة وصل القبض", fields: ['receiptIdImage'] },
-    { title: "المراجعة النهائية" },
+    { title: "صورة وصل القبض", fields: ['receiptIdImage']},
+    { title: "المراجعة النهائية" }
   ];
 
+  const engineTypeOptions = [
+    { value: 'وقود', label: 'وقود' },
+    { value: 'كهربائي', label: 'كهربائي' },
+    { value: 'هجين', label: 'هجين' },
+  ];
+
+  const provinceOptions = [
+    { value: '11', label: 'بغداد 11' },
+    { value: '12', label: 'نينوى 12' },
+    { value: '13', label: 'ميسان 13' },
+    { value: '14', label: 'البصرة 14' },
+    { value: '15', label: 'الأنبار 15' },
+    { value: '16', label: 'القادسية 16' },
+    { value: '17', label: 'المثنى 17' },
+    { value: '18', label: 'بابل 18' },
+    { value: '19', label: 'كربلاء 19' },
+    { value: '20', label: 'ديالى 20' },
+    { value: '21', label: 'السليمانية 21' },
+    { value: '22', label: 'أربيل 22' },
+    { value: '23', label: 'حلبجة 23' },
+    { value: '24', label: 'دهوك 24' },
+    { value: '25', label: 'كركوك 25' },
+    { value: '26', label: 'صلاح الدين 26' },
+    { value: '27', label: 'ذي قار 27' },
+    { value: '28', label: 'النجف 28' },
+    { value: '29', label: 'واسط 29' }
+];
+
+  const [provinceCode, setProvinceCode] = useState(''); // رمز المحافظة
+  const [plateLetter, setPlateLetter] = useState(''); // الحرف
+  const [plateNumber, setPlateNumber] = useState(''); // الرقم
+
+  const handlePlateNumberChange = () => {
+    if (plateNumber.length === 5) {
+      const fullPlateNumber = `${provinceCode}${plateLetter}${plateNumber}`;
+      setFormData((prev) => ({
+        ...prev,
+        PlateNumber: fullPlateNumber,
+      }));
+    }
+  };
+  
   useEffect(() => {
     if (location.state?.vehicleData) {
       const { vehicleData } = location.state;
 
-      // تعيين البيانات الأصلية
       setOriginalData({
         CarBrandId: vehicleData.carBrand,
         CarNameId: vehicleData.carName,
@@ -222,13 +290,12 @@ const CreateFormVersion = () => {
         VehicleAxlesNumber: vehicleData.vehicleAxlesNumber,
         SeatsNumber: vehicleData.seatsNumber,
         Usage: vehicleData.usage,
-        VehicleID: vehicleData.vehicleID, // تعيين VehicleID
+        VehicleID: vehicleData.vehicleID, 
       });
 
-      // تعيين البيانات الحالية
       setFormData((prev) => ({
         ...prev,
-        VehicleID: vehicleData.vehicleID, // تعيين VehicleID
+        VehicleID: vehicleData.vehicleID, 
         VehicleType: vehicleData.vehicleType,
         CarBrandId: vehicleData.carBrand,
         CarNameId: vehicleData.carName,
@@ -247,7 +314,7 @@ const CreateFormVersion = () => {
   }, [location.state]);
 
   const toggleLock = () => {
-    setLockedFields((prev) => !prev); // فتح أو إغلاق جميع الحقول
+    setLockedFields((prev) => !prev); 
   };
 
   const handleChange = (e) => {
