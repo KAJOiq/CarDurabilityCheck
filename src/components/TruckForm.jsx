@@ -2,13 +2,13 @@ import React, { useRef, useState, useEffect } from "react";
 import logo from "../assets/logo.jpg";
 import imgStatic from "../assets/truck.png";
 import QRCode from "qrcode"; 
-
-
 const TruckForm = ({ searchResults }) => {
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState("");
+  const printFrameRef = useRef(null);
 
     useEffect(() => {
       if (!searchResults ) return;
+
       const qrData = JSON.stringify({
         ADDID: searchResults.applicationId, 
         ISSD: searchResults.issueDate, 
@@ -36,26 +36,25 @@ const TruckForm = ({ searchResults }) => {
         SP: searchResults.stickerProvider,
       });
   
-      QRCode.toDataURL(qrData)
-        .then((url) => {
-          if (url !== qrCodeDataUrl) {
-            setQrCodeDataUrl(url); 
-          }
-        })
+      RCode.toDataURL(qrData)
+        .then((url) => setQrCodeDataUrl(url))
         .catch((error) => console.error("Error generating QR code:", error));
-    }, [searchResults]); 
-  
-    const formatDate = (dateString) => {
-      const date = new Date(dateString);
-      return date.toISOString().split("T")[0];
-    };
+  }, [searchResults]);
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toISOString().split("T")[0];
+  };
+
   const handlePrint = () => {
     if (!searchResults) return;
     const logoBase64 = logo;
     const imgStaticBase64 = imgStatic;
-    const printWindow = window.open("_blank");
-    printWindow.document.open();
-    printWindow.document.write(`
+    const printFrame = printFrameRef.current;
+    if (!printFrame) return;
+    const doc = printFrame.contentDocument || printFrame.contentWindow.document;
+    doc.open();
+    doc.write(`
      <!DOCTYPE html>
       <html lang="ar" dir="rtl">
       <head>
@@ -290,25 +289,37 @@ const TruckForm = ({ searchResults }) => {
         </body>
         </html>
     `);
-    printWindow.document.close();
-
-    // Add a delay of 500 milliseconds (0.5 seconds) before calling print()
+    doc.close();
+    
     setTimeout(() => {
-      printWindow.print();
-    }, 500);  // Adjust the 500 milliseconds as needed
+      printFrame.contentWindow.print();
+    }, 500);
   };
 
   return (
     <div>
       <button
-        className="bg-blue-500 text-white px-6 py-3 rounded-2xl hover:bg-blue-700"
+        className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-5 py-3 rounded-lg 
+                    hover:from-blue-600 hover:to-blue-700 transition-all duration-300
+                    flex items-center justify-center gap-3 shadow-lg hover:shadow-xl"
         onClick={handlePrint}
       >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-5 w-5"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fillRule="evenodd"
+            d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v2a2 2 0 002 2h6a2 2 0 002-2v-2h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 0H7v3h6V4zm0 8H7v4h6v-4z"
+            clipRule="evenodd"
+          />
+        </svg>
         طباعة الاستمارة
       </button>
-
+      <iframe ref={printFrameRef} style={{ display: "none" }} />
     </div>
   );
 };
-
 export default TruckForm;
