@@ -62,7 +62,7 @@ const TruckForm = ({ searchResults }) => {
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>شهادة فحص المركبة</title>
-        <script src="https://cdn.tailwindcss.com"></script>
+        <link href="/tailwind.css" rel="stylesheet">
         <style>
            @media print {
           @page {

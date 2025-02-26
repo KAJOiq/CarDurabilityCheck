@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import logo from "../assets/logo.jpg";
 import QRCode from "qrcode"; 
 import imgStatic from "../assets/car.jpeg";
 const CarForm = ({ searchResults }) => {
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState("");
+  const printFrameRef = useRef(null);
 
   useEffect(() => {
     if (!searchResults) return;
@@ -48,16 +49,19 @@ const CarForm = ({ searchResults }) => {
   const handlePrint = () => {
     if (!searchResults) return;
     const imgStaticBase64 = imgStatic;
-    const printWindow = window.open("_blank");
-    printWindow.document.open();
-    printWindow.document.write(`
+    const printFrame = printFrameRef.current;
+    if (!printFrame) return;
+    
+    const doc = printFrame.contentDocument || printFrame.contentWindow.document;
+    doc.open();
+    doc.write(`
     <!DOCTYPE html>
     <html lang="ar" dir="rtl">
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>شهادة فحص المركبة</title>
-      <script src="https://cdn.tailwindcss.com"></script>
+      <link href="/tailwind.css" rel="stylesheet">
       <style>
         @media print {
           @page {
@@ -170,10 +174,10 @@ const CarForm = ({ searchResults }) => {
     </body>
     </html>
     `);
-    printWindow.document.close();
-
+    doc.close();
+    
     setTimeout(() => {
-      printWindow.print();
+      printFrame.contentWindow.print();
     }, 500);
   };
 
@@ -185,6 +189,8 @@ const CarForm = ({ searchResults }) => {
       >
         طباعة الاستمارة
       </button>
+      <iframe ref={printFrameRef} style={{ display: "none" }} />
+
     </div>
   );
 };
