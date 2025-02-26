@@ -731,14 +731,12 @@ const CreateForm = () => {
                   required
                 />
                 
-                
 {formData.VehicleType === "شاحنة" && (
-  <div className="p-4">
+  <div className="p-4 border rounded-lg shadow-sm">
     <label className="block text-right mb-4 font-medium text-gray-700">تفاصيل المقطورات</label>
-
     {formData.TrailerData.map((trailer, index) => (
       <div key={index} className="mb-6 p-4 border rounded-lg shadow-sm">
-        <div className="space-y-4">
+        <div className="space-y-1 grid grid-cols-2 gap-4 w-full">
           {/* رقم شاصي المقطورة */}
           <div>
             <label className="block text-right text-gray-700">رقم شاصي المقطورة</label>
@@ -763,7 +761,7 @@ const CreateForm = () => {
           <div>
             <label className="block text-right text-gray-700">عدد المحاور</label>
             <input
-              type="number"
+              type="text"
               name={`TrailerAxlesNumber-${index}`}
               value={trailer.TrailerAxlesNumber || ""}
               onChange={(e) => {
@@ -783,7 +781,7 @@ const CreateForm = () => {
           <div>
             <label className="block text-right text-gray-700">الحمولة</label>
             <input
-              type="number"
+              type="text"
               name={`LoadWeight-${index}`}
               value={trailer.LoadWeight || ""}
               onChange={(e) => {
