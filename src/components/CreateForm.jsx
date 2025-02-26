@@ -145,7 +145,7 @@ const ReviewData = ({ formData }) => {
       )}
 
       {/* قسم عرض الصور */}
-      <div className="bg-white p-6 rounded-lg shadow-md">
+{/*       <div className="bg-white p-6 rounded-lg shadow-md">
         <div className="flex items-center space-x-3 mb-4">
           <CameraIcon className="w-8 h-8 text-blue-500" />
           <h4 className="text-xl font-semibold text-gray-700">الصور المرفوعة</h4>
@@ -180,7 +180,7 @@ const ReviewData = ({ formData }) => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
