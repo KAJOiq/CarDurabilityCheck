@@ -59,13 +59,18 @@ const ShowForms = () => {
         onSearch={handleSearch}
       />
 
+      {/* Display the search results */}
       {searchResults && (
         <div className="space-y-8" dir="rtl">
           <div className="bg-gradient-to-br from-blue-50 to-slate-50 rounded-2xl p-6 shadow-lg">
             <h2 className="text-md font-bold text-gray-800 mb-6 border-b-2 border-blue-200 pb-4">
               تفاصيل الاستمارة
             </h2>
-
+            <div className="mt-4 py-4" dir="rtl">
+              {searchResults?.vehicleType === "سيارة" && <CarForm searchResults={searchResults} />}
+              {searchResults?.vehicleType === "شاحنة" && <TruckForm searchResults={searchResults} />}
+              {searchResults?.vehicleType === "دراجة" && <BikeForm searchResults={searchResults} />}
+            </div>  
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {Object.entries({
                 "رقم الاستمارة": searchResults.applicationId,
@@ -156,11 +161,7 @@ const ShowForms = () => {
         </div>
       )}
 
-      <div className="mt-8" dir="rtl">
-        {searchResults?.vehicleType === "سيارة" && <CarForm searchResults={searchResults} />}
-        {searchResults?.vehicleType === "شاحنة" && <TruckForm searchResults={searchResults} />}
-        {searchResults?.vehicleType === "دراجة" && <BikeForm searchResults={searchResults} />}
-      </div>
+    
     </div>
   );
 };
