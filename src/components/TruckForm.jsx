@@ -36,7 +36,7 @@ const TruckForm = ({ searchResults }) => {
         SP: searchResults.stickerProvider,
       });
   
-      RCode.toDataURL(qrData)
+      QRCode.toDataURL(qrData)
         .then((url) => setQrCodeDataUrl(url))
         .catch((error) => console.error("Error generating QR code:", error));
   }, [searchResults]);

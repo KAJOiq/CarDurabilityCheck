@@ -17,6 +17,11 @@ import { useNavigate } from "react-router-dom";
 import DropDownListTemplate from "./DropDownListTemplate";
 import fetchData from "../utils/fetchData";
 import Select from 'react-select';
+import logo from "../assets/logo.jpg";
+import QRCode from "qrcode"; 
+import imgStaticCar from "../assets/car.jpeg";
+import imgStaticTruck from "../assets/truck.png";
+import imgStaticBike from "../assets/bike.png";
 
 const ReviewData = ({ formData }) => {
   return (
@@ -66,15 +71,15 @@ const ReviewData = ({ formData }) => {
             </div>
             <div className="flex justify-between items-center">
               <span className="font-medium text-gray-600">نوع المركبة</span>
-              <span className="text-gray-800">{formData.CarBrandId}</span>
+              <span className="text-gray-800">{formData.CarBrand}</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="font-medium text-gray-600">طراز المركبة</span>
-              <span className="text-gray-800">{formData.CarNameId}</span>
+              <span className="text-gray-800">{formData.CarName}</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="font-medium text-gray-600">لون المركبة</span>
-              <span className="text-gray-800">{formData.CarColorId}</span>
+              <span className="text-gray-800">{formData.CarColor}</span>
             </div>
           </div>
           <div className="space-y-3">
@@ -143,53 +148,17 @@ const ReviewData = ({ formData }) => {
           </div>
         </div>
       )}
-
-      {/* قسم عرض الصور */}
-{/*       <div className="bg-white p-6 rounded-lg shadow-md">
-        <div className="flex items-center space-x-3 mb-4">
-          <CameraIcon className="w-8 h-8 text-blue-500" />
-          <h4 className="text-xl font-semibold text-gray-700">الصور المرفوعة</h4>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-3">
-            <div className="flex flex-col items-center">
-              <span className="font-medium text-gray-600">صورة الشاصي</span>
-              {formData.chassisCroppedImage ? (
-                <img
-                  src={URL.createObjectURL(formData.chassisCroppedImage)}
-                  alt="صورة الشاصي"
-                  className="w-full h-auto rounded-lg"
-                />
-              ) : (
-                <span className="text-gray-500">لا توجد صورة</span>
-              )}
-            </div>
-          </div>
-          <div className="space-y-3">
-            <div className="flex flex-col items-center">
-              <span className="font-medium text-gray-600">صورة السيارة</span>
-              {formData.carCroppedImage ? (
-                <img
-                  src={URL.createObjectURL(formData.carCroppedImage)}
-                  alt="صورة السيارة"
-                  className="w-full h-auto rounded-lg"
-                />
-              ) : (
-                <span className="text-gray-500">لا توجد صورة</span>
-              )}
-            </div>
-          </div>
-        </div>
-      </div> */}
     </div>
   );
 };
+
 const CreateForm = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formErrors, setFormErrors] = useState([]);
-  
+  const [mergedData, setMergedData] = useState(null); 
+
   // States for photos
   const [carFullImage, setCarFullImage] = useState(null);
   const [carCroppedImage, setCarCroppedImage] = useState(null);
@@ -327,6 +296,10 @@ const CreateForm = () => {
       setIsSubmitting(true);
       const formDataToSend = new FormData();
   
+      delete formDataToSend.CarBrand;
+      delete formDataToSend.CarName;
+      delete formDataToSend.CarColor;
+
       Object.entries(formData).forEach(([key, value]) => {
         if (key !== 'TrailerData' && !(key === 'ReceiptId' && (formData.Governmental || value === null))) {
           formDataToSend.append(key, value);
@@ -368,7 +341,24 @@ const CreateForm = () => {
         setFormErrors(errorMessages);
         return;
       }
-        navigate('/forms', { state: { success: true } });
+      const mergedData = {
+        ...formData, 
+        applicationId: result.results.applicationId,
+        vehicleId: result.results.vehicleId,
+        issueDate: result.results.issueDate,
+      };
+
+      setMergedData(mergedData);
+
+      if (mergedData.VehicleType === 'سيارة') {
+      handlePrintForCar(mergedData);
+      } else if (mergedData.VehicleType === 'شاحنة') {
+        handlePrintForTruck(mergedData);
+      } else if (mergedData.VehicleType === 'دراجة') {
+        handlePrintForBike(mergedData);
+      }
+
+      navigate('/forms', { state: { success: true } });
     } catch (error) {
       console.error('Error:', error);
       setFormErrors(['فشل في الاتصال بالخادم: ' + error.message]);
@@ -376,6 +366,665 @@ const CreateForm = () => {
       setIsSubmitting(false);
     }
   };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toISOString().split("T")[0];
+  };
+
+  const handlePrintForCar = (data) => {
+    if (!data) return;
+    const imgStaticBase64 = imgStaticCar;
+
+    const qrData = JSON.stringify({
+      ADDID: data.applicationId,
+      ISSD: data.issueDate,
+      TFPN: data.TrafficPoliceApplicationId,
+      RID: data.ReceiptId,
+      CON: data.CarOwnerName,
+      IG: data.Governmental,
+      CN: data.ChassisNumber,
+      PN: data.PlateNumber,
+      CYC: data.EngineCylindersNumber,
+      VAXN: data.VehicleAxlesNumber,
+      COM: data.CarModel,
+      SEAN: data.SeatsNumber,
+      VN: data.CarNameId,
+      VC: data.CarColorId,
+      VB: data.CarBrandId,
+      VT: data.VehicleType,
+      USE: data.Usage,
+      AGN: data.agency,
+      LN: data.location,
+      VID: data.vehicleId,
+      ENT: data.EngineType,
+      IIC: data.isInspectionCertified,
+      SN: data.stickerNumber,
+      SP: data.stickerProvider,
+    });
+
+    QRCode.toDataURL(qrData)
+      .then((qrCodeDataUrl) => {
+        const printFrame = document.createElement('iframe');
+        printFrame.style.display = 'none';
+        document.body.appendChild(printFrame);
+
+        const doc = printFrame.contentDocument || printFrame.contentWindow.document;
+        doc.open();
+        doc.write(`
+         <!DOCTYPE html>
+             <html lang="ar" dir="rtl">
+             <head>
+               <meta charset="UTF-8">
+               <meta name="viewport" content="width=device-width, initial-scale=1.0">
+               <title>شهادة فحص المركبة</title>
+               <link href="/tailwind.css" rel="stylesheet">
+               <style>
+                 @media print {
+                   @page {
+                     size: A4 portrait;
+                   }
+                   body {
+                     font-family: Arial, sans-serif;
+                     direction: rtl;
+                   }
+                 }
+               </style>
+             </head>
+             <body class="bg-white w-[210mm] h-[148mm] p-6 text-right">
+               <!-- Header -->
+               <div class="flex items-center justify-between border-b-2 border-black pb-2 w-full" dir="rtl">
+                 <div class="flex flex-col items-center w-1/4 text-sm space-y-2">
+                   <h1 class="text-2xl font-bold text-black-800">جمهورية العراق</h1>
+                   <h1 class="text-xl font-bold text-black-800">وزارة الداخلية</h1>
+                 </div>
+         
+                 <!-- Center QR and Logo -->
+                 <div class="relative flex items-center justify-center w-1/2">
+                   <div class="w-24 mb-2 absolute right-0 mr-4">
+                     <img src="${qrCodeDataUrl}" alt="QR Code" class="w-auto h-auto" />
+                   </div>
+                   <div class="mb-2 mx-auto absolute left-6 ml-10">
+                     <img src="${logo}" alt="Logo" class="w-24 h-auto" />
+                   </div>
+                 </div>
+         
+                 <!-- Right-side Details -->
+                 <div class="flex flex-col items-start w-2/5 text-sm text-right font-semibold">
+                   <div class="grid grid-cols-2 w-full">
+                     <div class="flex flex-col text-black-800">
+                       <span>رقم استمارة الفحص</span> 
+                       <span>رقم وصل القبض</span>
+                       <span>اسم الموقع</span>
+                       <span>تاريخ الاصدار</span>
+                     </div>
+                     <div class="flex flex-col text-black-800 font-bold text-right">
+                       <span>: ${localStorage.getItem("location")}-${data.applicationId}</span>
+                       <span>: ${formData.ReceiptId}</span>
+                       <span>: ${localStorage.getItem("agency")}</span>
+                       <span>: ${formatDate(data.issueDate)}</span>
+                     </div>
+                   </div>
+                 </div>
+               </div>
+         
+               <!-- Vehicle Data Section -->
+               <div class="border border-black rounded-lg p-1 mt-1">
+                 <h3 class="bg-gray-200 text-center font-bold py-0.5">بيانات المركبة</h3>
+                 <div class="grid grid-cols-2 gap-2 text-md">
+                   ${[
+                     ["اسم المالك", formData.CarOwnerName],
+                     ["نوع المركبة", formData.CarBrand],
+                     ["طراز المركبة", formData.CarName],
+                     ["لون المركبة", formData.CarColor],
+                     ["رقم المركبة", formData.PlateNumber],
+                     ["رقم الشاصي", formData.ChassisNumber],
+                     ["الموديل", formData.CarModel],
+                     ["نوع المحرك", formData.EngineType],
+                     ["عدد السلندر", formData.EngineCylindersNumber],
+                     ["عدد المحاور", formData.VehicleAxlesNumber],
+                     ["عدد الركاب", formData.SeatsNumber],
+                   ]
+                     .map(
+                       ([label, value]) =>
+                         `
+                         <div class="flex items-center py-0.5 border-black">
+                           <span class="font-bold text-md w-1/3">${label} :</span>
+                           <span class="font-bold text-md w-2/3 px-1 border border-black rounded">${value || "---"}</span>
+                         </div>
+                         `
+                     )
+                     .join("")}
+                     
+                 </div>
+               </div>
+               <div class="border border-black grid grid-cols-2 rounded-lg p-2" >
+               <!-- Vehicle Image -->
+                 <div class="w-full max-w-100 h-auto p-0 dir="ltr"">
+                      <img src="${imgStaticBase64}" class="object-contain w-full h-full rounded-md p-0.5 border border-white" />
+                   </div>
+
+                  <div class="border border-white grid grid-rows-2 rounded-lg p-2">
+                    <div class="w-full max-w-100 h-auto p-0" dir="rtl">
+                      ${carCroppedImage ? (
+                        `<img
+                          src=${URL.createObjectURL(carCroppedImage)}
+                          alt="صورة السيارة المقصوصة"
+                          class="object-contain w-full h-full rounded-md p-0.5 border border-black"
+                        />`
+                      ) : (
+                        "صورة السيارة المقصوصة"
+                      )}
+                    </div>
+                    <div class="w-full max-w-100 h-auto p-0" dir="rtl">
+                      ${chassisCroppedImage ? (
+                        `<img
+                          src=${URL.createObjectURL(chassisCroppedImage)}
+                          alt="صورة الشاصي المقصوصة"
+                          class="object-contain w-full h-full rounded-md p-0.5 border border-black"
+                        />`
+                      ) : (
+                        "صورة الشاصي المقصوصة"
+                      )}
+                    </div>
+                  </div>
+
+                 <div class="border border-black  rounded-lg p-2 min-h-40" >
+                   <span class="font-bold text-md text-center w-1/3">الفاحص : 
+                   </span> 
+                 </div>
+                 <div class="border border-black  rounded-lg p-2 min-h-40" >
+                   <span class="font-bold text-md text-center w-1/3">الفاحص :
+                 </span> 
+                 </div>
+                 </div>
+                </div> 
+             </body>
+             </html>
+        `);
+        doc.close();
+
+        setTimeout(() => {
+          printFrame.contentWindow.print();
+          document.body.removeChild(printFrame);
+        }, 500);
+      })
+      .catch((error) => console.error("Error generating QR code:", error));
+  };
+
+  const handlePrintForTruck = (data) => {
+    if (!data) return;
+    const imgStaticBase64 = imgStaticTruck;
+
+    const qrData = JSON.stringify({
+      ADDID: data.applicationId,
+      ISSD: data.issueDate,
+      TFPN: data.TrafficPoliceApplicationId,
+      RID: data.ReceiptId,
+      CON: data.CarOwnerName,
+      IG: data.Governmental,
+      CN: data.ChassisNumber,
+      PN: data.PlateNumber,
+      CYC: data.EngineCylindersNumber,
+      VAXN: data.VehicleAxlesNumber,
+      COM: data.CarModel,
+      SEAN: data.SeatsNumber,
+      VN: data.CarNameId,
+      VC: data.CarColorId,
+      VB: data.CarBrandId,
+      VT: data.VehicleType,
+      USE: data.Usage,
+      AGN: data.agency,
+      LN: data.location,
+      VID: data.vehicleId,
+      ENT: data.EngineType,
+      IIC: data.isInspectionCertified,
+      SN: data.stickerNumber,
+      SP: data.stickerProvider,
+    });
+
+    QRCode.toDataURL(qrData)
+      .then((qrCodeDataUrl) => {
+        const printFrame = document.createElement('iframe');
+        printFrame.style.display = 'none';
+        document.body.appendChild(printFrame);
+
+        const doc = printFrame.contentDocument || printFrame.contentWindow.document;
+        doc.open();
+        doc.write(`
+          <!DOCTYPE html>
+      <html lang="ar" dir="rtl">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>شهادة فحص المركبة</title>
+        <link href="/tailwind.css" rel="stylesheet">
+        <style>
+           @media print {
+          @page {
+            size: A4 portrait;
+          }
+            body {
+              font-family: Arial, sans-serif;
+              direction: rtl;
+            }
+          }
+        </style>
+      </head>
+      <body class="bg-white w-[210mm] h-[148mm] p-6 text-right">
+      <!-- Header -->
+      <div class="flex items-center justify-between border-b-2 border-black pb-2 w-full" dir="rtl">
+        <!-- Left-side Titles -->
+        <div class="flex flex-col items-center w-1/4 text-sm space-y-2">
+          <h1 class="text-2xl font-bold text-black-800">جمهورية العراق</h1>
+          <h1 class="text-xl font-bold text-black-800">وزارة الداخلية</h1>
+        </div>
+      
+        <!-- Centered Section (QR Code and Logo) -->
+        <div class="relative flex items-center justify-center w-1/2">
+          <!-- QR Code (Left) -->
+          <div class="w-24 mb-2 absolute right-0 mr-4">
+            <img src="${qrCodeDataUrl}" alt="QR Code" class="w-auto h-auto" />
+          </div>
+      
+          <!-- Logo (Centered) -->
+          <div class="mb-2 mx-auto absolute left-6 ml-10">
+            <img src="${logo}" alt="Logo" class="w-24 h-auto" />
+          </div>
+        </div>
+      
+        <!-- Right-side Details -->
+        <div class="flex flex-col items-start w-2/5 text-sm text-right font-semibold">
+          <!-- كل سطر راح يكون grid مكون من عمودين -->
+          <div class="grid grid-cols-2 w-full"> <!-- زيادة المسافة الأفقية هنا -->
+            <!-- العمود الأول للنصوص الثابتة -->
+            <div class="flex flex-col text-black-800"> <!-- زيادة المسافة الجانبية هنا -->
+              <span>رقم استمارة الفحص</span> 
+              <span>رقم وصل القبض</span>
+              <span>اسم الموقع</span>
+              <span>تاريخ الاصدار</span>
+            </div>
+      
+            <!-- العمود الثاني للقيم المتغيرة -->
+            <div class="flex flex-col text-black-800 font-bold text-right">
+              <span>: ${localStorage.getItem("location")}-${data.applicationId}</span>
+              <span>: ${formData.ReceiptId}</span>
+              <span>: ${localStorage.getItem("agency")}</span>
+              <span>: ${formatDate(data.issueDate)}</span>
+           
+            </div>
+          </div>
+        </div>
+      
+      </div>
+           <!-- Main Content with Grid -->
+<div class="grid grid-cols-3 gap-2 mt-2">
+  <!-- Vehicle Data (Left) -->
+  <div class="border border-black rounded-lg p-1 relative col-span-2" dir="rtl">
+    <h3 class="bg-gray-200 text-center font-bold">بيانات المركبة</h3>
+    <div class="text-sm">
+      ${[
+        [
+          `<div class="flex justify-between w-full py-0.5 border-black">
+            <span class="font-bold text-center text-md w-1/3">نوع المركبة</span>
+            <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.CarBrand || "---"}</span>
+            <span class="font-bold text-center text-md w-1/3">طراز المركبة</span>
+            <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.CarName || "---"}</span>
+          </div>`,
+          null,
+        ],
+
+        [
+          `<div class="flex justify-between w-full py-0.5 border-black">
+            <span class="font-bold text-center text-md w-1/3">لون المركبة</span>
+            <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.CarColor || "---"}</span>
+            <span class="font-bold text-center text-md w-1/3">نوع المحرك</span>
+            <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.CngineType || "---"}</span>
+          </div>`,
+          null,
+        ],
+        [
+          `<div class="flex justify-between w-full py-0.5 border-black">
+            <span class="font-bold text-center text-md w-1/3">الاستخدام</span>
+            <span class="font-bold text-md w-1/2 px-1 border border-black rounded">${formData.Usage || "---"}</span>
+            <span class="font-bold text-center text-md w-1/3">الموديل</span>
+            <span class="font-bold text-md w-1/2 px-1 border border-black rounded">${formData.CarModel || "---"}</span>
+            <span class="font-bold text-center text-md w-1/3">عدد السلندر</span>
+            <span class="font-bold text-md w-1/2 px-1 border border-black rounded">${formData.EngineCylindersNumber || "---"}</span>
+          </div>`,
+          null,
+        ],
+        
+        ["رقم المركبة", formData.PlateNumber],
+        ["رقم الشاصي", formData.ChassisNumber],
+
+         // بيانات الملحق الأول
+         [
+          `<div class="border-black">
+            <h3 class="bg-gray-200 text-center font-semibold text-sm">بيانات الملحق الأول</h3>
+            ${[
+              [
+                `<div class="flex justify-between w-full py-0.5 border-black">
+                  <span class="font-bold text-center text-md w-1/3">نوع الحمل</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[0]?.Category || "---"}</span>
+                  <span class="font-bold text-center text-md w-1/3">شاصي الحمل</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[0]?.TrailerChassisNumber  || "---"}</span>
+                </div>`,
+                null,
+              ],
+              [
+                `<div class="flex justify-between w-full border-black">
+                  <span class="font-bold text-center text-md w-1/3">عدد المحاور</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[0]?.TrailerAxlesNumber  || "---"}</span>
+                  <span class="font-bold text-center text-md w-1/3">الحمولة</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[0]?.LoadWeight  || "---"}</span>
+                </div>`,
+                null,
+              ],
+            ].map(([content]) => content).join('')}
+          </div>`,
+          null
+        ],
+
+        // بيانات الملحق الثاني
+        [
+          `<div class="border-black">
+            <h3 class="bg-gray-200 text-center font-semibold text-sm">بيانات الملحق الثاني</h3>
+            ${[
+              [
+                `<div class="flex justify-between w-full py-0.5 border-black">
+                  <span class="font-bold text-center text-md w-1/3">نوع الحمل</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[1]?.Category || "---"}</span>
+                  <span class="font-bold text-center text-md w-1/3">شاصي الحمل</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[1]?.TrailerChassisNumber  || "---"}</span>
+                </div>`,
+                null,
+              ],
+              [
+                `<div class="flex justify-between w-full border-black">
+                  <span class="font-bold text-center text-md w-1/3">عدد المحاور</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[1]?.TrailerAxlesNumber  || "---"}</span>
+                  <span class="font-bold text-center text-md w-1/3">الحمولة</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[1]?.LoadWeight  || "---"}</span>
+                </div>`,
+                null,
+              ],
+            ].map(([content]) => content).join('')}
+          </div>`,
+          null
+        ],
+
+        // بيانات الملحق الثالث
+        [
+          `<div class="border-black">
+            <h3 class="bg-gray-200 text-center font-semibold text-sm">بيانات الملحق الثالث</h3>
+            ${[
+              [
+                `<div class="flex justify-between w-full py-0.5 border-black">
+                  <span class="font-bold text-center text-md w-1/3">نوع الحمل</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[2]?.Category || "---"}</span>
+                  <span class="font-bold text-center text-md w-1/3">شاصي الحمل</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[2]?.TrailerChassisNumber  || "---"}</span>
+                </div>`,
+                null,
+              ],
+              [
+                `<div class="flex justify-between w-full border-black">
+                  <span class="font-bold text-center text-md w-1/3">عدد المحاور</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[2]?.TrailerAxlesNumber  || "---"}</span>
+                  <span class="font-bold text-center text-md w-1/3">الحمولة</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[2]?.LoadWeight  || "---"}</span>
+                </div>`,
+                null,
+              ],
+            ].map(([content]) => content).join('')}
+          </div>`,
+          null
+        ],
+      ]
+        .map(([label, value]) =>
+          value !== null
+            ? `
+              <div class="flex justify-between items-center py-0.5 border-black">
+                <span class="font-bold text-center text-md w-1/3">${label} :</span>
+                <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${value || "---"}</span>
+              </div>
+            `
+            : label
+        )
+        .join("")}
+    </div>
+
+  </div>
+          <!-- Vehicle Image -->
+            
+             <div class="border border-white grid grid-rows-2 rounded-lg p-2">
+                    <div class="w-full max-w-100 h-auto p-0" dir="rtl">
+                      ${carCroppedImage ? (
+                        `<img
+                          src=${URL.createObjectURL(carCroppedImage)}
+                          alt="صورة السيارة المقصوصة"
+                          class="object-contain w-full h-full rounded-md p-0.5 border border-black"
+                        />`
+                      ) : (
+                        "صورة السيارة المقصوصة"
+                      )}
+                    </div>
+                    <div class="w-full max-w-100 h-auto p-0" dir="rtl">
+                      ${chassisCroppedImage ? (
+                        `<img
+                          src=${URL.createObjectURL(chassisCroppedImage)}
+                          alt="صورة الشاصي المقصوصة"
+                          class="object-contain w-full h-full rounded-md p-0.5 border border-black"
+                        />`
+                      ) : (
+                        "صورة الشاصي المقصوصة"
+                      )}
+                    </div>
+              </div>
+          </div>
+    <div class="border border-black rounded-lg p-2 w-full mt-4 mx-auto">
+    <div class="h-auto p-0 w-full">
+        <img src="${imgStaticBase64}" 
+             class="w-full h-auto object-scale-down mx-auto" 
+             style="max-width: 90% !important;
+                    display: block !important;
+                    margin: 0 auto !important;" />
+    </div>
+</div>
+        </body>
+        </html>
+        `);
+        doc.close();
+
+        setTimeout(() => {
+          printFrame.contentWindow.print();
+          document.body.removeChild(printFrame);
+        }, 500);
+      })
+      .catch((error) => console.error("Error generating QR code:", error));
+  };
+
+  const handlePrintForBike = (data) => {
+    if (!data) return;
+    const imgStaticBase64 = imgStaticBike;
+
+    const qrData = JSON.stringify({
+      ADDID: data.applicationId,
+      ISSD: data.issueDate,
+      TFPN: data.TrafficPoliceApplicationId,
+      RID: data.ReceiptId,
+      CON: data.CarOwnerName,
+      IG: data.Governmental,
+      CN: data.ChassisNumber,
+      PN: data.PlateNumber,
+      CYC: data.EngineCylindersNumber,
+      VAXN: data.VehicleAxlesNumber,
+      COM: data.CarModel,
+      SEAN: data.SeatsNumber,
+      VN: data.CarNameId,
+      VC: data.CarColorId,
+      VB: data.CarBrandId,
+      VT: data.VehicleType,
+      USE: data.Usage,
+      AGN: data.agency,
+      LN: data.location,
+      VID: data.vehicleId,
+      ENT: data.EngineType,
+      IIC: data.isInspectionCertified,
+      SN: data.stickerNumber,
+      SP: data.stickerProvider,
+    });
+
+    QRCode.toDataURL(qrData)
+      .then((qrCodeDataUrl) => {
+        const printFrame = document.createElement('iframe');
+        printFrame.style.display = 'none';
+        document.body.appendChild(printFrame);
+
+        const doc = printFrame.contentDocument || printFrame.contentWindow.document;
+        doc.open();
+        doc.write(
+          `<!DOCTYPE html>
+            <html lang="ar" dir="rtl">
+            <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>شهادة فحص المركبة</title>
+              <link href="/tailwind.css" rel="stylesheet">
+              <style>
+                @media print {
+                  @page {
+                    size: A4 portrait;
+                  }
+                  body {
+                    font-family: Arial, sans-serif;
+                    direction: rtl;
+                  }
+                }
+              </style>
+            </head>
+            <body class="bg-white w-[210mm] h-[148mm] p-6 text-right">
+              <!-- Header -->
+              <div class="flex items-center justify-between border-b-2 border-black pb-2 w-full" dir="rtl">
+                <div class="flex flex-col items-center w-1/4 text-sm space-y-2">
+                  <h1 class="text-2xl font-bold text-black-800">جمهورية العراق</h1>
+                  <h1 class="text-xl font-bold text-black-800">وزارة الداخلية</h1>
+                </div>
+        
+                <!-- Center QR and Logo -->
+                <div class="relative flex items-center justify-center w-1/2">
+                  <div class="w-24 mb-2 absolute right-0 mr-4">
+                    <img src="${qrCodeDataUrl}" alt="QR Code" class="w-auto h-auto" />
+                  </div>
+                  <div class="mb-2 mx-auto absolute left-6 ml-10">
+                    <img src="${logo}" alt="Logo" class="w-24 h-auto" />
+                  </div>
+                </div>
+        
+                <!-- Right-side Details -->
+                <div class="flex flex-col items-start w-2/5 text-sm text-right font-semibold">
+                  <div class="grid grid-cols-2 w-full">
+                    <div class="flex flex-col text-black-800">
+                      <span>رقم استمارة الفحص</span> 
+                      <span>رقم وصل القبض</span>
+                      <span>اسم الموقع</span>
+                      <span>تاريخ الاصدار</span>
+                    </div>
+                    <div class="flex flex-col text-black-800 font-bold text-right">
+                      <span>: ${localStorage.getItem("location")}-${data.applicationId}</span>
+                      <span>: ${formData.ReceiptId}</span>
+                      <span>: ${localStorage.getItem("agecny")}</span>
+                      <span>: ${formatDate(data.issueDate)}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+        
+              <!-- Vehicle Data Section -->
+              <div class="border border-black rounded-lg p-1 mt-1">
+                <h3 class="bg-gray-200 text-center font-bold py-0.5">بيانات المركبة</h3>
+                <div class="grid grid-cols-2 gap-2 text-md">
+                  ${[
+                    ["اسم المالك", formData.CarOwnerName],
+                    ["نوع المركبة", formData.CarBrand],
+                    ["طراز المركبة", formData.CarName],
+                    ["لون المركبة", formData.CarColor],
+                    ["رقم المركبة", formData.PlateNumber],
+                    ["رقم الشاصي", formData.ChassisNumber],
+                    ["الموديل", formData.CarModel],
+                    ["نوع المحرك", formData.EngineType],
+                    ["عدد السلندر", formData.EngineCylindersNumber],
+                    ["عدد المحاور", formData.VehicleAxlesNumber],
+                    ["عدد الركاب", formData.SeatsNumber],
+                  ]
+                    .map(
+                      ([label, value]) =>
+                        `
+                        <div class="flex items-center py-0.5 border-black">
+                          <span class="font-bold text-md w-1/3">${label} :</span>
+                          <span class="font-bold text-md w-2/3 px-1 border border-black rounded">${value || "---"}</span>
+                        </div>
+                        `
+                    )
+                    .join("")}
+                    
+                </div>
+              </div>
+              <div class="border border-black grid grid-cols-2 rounded-lg p-2" >
+              <!-- Vehicle Image -->
+                <div class="w-full max-w-100 h-auto p-0 dir="ltr"">
+                     <img src="${imgStaticBase64}" class="object-contain w-full h-full rounded-md p-0.5 border border-white" />
+                  </div>
+                 <div class="border border-white grid grid-rows-2 rounded-lg p-2" >
+                                   <div class="border border-white grid grid-rows-2 rounded-lg p-2">
+                    <div class="w-full max-w-100 h-auto p-0" dir="rtl">
+                      ${carCroppedImage ? (
+                        `<img
+                          src=${URL.createObjectURL(carCroppedImage)}
+                          alt="صورة السيارة المقصوصة"
+                          class="object-contain w-full h-full rounded-md p-0.5 border border-black"
+                        />`
+                      ) : (
+                        "صورة السيارة المقصوصة"
+                      )}
+                    </div>
+                    <div class="w-full max-w-100 h-auto p-0" dir="rtl">
+                      ${chassisCroppedImage ? (
+                        `<img
+                          src=${URL.createObjectURL(chassisCroppedImage)}
+                          alt="صورة الشاصي المقصوصة"
+                          class="object-contain w-full h-full rounded-md p-0.5 border border-black"
+                        />`
+                      ) : (
+                        "صورة الشاصي المقصوصة"
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <div class="border border-black  rounded-lg p-2 min-h-40" >
+                  <span class="font-bold text-md text-center w-1/3">الفاحص : 
+                  </span> 
+                </div>
+                <div class="border border-black  rounded-lg p-2 min-h-40" >
+                  <span class="font-bold text-md text-center w-1/3">الفاحص :
+                </span> 
+                </div>
+                </div>
+                
+                </div>
+                
+            </body>
+            </html>`);
+            doc.close();
+    
+            setTimeout(() => {
+              printFrame.contentWindow.print();
+              document.body.removeChild(printFrame);
+            }, 500);
+          })
+          .catch((error) => console.error("Error generating QR code:", error));
+  };    
 
   const handleCarImage = ({ fullImage, croppedImage }) => {
     setCarCroppedImage(croppedImage); // File
@@ -548,7 +1197,8 @@ const CreateForm = () => {
                   onSelect={(item) => {
                     setFormData((prev) => ({
                       ...prev,
-                      CarBrandId: item.id, 
+                      CarBrandId: item.id,
+                      CarBrand: item.name, 
                     }));
                   }}
                   placeholder="اختر نوع المركبة"
@@ -567,6 +1217,7 @@ const CreateForm = () => {
                     setFormData((prev) => ({
                       ...prev,
                       CarNameId: item.id, 
+                      CarName: item.name,
                     }));
                   }}
                   placeholder="اختر طراز المركبة"
@@ -584,7 +1235,8 @@ const CreateForm = () => {
                   onSelect={(item) => {
                     setFormData((prev) => ({
                       ...prev,
-                      CarColorId: item.id, 
+                      CarColorId: item.id,
+                      CarColor: item.color, 
                     }));
                   }}
                   placeholder="اختر لون المركبة"

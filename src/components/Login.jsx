@@ -44,11 +44,13 @@ const Login = ({ onLogin }) => {
 
       if (data.isSuccess) {
         const { accessToken, userDetails } = data.results;
-        const { role } = userDetails;
+        const { role, location, agency } = userDetails;
     
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("role", role); // roles: superAdmin, admin, user, supervisor, reporter, checker.
         localStorage.setItem("userName", userName);
+        localStorage.setItem("location", location);
+        localStorage.setItem("agency", agency);
         
         onLogin(userName);
         navigate("/");
