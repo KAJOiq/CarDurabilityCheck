@@ -1,15 +1,17 @@
 import React, { useState } from "react";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { MagnifyingGlassIcon, PencilIcon } from "@heroicons/react/24/outline";
 import SearchModalForPrint from "./SearchModalForPrint";
 import SearchModalForForm from "./SearchModalForForm";
 import CarForm from "./CarForm";
 import TruckForm from "./TruckForm";
 import BikeForm from "./BikeForm";
+import EditFormModal from "./EditFormModal";
 
 const ShowForms = () => {
   const [isSearchModalForPrintOpen, setIsSearchModalForPrintOpen] = useState(false);
   const [isSearchModalForFormOpen, setIsSearchModalForFormOpen] = useState(false);
   const [searchResults, setSearchResults] = useState(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false); // حالة فتح نموذج التعديل
 
   const handleSearch = (formData) => {
     setSearchResults(formData);
@@ -67,10 +69,49 @@ const ShowForms = () => {
               تفاصيل الاستمارة
             </h2>
             <div className="mt-4 py-4" dir="rtl">
-              {searchResults?.vehicleType === "سيارة" && <CarForm searchResults={searchResults} />}
-              {searchResults?.vehicleType === "شاحنة" && <TruckForm searchResults={searchResults} />}
-              {searchResults?.vehicleType === "دراجة" && <BikeForm searchResults={searchResults} />}
-            </div>  
+              {searchResults?.vehicleType === "سيارة" && (
+                <div className="flex items-center gap-4">
+                  <CarForm searchResults={searchResults} />
+                  <button
+                    className="group bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 
+                              text-white px-5 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all
+                              flex items-center gap-3 transform hover:scale-105"
+                    onClick={() => setIsEditModalOpen(true)}
+                  >
+                    <PencilIcon className="h-6 w-6 text-white/90 group-hover:text-white" />
+                    <span className="text-md font-semibold">تعديل الاستمارة</span>
+                  </button>
+                </div>
+              )}
+              {searchResults?.vehicleType === "شاحنة" && (
+                <div className="flex items-center gap-4">
+                  <TruckForm searchResults={searchResults} />
+                  <button
+                    className="group bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 
+                              text-white px-5 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all
+                              flex items-center gap-3 transform hover:scale-105"
+                    onClick={() => setIsEditModalOpen(true)}
+                  >
+                    <PencilIcon className="h-6 w-6 text-white/90 group-hover:text-white" />
+                    <span className="text-md font-semibold">تعديل الاستمارة</span>
+                  </button>
+                </div>
+              )}
+              {searchResults?.vehicleType === "دراجة" && (
+                <div className="flex items-center gap-4">
+                  <BikeForm searchResults={searchResults} />
+                  <button
+                    className="group bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 
+                              text-white px-5 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all
+                              flex items-center gap-3 transform hover:scale-105"
+                    onClick={() => setIsEditModalOpen(true)}
+                  >
+                    <PencilIcon className="h-6 w-6 text-white/90 group-hover:text-white" />
+                    <span className="text-md font-semibold">تعديل الاستمارة</span>
+                  </button>
+                </div>
+              )}
+            </div>    
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {Object.entries({
                 "رقم الاستمارة": searchResults.applicationId,
@@ -158,10 +199,14 @@ const ShowForms = () => {
               </div>
             )}
           </div>
+          {/*Edit button*/}
+          <EditFormModal
+            isOpen={isEditModalOpen}
+            onClose={() => setIsEditModalOpen(false)}
+            formData={searchResults}
+          />
         </div>
       )}
-
-    
     </div>
   );
 };

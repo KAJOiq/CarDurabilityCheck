@@ -2,6 +2,8 @@ import React, { useRef, useState, useEffect } from "react";
 import logo from "../assets/logo.jpg";
 import imgStatic from "../assets/truck.png";
 import QRCode from "qrcode"; 
+import { PrinterIcon } from "@heroicons/react/24/outline";
+
 const TruckForm = ({ searchResults }) => {
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState("");
   const printFrameRef = useRef(null);
@@ -299,24 +301,14 @@ const TruckForm = ({ searchResults }) => {
   return (
     <div>
       <button
-        className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-5 py-3 rounded-lg 
-                    hover:from-blue-600 hover:to-blue-700 transition-all duration-300
-                    flex items-center justify-center gap-3 shadow-lg hover:shadow-xl"
-        onClick={handlePrint}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-5 w-5"
-          viewBox="0 0 20 20"
-          fill="currentColor"
+          className="group bg-gradient-to-r from-blue-500 to-blue-600 
+                    hover:from-blue-600 hover:to-blue-700 text-white px-5 py-3
+                    rounded-xl shadow-lg hover:shadow-xl transition-all 
+                    flex items-center gap-3 transform hover:scale-105"
+          onClick={handlePrint}
         >
-          <path
-            fillRule="evenodd"
-            d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v2a2 2 0 002 2h6a2 2 0 002-2v-2h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 0H7v3h6V4zm0 8H7v4h6v-4z"
-            clipRule="evenodd"
-          />
-        </svg>
-        طباعة الاستمارة
+          <PrinterIcon className="h-6 w-6 text-white/90 group-hover:text-white" />
+          <span className="text-md font-semibold">طباعة الاستمارة</span>
       </button>
       <iframe ref={printFrameRef} style={{ display: "none" }} />
     </div>
