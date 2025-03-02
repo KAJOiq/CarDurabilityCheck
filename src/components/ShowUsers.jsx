@@ -5,7 +5,7 @@ import AddUsers from "./AddUsers";
 import DisableUsers from "./DisableUsers";
 import EnableUsers from "./EnableUsers";
 import UpdateUsers from "./UpdateUsers";
-
+import UpdateUsersBysuperadmin from "./UpdateUsersBysuperadmin";
 const ShowUsers = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -14,6 +14,7 @@ const ShowUsers = () => {
   const [showUpdateUser, setShowUpdateUser] = useState(false);
   const [userIdToUpdate, setUserIdToUpdate] = useState(null);
   const [totalPages, setTotalPages] = useState(0);
+  const isSuperAdmin = localStorage.getItem("role") === "superadmin";
 
   const [filters, setFilters] = useState({
     name: "",
@@ -274,6 +275,13 @@ const ShowUsers = () => {
 
       {showAddUser && <AddUsers setShowAddUser={setShowAddUser} setUsers={handleAddUser} refreshUsers={refreshUsers}/>}
       {showUpdateUser && <UpdateUsers userId={userIdToUpdate} closeModal={() => setShowUpdateUser(false)} refreshUsers={refreshUsers} />}
+      {isSuperAdmin && showUpdateUser && (
+        <UpdateUsersBysuperadmin 
+          userId={userIdToUpdate} 
+          closeModal={() => setShowUpdateUser(false)} 
+          refreshUsers={refreshUsers} 
+        />
+      )}
     </div>
   );
 };
