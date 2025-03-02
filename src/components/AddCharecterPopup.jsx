@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import fetchData from "../utils/fetchData";
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
 
-const AddColorPopup = ({ onClose, refreshData }) => {
+const AddCharecterPopup = ({ onClose, refreshData }) => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(null);
   const [error, setError] = useState(null);
-  const [color, setColor] = useState("");
+  const [newChar, setNewChar] = useState("");
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -15,25 +15,21 @@ const AddColorPopup = ({ onClose, refreshData }) => {
 
     try {
       const formData = new FormData();
-      formData.append("color", color);
+      formData.append("newChar", newChar);
 
-      const response = await fetchData("admin/lookup/add-new-color", {
+      const response = await fetchData("admin/lookup/add-new-plate-character", {
         method: "POST",
         body: formData
       });
 
       if (response.isSuccess) {
-        setSuccess(response.results);
+        setSuccess("تم إضافة حرف جديد بنجاح!");
         refreshData();
-        setColor("");
+        setNewChar("");
       } else {
-        // التحقق من وجود أخطاء متعددة في الاستجابة
         if (response.errors && response.errors.length > 0) {
-          setError(
-            response.errors.map((err, index) => (
-              <div key={index}>{err.message || "حدث خطأ أثناء الحفظ"}</div>
-            ))
-          );
+          const errorMessage = response.errors[0].message || "حدث خطأ أثناء الحفظ";
+          setError(errorMessage);
         } else {
           setError("حدث خطأ أثناء الحفظ");
         }
@@ -49,14 +45,14 @@ const AddColorPopup = ({ onClose, refreshData }) => {
     <div className="fixed inset-0 bg-black/30 backdrop-blur-lg flex items-center justify-center p-4" dir="rtl">
       <div className="bg-white rounded-xl shadow-lg w-full max-w-md overflow-hidden">
         <div className="p-6">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">إضافة لون جديد</h3>
+          <h3 className="text-xl font-semibold text-gray-800 mb-4">إضافة حرف جديد</h3>
           
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">اسم اللون</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">الحرف</label>
             <input
               type="text"
-              value={color}
-              onChange={(e) => setColor(e.target.value)}
+              value={newChar}
+              onChange={(e) => setNewChar(e.target.value)}
               className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-green-500"
             />
           </div>
@@ -89,7 +85,7 @@ const AddColorPopup = ({ onClose, refreshData }) => {
               ) : (
                 <>
                   <XCircleIcon className="w-5 h-5" />
-                  {Array.isArray(error) ? error : <div>{error}</div>}
+                  {error}
                 </>
               )}
             </div>
@@ -100,4 +96,4 @@ const AddColorPopup = ({ onClose, refreshData }) => {
   );
 };
 
-export default AddColorPopup;
+export default AddCharecterPopup;

@@ -19,7 +19,7 @@ const AddLocationPopup = ({ onClose, refreshData }) => {
   useEffect(() => {
     const fetchAgencies = async () => {
       try {
-        const response = await fetchData("lookup/find-traffic-agencies?agencyName=");
+        const response = await fetchData("admin/lookup/find-traffic-agencies?agencyName=");
 
         if (response.isSuccess) {
           setAgencies(response.results.result);

@@ -57,7 +57,7 @@ const ReportStatus = () => {
   useEffect(() => {
     const fetchAgencies = async () => {
       try {
-        const response = await fetchData("lookup/find-traffic-agencies?page=0&pageSize=5000", {
+        const response = await fetchData("admin/lookup/find-traffic-agencies?page=0&pageSize=5000", {
           method: "GET",
         });
 
@@ -79,7 +79,7 @@ const ReportStatus = () => {
       const fetchLocations = async () => {
         try {
           const response = await fetchData(
-            `lookup/find-traffic-locations?agensyId=${selectedAgency.value}&page=0&pageSize=5000`,
+            `admin/lookup/find-traffic-locations?agensyId=${selectedAgency.value}&page=0&pageSize=5000`,
             {
               method: "GET",
             }
@@ -115,7 +115,7 @@ const ReportStatus = () => {
       const locationId = selectedLocation?.value || '';
 
       const response = await fetchData(
-        `Reporter/applications-reporter?VehicleType=${vehicleType}&EngineType=${motorType}&AgencyId=${agencyId}&LocationId=${locationId}&StartDate=${startDate}&EndDate=${endDate}`,
+        `reporter/application/make-reports?VehicleType=${vehicleType}&EngineType=${motorType}&AgencyId=${agencyId}&LocationId=${locationId}&StartDate=${startDate}&EndDate=${endDate}`,
         {
           method: 'GET',
           headers: { 'accept': '*/*' },
@@ -162,7 +162,6 @@ const ReportStatus = () => {
         <div className="w-full lg:w-80 bg-white p-6 rounded-2xl shadow-xl border border-gray-100/50 backdrop-blur-sm">
           <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2 text-right">
             <DocumentTextIcon className="w-6 h-6 text-blue-600" />
-            فلاتر البحث
           </h2>
 
           <div className="space-y-6">

@@ -28,12 +28,13 @@ const AddUsers = ({ setShowAddUser, setUsers, refreshUsers }) => {
     { value: "reporter", label: "Reporter" },
     { value: "supervisor", label: "Supervisor" },
     { value: "superadmin", label: "Superadmin" },
+    {value: "printer", label: "Printer"},
   ];
 
   useEffect(() => {
     const fetchAgencies = async () => {
       try {
-        const response = await fetchData("lookup/find-traffic-agencies?page=0&pageSize=5000", {
+        const response = await fetchData("admin/lookup/find-traffic-agencies?page=0&pageSize=5000", {
           method: "GET",
         });
 
@@ -55,7 +56,7 @@ const AddUsers = ({ setShowAddUser, setUsers, refreshUsers }) => {
       const fetchLocations = async () => {
         try {
           const response = await fetchData(
-            `lookup/find-traffic-locations?agensyId=${selectedAgency.value}&page=0&pageSize=5000`,
+            `admin/lookup/find-traffic-locations?agensyId=${selectedAgency.value}&page=0&pageSize=5000`,
             {
               method: "GET",
             }

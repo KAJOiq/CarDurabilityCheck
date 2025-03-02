@@ -17,7 +17,7 @@ const AddAgencyPopup = ({ onClose, refreshData }) => {
       const formData = new FormData();
       formData.append("agencyName", agencyName);
 
-      const response = await fetchData("lookup/add-new-agency", {
+      const response = await fetchData("admin/lookup/add-new-agency", {
         method: "POST",
         body: formData
       });
@@ -27,7 +27,6 @@ const AddAgencyPopup = ({ onClose, refreshData }) => {
         refreshData();
         setAgencyName("");
       } else {
-        // التحقق من وجود رسالة خطأ في المصفوفة "errors"
         if (response.errors && response.errors.length > 0) {
           const errorMessage = response.errors[0].message || "حدث خطأ أثناء الحفظ";
           setError(errorMessage);

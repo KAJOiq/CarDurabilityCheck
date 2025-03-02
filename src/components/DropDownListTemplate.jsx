@@ -31,7 +31,7 @@ const DropDownListTemplate = ({
         pageSize: 5000,
       };
 
-      const result = await fetchData(`lookup/${endpoint}?${new URLSearchParams(params)}`);
+      const result = await fetchData(`admin/lookup/${endpoint}?${new URLSearchParams(params)}`);
       
       if (result && result.results && Array.isArray(result.results.result)) {
         setItems(result.results.result); 

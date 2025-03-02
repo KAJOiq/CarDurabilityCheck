@@ -21,7 +21,7 @@ const AddVehiclePopup = ({ onClose, refreshData }) => {
 
   const fetchBrands = async () => {
     try {
-      const response = await fetchData("lookup/find-vehicle-company?brandName=&page=0&pageSize=5000");
+      const response = await fetchData("admin/lookup/find-vehicle-company?brandName=&page=0&pageSize=5000");
       if (response.isSuccess && Array.isArray(response.results.result)) {
         setBrands(response.results.result);
       } else {

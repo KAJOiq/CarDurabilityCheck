@@ -4,6 +4,7 @@ import AddVehiclePopup from "./AddVehiclePopup";
 import AddColorPopup from "./AddColorPopup";
 import AddAgencyPopup from "./AddAgencyPopup";
 import AddLocationPopup from "./AddLocationPopup";
+import AddCharecterPopup from "./AddCharecterPopup";
 import Select from "react-select";
 import { MagnifyingGlassIcon, ChevronLeftIcon, ChevronRightIcon, PlusCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
 
@@ -67,6 +68,14 @@ const DropDownListPage = () => {
   });
   const [tlTotal, setTlTotal] = useState(0);
 
+  const [showAddCharecterPopup, setShowAddCharecterPopup] = useState(false);
+  const [characters, setCharecters] = useState({ result: [], total: 0 });
+  const [chFilters, setChFilters] = useState({
+    page: 0,
+    pageSize: 10,
+  });
+  const [chTotal, setChTotal] = useState([]);
+
   // States to control visibility of select fields
   const [hideBrandSelect, setHideBrandSelect] = useState(false);
   const [hideAgencySelect, setHideAgencySelect] = useState(false);
@@ -82,7 +91,7 @@ const DropDownListPage = () => {
           pageSize: 5000,
         });
         const companiesResponse = await fetchData(
-          `lookup/find-vehicle-company?${companiesParams}`
+          `admin/lookup/find-vehicle-company?${companiesParams}`
         );
         if (companiesResponse.isSuccess) {
           setAllVehicleCompanies(companiesResponse.results.result);
@@ -95,7 +104,7 @@ const DropDownListPage = () => {
           pageSize: 1000,
         });
         const agenciesResponse = await fetchData(
-          `lookup/find-traffic-agencies?${agenciesParams}`
+          `admin/lookup/find-traffic-agencies?${agenciesParams}`
         );
         if (agenciesResponse.isSuccess) {
           setAllTrafficAgencies(agenciesResponse.results.result);
@@ -116,23 +125,27 @@ const DropDownListPage = () => {
       switch (tab) {
         case "vehicleCompanies":
           params = new URLSearchParams({ ...vcFilters, page: vcFilters.page.toString() });
-          url = `lookup/find-vehicle-company?${params}`;
+          url = `admin/lookup/find-vehicle-company?${params}`;
           break;
         case "vehicleNames":
           params = new URLSearchParams({ ...vnFilters, page: vnFilters.page.toString() });
-          url = `lookup/find-vehicle-name?${params}`;
+          url = `admin/lookup/find-vehicle-name?${params}`;
           break;
         case "vehicleColors":
           params = new URLSearchParams({ ...vColorFilters, page: vColorFilters.page.toString() });
-          url = `lookup/find-vehicles-colors?${params}`;
+          url = `admin/lookup/find-vehicles-colors?${params}`;
           break;
         case "trafficAgencies":
           params = new URLSearchParams({ ...taFilters, page: taFilters.page.toString() });
-          url = `lookup/find-traffic-agencies?${params}`;
+          url = `admin/lookup/find-traffic-agencies?${params}`;
           break;
         case "trafficLocations":
           params = new URLSearchParams({ ...tlFilters, page: tlFilters.page.toString() });
-          url = `lookup/find-traffic-locations?${params}`;
+          url = `admin/lookup/find-traffic-locations?${params}`;
+          break;
+        case "charecters":
+          params = new URLSearchParams({ ...chFilters, page: chFilters.page.toString() });
+          url = `admin/lookup/find-plate-character?${params}`;
           break;
         default:
           return;
@@ -161,6 +174,10 @@ const DropDownListPage = () => {
             setTrafficLocations(response.results.result);
             setTlTotal(response.results.total);
             break;
+          case "charecters":
+            setCharecters(response.results); 
+            setChTotal(response.results.total);
+            break;
         }
       } else {
         setError("فشل في تحميل البيانات");
@@ -174,7 +191,7 @@ const DropDownListPage = () => {
 
   useEffect(() => {
     fetchTabData(activeTab);
-  }, [activeTab, vcFilters, vnFilters, vColorFilters, taFilters, tlFilters]);
+  }, [activeTab, vcFilters, vnFilters, vColorFilters, taFilters, tlFilters, chFilters]);
 
   const handleFilterChange = (e, tab) => {
     const { name, value } = e.target;
@@ -193,6 +210,9 @@ const DropDownListPage = () => {
         break;
       case "trafficLocations":
         setTlFilters((prev) => ({ ...prev, [name]: value }));
+        break;
+      case "charecters":
+        setChFilters((prev) => ({ ...prev, [name]: value }));
         break;
     }
   };
@@ -214,6 +234,9 @@ const DropDownListPage = () => {
       case "trafficLocations":
         setTlFilters((prev) => ({ ...prev, page: newPage }));
         break;
+      case "charecters":
+        setChFilters((prev) => ({ ...prev, page: newPage }));
+        break;
     }
   };
 
@@ -233,6 +256,10 @@ const DropDownListPage = () => {
   const toggleAddLocationPopup = () => {
     setShowAddLocationPopup(prev => !prev);
     setHideAgencySelect(prev => !prev); 
+  }
+
+  const toggleAddCharecterPopup = () => {
+    setShowAddCharecterPopup(prev => !prev);
   }
 
   const renderTable = (data, columns) => {
@@ -546,6 +573,35 @@ const DropDownListPage = () => {
           </>
         );
 
+        case "charecters":
+          return (
+            <>
+              <div className="flex gap-4 mb-4 overflow-x-auto justify-center">
+                <button 
+                  onClick={toggleAddCharecterPopup} 
+                  className="group bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+                >
+                  <PlusCircleIcon className="w-5 h-5" />
+                  إضافة حرف جديد
+                </button>
+              </div>  
+              <div className="mb-8 bg-white rounded-xl shadow-sm border border-gray-100">
+                <div className="p-6 grid grid-cols-1 gap-4">
+                  <input
+                    type="text"
+                    name="charecter"
+                    value={chFilters.charecter}
+                    onChange={(e) => handleFilterChange(e, "charecters")}
+                    placeholder="ابحث عن حرف"
+                    className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all text-right"
+                  />
+                </div>
+              </div>
+              {renderTable(characters.result, [{ key: "name", title: "الحرف" }])}
+              {renderPagination(chTotal, chFilters.pageSize, chFilters.page, "charecters")}
+            </>
+          );
+
       default:
         return null;
     }
@@ -577,8 +633,14 @@ const DropDownListPage = () => {
           refreshData={() => fetchTabData(activeTab)} 
         />
       )}
+      {showAddCharecterPopup && (
+        <AddCharecterPopup 
+          onClose={toggleAddCharecterPopup} 
+          refreshData={() => fetchTabData(activeTab)} 
+        />
+      )}
       <div className="flex gap-4 mb-8 overflow-x-auto justify-center">
-        {["vehicleCompanies", "vehicleNames", "vehicleColors", "trafficAgencies", "trafficLocations"].map((tab) => (
+        {["vehicleCompanies", "vehicleNames", "vehicleColors", "trafficAgencies", "trafficLocations", "charecters"].map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -594,6 +656,7 @@ const DropDownListPage = () => {
               vehicleColors: "ألوان المركبات",
               trafficAgencies: "المديريات المرورية",
               trafficLocations: "المواقع المرورية",
+              charecters: "الحروف"
             }[tab]}
           </button>
         ))}
