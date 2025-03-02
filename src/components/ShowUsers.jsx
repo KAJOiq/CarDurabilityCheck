@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { UserPlusIcon, PencilIcon } from "@heroicons/react/24/outline";
 import fetchData from "../utils/fetchData";
 import AddUsers from "./AddUsers";
-import DeleteUsers from "./DeleteUsers";
+import DisableUsers from "./DisableUsers";
+import EnableUsers from "./EnableUsers";
 import UpdateUsers from "./UpdateUsers";
 
 const ShowUsers = () => {
@@ -61,6 +62,12 @@ const ShowUsers = () => {
   const handleDisableUser = (userId) => {
     setUsers((prevUsers) =>
       prevUsers.map((user) => (user.id === userId ? { ...user, disabled: true } : user))
+    );
+  };
+
+  const handleEnableUser = (userId) => {
+    setUsers((prevUsers) =>
+      prevUsers.map((user) => (user.id === userId ? { ...user, disabled: false } : user))
     );
   };
 
@@ -178,6 +185,7 @@ const ShowUsers = () => {
               <option value="checker">checker</option>
               <option value="supervisor">supervisor</option>
               <option value="superadmin">superadmin</option>
+              <option value="printer">printer</option>
             </select>
           </div>
         </div>
@@ -204,9 +212,13 @@ const ShowUsers = () => {
             </thead>
             <tbody className="bg-white divide-y divide-blue-200">
               {users.map((user, index) => (
-                <tr key={index} className={`hover:bg-blue-50 transition-colors ${user.disabled ? 'opacity-80' : ''}`}>
+                <tr key={index} className={`hover:bg-blue-50 transition-colors ${user.disabled ? 'opacity-100' : ''}`}>
                   <td className="px-4 py-3 text-right">
-                    <DeleteUsers userId={user.id} onDisable={handleDisableUser} isDisabled={user.disabled} />
+                  {user.disabled ? (
+                      <EnableUsers userId={user.id} onEnable={handleEnableUser} />
+                    ) : (
+                      <DisableUsers userId={user.id} onDisable={handleDisableUser} isDisabled={user.disabled} />
+                    )}
                     <button
                       className={`ml-2 ${user.disabled ? 'text-gray-400 cursor-not-allowed' : 'text-blue-600'}`}
                       onClick={() => !user.disabled && handleEditUser(user.id)}
