@@ -82,7 +82,7 @@ const DropDownListPage = () => {
           pageSize: 5000,
         });
         const companiesResponse = await fetchData(
-          `lookup/find-vehicle-company?${companiesParams}`
+          `admin/lookup/find-vehicle-company?${companiesParams}`
         );
         if (companiesResponse.isSuccess) {
           setAllVehicleCompanies(companiesResponse.results.result);
@@ -95,7 +95,7 @@ const DropDownListPage = () => {
           pageSize: 1000,
         });
         const agenciesResponse = await fetchData(
-          `lookup/find-traffic-agencies?${agenciesParams}`
+          `admin/lookup/find-traffic-agencies?${agenciesParams}`
         );
         if (agenciesResponse.isSuccess) {
           setAllTrafficAgencies(agenciesResponse.results.result);
@@ -116,23 +116,23 @@ const DropDownListPage = () => {
       switch (tab) {
         case "vehicleCompanies":
           params = new URLSearchParams({ ...vcFilters, page: vcFilters.page.toString() });
-          url = `lookup/find-vehicle-company?${params}`;
+          url = `admin/lookup/find-vehicle-company?${params}`;
           break;
         case "vehicleNames":
           params = new URLSearchParams({ ...vnFilters, page: vnFilters.page.toString() });
-          url = `lookup/find-vehicle-name?${params}`;
+          url = `admin/lookup/find-vehicle-name?${params}`;
           break;
         case "vehicleColors":
           params = new URLSearchParams({ ...vColorFilters, page: vColorFilters.page.toString() });
-          url = `lookup/find-vehicles-colors?${params}`;
+          url = `admin/lookup/find-vehicles-colors?${params}`;
           break;
         case "trafficAgencies":
           params = new URLSearchParams({ ...taFilters, page: taFilters.page.toString() });
-          url = `lookup/find-traffic-agencies?${params}`;
+          url = `admin/lookup/find-traffic-agencies?${params}`;
           break;
         case "trafficLocations":
           params = new URLSearchParams({ ...tlFilters, page: tlFilters.page.toString() });
-          url = `lookup/find-traffic-locations?${params}`;
+          url = `admin/lookup/find-traffic-locations?${params}`;
           break;
         default:
           return;

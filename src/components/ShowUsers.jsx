@@ -15,6 +15,7 @@ const ShowUsers = () => {
   const [userIdToUpdate, setUserIdToUpdate] = useState(null);
   const [totalPages, setTotalPages] = useState(0);
   const isSuperAdmin = localStorage.getItem("role") === "superadmin";
+  const isAdmin = localStorage.getItem("role") === "admin";
 
   const [filters, setFilters] = useState({
     name: "",
@@ -215,10 +216,23 @@ const ShowUsers = () => {
               {users.map((user, index) => (
                 <tr key={index} className={`hover:bg-blue-50 transition-colors ${user.disabled ? 'opacity-100' : ''}`}>
                   <td className="px-4 py-3 text-right">
-                  {user.disabled ? (
-                      <EnableUsers userId={user.id} onEnable={handleEnableUser} />
+                      {user.disabled ? (
+                      // Only Super Admin can Enable
+                      isSuperAdmin && (
+                        <EnableUsers 
+                          userId={user.id} 
+                          onEnable={handleEnableUser} 
+                        />
+                      )
                     ) : (
-                      <DisableUsers userId={user.id} onDisable={handleDisableUser} isDisabled={user.disabled} />
+                      // Both Admin and Super Admin can Disable
+                      (isAdmin || isSuperAdmin) && (
+                        <DisableUsers 
+                          userId={user.id} 
+                          onDisable={handleDisableUser} 
+                          isDisabled={user.disabled} 
+                        />
+                      )
                     )}
                     <button
                       className={`ml-2 ${user.disabled ? 'text-gray-400 cursor-not-allowed' : 'text-blue-600'}`}

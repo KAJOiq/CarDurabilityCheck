@@ -49,9 +49,12 @@ const App = () => {
             <Route path="update-user/:userId" element={<UpdateUsersBysuperadmin />} />
             <Route path="/disable-user" element={<DisableUsers />} />
             <Route path="/enable-user" element={<EnableUsers />} />
-            <Route path="/reports" element={<ReportStatus />} />
             <Route path="/change-password" element={<ChangePassword />} /> 
             <Route path="/dropdown-list" element={<DropDownListPage />} />
+            <Route path="/add-vehicle" element={<AddVehiclePopup/>} />
+            <Route path="/add-color" element={<AddColorPopup/>} />
+            <Route path="/add-agency" element={<AddAgencyPopup/>} />
+            <Route path="/add-location" element={<AddLocationPopup/>} />
             <Route path="*" element={<Navigate to="/users" />} />
           </Routes>
         );
@@ -66,11 +69,6 @@ const App = () => {
             <Route path="/reports" element={<ReportStatus />} />
             <Route path="/create-form" element={<CreateForm />} />
             <Route path="/change-password" element={<ChangePassword />} /> 
-            <Route path="/dropdown-list" element={<DropDownListPage />} />
-            <Route path="/add-vehicle" element={<AddVehiclePopup/>} />
-            <Route path="/add-color" element={<AddColorPopup/>} />
-            <Route path="/add-agency" element={<AddAgencyPopup/>} />
-            <Route path="/add-location" element={<AddLocationPopup/>} />
             <Route path="*" element={<Navigate to="/users" />} />
           </Routes>
         );
