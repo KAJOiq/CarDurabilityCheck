@@ -162,7 +162,7 @@ const CreateFormVersion = () => {
   const [formErrors, setFormErrors] = useState([]);
   const [lockedFields, setLockedFields] = useState(true);
   const [originalData, setOriginalData] = useState({});
- 
+
   const [mergedData, setMergedData] = useState(null); 
   
   // States for photos
@@ -1268,7 +1268,7 @@ const CreateFormVersion = () => {
                           CarName: item.name,
                         }));
                       }}
-                      placeholder={formData.CarName || "اختر نوع المركبة"}
+                      placeholder={formData.CarName || "اختر اسم المركبة"}
                       disabled={true} // دائمًا مقفل
                     />
                   </div>
@@ -1286,7 +1286,7 @@ const CreateFormVersion = () => {
                           CarColor: item.color,
                         }));
                       }}
-                      placeholder={formData.CarColor || "اختر نوع المركبة"}
+                      placeholder={formData.CarColor || "اختر لون المركبة"}
                       disabled={lockedFields} // يمكن تعديله إذا فُتح القفل
                     />
                   </div>
