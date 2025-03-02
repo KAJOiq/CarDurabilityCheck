@@ -6,17 +6,48 @@ import FetchData from "../utils/fetchData";
 const Login = ({ onLogin }) => {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
+  const [profileName, setProfileName] = useState("Unknown-PC");
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
+    async function getPCName() {
+      try {
+        const pcName = await getLocalPCName();
+        setProfileName(pcName);
+      } catch {
+        setProfileName("Unknown-PC");
+      }
+    }
+
+    getPCName();
+
     const sessionExpiredMessage = localStorage.getItem("sessionExpired");
     if (sessionExpiredMessage) {
       setErrorMessage(sessionExpiredMessage);
       localStorage.removeItem("sessionExpired");
     }
   }, []);
+
+  const getLocalPCName = async () => {
+    return new Promise((resolve) => {
+      const pc = new RTCPeerConnection({ iceServers: [] });
+      pc.createDataChannel("");
+      pc.createOffer()
+        .then((offer) => pc.setLocalDescription(offer))
+        .catch(() => {});
+
+      pc.onicecandidate = (event) => {
+        if (event && event.candidate && event.candidate.address) {
+          resolve(event.candidate.address);
+        } else {
+          resolve("Unknown-PC");
+        }
+        pc.close();
+      };
+    });
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -28,37 +59,35 @@ const Login = ({ onLogin }) => {
         "Users/login",
         {
           method: "POST",
-          body: JSON.stringify({ userName, password }),
+          body: JSON.stringify({ userName, password, profileName }), // Send PC Name
         },
         { "Content-Type": "application/json" }
       );
-    
+
       if (!data.isSuccess) {
-        if (data.errors) {
-          setErrorMessages(data.errors.map((err) => err.message));
-        } else {
-          setErrorMessages(["فشل في تسجيل الدخول"]);
-        }
+        setErrorMessage("فشل في تسجيل الدخول");
         return;
       }
 
       if (data.isSuccess) {
         const { accessToken, userDetails } = data.results;
-        const { role } = userDetails;
-    
+        const { role, location, agency } = userDetails;
+
         localStorage.setItem("accessToken", accessToken);
-        localStorage.setItem("role", role); // roles: superAdmin, admin, user, supervisor, reporter, checker.
+        localStorage.setItem("role", role);
         localStorage.setItem("userName", userName);
-        
+        localStorage.setItem("location", location);
+        localStorage.setItem("agency", agency);
+
         onLogin(userName);
         navigate("/");
-      } 
+      }
     } catch (error) {
       setErrorMessage("خطأ في اسم المستخدم أو كلمة المرور. يرجى المحاولة مرة أخرى.");
     } finally {
       setLoading(false);
     }
-  };    
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 w-full">

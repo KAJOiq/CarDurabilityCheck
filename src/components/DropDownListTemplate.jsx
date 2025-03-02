@@ -44,7 +44,7 @@ const DropDownListTemplate = ({
     } finally {
       setLoading(false);
     }
-  }, [endpoint, queryParams]);
+  }, [endpoint, queryParams, labelKey, valueKey]);
 
   
   useEffect(() => {

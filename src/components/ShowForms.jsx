@@ -1,15 +1,17 @@
 import React, { useState } from "react";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { MagnifyingGlassIcon, PencilIcon } from "@heroicons/react/24/outline";
 import SearchModalForPrint from "./SearchModalForPrint";
 import SearchModalForForm from "./SearchModalForForm";
 import CarForm from "./CarForm";
 import TruckForm from "./TruckForm";
 import BikeForm from "./BikeForm";
+import EditFormModal from "./EditFormModal";
 
 const ShowForms = () => {
   const [isSearchModalForPrintOpen, setIsSearchModalForPrintOpen] = useState(false);
   const [isSearchModalForFormOpen, setIsSearchModalForFormOpen] = useState(false);
   const [searchResults, setSearchResults] = useState(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false); // حالة فتح نموذج التعديل
 
   const handleSearch = (formData) => {
     setSearchResults(formData);
@@ -59,13 +61,57 @@ const ShowForms = () => {
         onSearch={handleSearch}
       />
 
+      {/* Display the search results */}
       {searchResults && (
         <div className="space-y-8" dir="rtl">
           <div className="bg-gradient-to-br from-blue-50 to-slate-50 rounded-2xl p-6 shadow-lg">
             <h2 className="text-md font-bold text-gray-800 mb-6 border-b-2 border-blue-200 pb-4">
               تفاصيل الاستمارة
             </h2>
-
+            <div className="mt-4 py-4" dir="rtl">
+              {searchResults?.vehicleType === "سيارة" && (
+                <div className="flex items-center gap-4">
+                  <CarForm searchResults={searchResults} />
+                  <button
+                    className="group bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 
+                              text-white px-5 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all
+                              flex items-center gap-3 transform hover:scale-105"
+                    onClick={() => setIsEditModalOpen(true)}
+                  >
+                    <PencilIcon className="h-6 w-6 text-white/90 group-hover:text-white" />
+                    <span className="text-md font-semibold">تعديل الاستمارة</span>
+                  </button>
+                </div>
+              )}
+              {searchResults?.vehicleType === "شاحنة" && (
+                <div className="flex items-center gap-4">
+                  <TruckForm searchResults={searchResults} />
+                  <button
+                    className="group bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 
+                              text-white px-5 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all
+                              flex items-center gap-3 transform hover:scale-105"
+                    onClick={() => setIsEditModalOpen(true)}
+                  >
+                    <PencilIcon className="h-6 w-6 text-white/90 group-hover:text-white" />
+                    <span className="text-md font-semibold">تعديل الاستمارة</span>
+                  </button>
+                </div>
+              )}
+              {searchResults?.vehicleType === "دراجة" && (
+                <div className="flex items-center gap-4">
+                  <BikeForm searchResults={searchResults} />
+                  <button
+                    className="group bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 
+                              text-white px-5 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all
+                              flex items-center gap-3 transform hover:scale-105"
+                    onClick={() => setIsEditModalOpen(true)}
+                  >
+                    <PencilIcon className="h-6 w-6 text-white/90 group-hover:text-white" />
+                    <span className="text-md font-semibold">تعديل الاستمارة</span>
+                  </button>
+                </div>
+              )}
+            </div>    
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {Object.entries({
                 "رقم الاستمارة": searchResults.applicationId,
@@ -73,7 +119,7 @@ const ShowForms = () => {
                 "رقم الوصل": searchResults.receiptId || "---",
                 "اسم المواطن": searchResults.carOwnerName,
                 "نوع الاستمارة": searchResults.vehicleType,
-                "الاستخدام": searchResults.usage,
+                "نوع التسجيل": searchResults.usage,
                 "الماركة": searchResults.carBrand,
                 "الطراز": searchResults.carName,
                 "اللون": searchResults.carColor,
@@ -84,9 +130,9 @@ const ShowForms = () => {
                 "عدد السلندر": searchResults.engineCylindersNumber,
                 "عدد المحاور": searchResults.vehicleAxlesNumber,
                 "عدد الركاب": searchResults.seatsNumber,
-                "الحمولة": searchResults.loadWeight,
+                //"الحمولة": searchResults.loadWeight,
                 "الحكومية": searchResults.governmental ? "نعم" : "لا",
-                "الفئة": searchResults.category,
+                //"الفئة": searchResults.category,
                 "تاريخ الإصدار": formatArabicDate(searchResults.issueDate),
                 "المديرية": searchResults.agency,
                 "الموقع": searchResults.location,
@@ -110,7 +156,7 @@ const ShowForms = () => {
                     <div className="grid grid-cols-2 gap-4">
                       {Object.entries({
                         "رقم الشاصي": trailer.chassisNumber,
-                        "عدد السلندر": trailer.cylindersNumber,
+                        "عدد المحاور": trailer.axelsNumber,
                         "الحمولة": trailer.loadWeight,
                         "الفئة": trailer.category,
                       }).map(([label, value]) => (
@@ -153,14 +199,14 @@ const ShowForms = () => {
               </div>
             )}
           </div>
+          {/*Edit button*/}
+          <EditFormModal
+            isOpen={isEditModalOpen}
+            onClose={() => setIsEditModalOpen(false)}
+            formData={searchResults}
+          />
         </div>
       )}
-
-      <div className="mt-8" dir="rtl">
-        {searchResults?.vehicleType === "1" && <CarForm searchResults={searchResults} />}
-        {searchResults?.vehicleType === "2" && <TruckForm searchResults={searchResults} />}
-        {searchResults?.vehicleType === "دراجة" && <BikeForm searchResults={searchResults} />}
-      </div>
     </div>
   );
 };

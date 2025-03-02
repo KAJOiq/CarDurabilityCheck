@@ -2,65 +2,68 @@ import React, { useRef, useState, useEffect } from "react";
 import logo from "../assets/logo.jpg";
 import imgStatic from "../assets/truck.png";
 import QRCode from "qrcode"; 
-
+import { PrinterIcon } from "@heroicons/react/24/outline";
 
 const TruckForm = ({ searchResults }) => {
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState("");
+  const printFrameRef = useRef(null);
 
     useEffect(() => {
       if (!searchResults ) return;
+
       const qrData = JSON.stringify({
-        "رقم استمارة الفحص": searchResults.applicationId,
-              "رقم استمارة المرور": searchResults.trafficPoliceApplicationId,
-              "رقم وصل القبض": searchResults.receiptId,
-              "اسم المواطن": searchResults.carOwnerName,
-              "نوع الاستمارة": searchResults.vehicleType,
-              "الاستخدام": searchResults.usage,
-              "نوع المركبة": searchResults.carBrand,
-              "طراز المركبة": searchResults.carName,
-              "لون المركبة": searchResults.carColor,
-              "الموديل": searchResults.carModel,
-              "رقم اللوحة": searchResults.plateNumber,
-              "رقم الشاصي": searchResults.chassisNumber,
-              "نوع المحرك": searchResults.engineType,
-              "عدد السلندر": searchResults.engineCylindersNumber,
-              "عدد المحاور": searchResults.vehicleAxlesNumber,
-              "عدد الركاب": searchResults.seatsNumber,
-              "الحمولة": searchResults.loadWeight,
-              "حكومي ؟": searchResults.governmental,
-              "فئة المركبة": searchResults.category,
-              "تاريخ الإصدار": searchResults.issueDate,
-              "المديرية": searchResults.agency,
-              "الموقع": searchResults.location,
+        ADDID: searchResults.applicationId, 
+        ISSD: searchResults.issueDate, 
+        TFPN: searchResults.trafficPoliceApplicationId,
+        RID: searchResults.receiptId, 
+        CON: searchResults.carOwnerName, 
+        IG: searchResults.governmental, 
+        CN: searchResults.chassisNumber, 
+        PN: searchResults.plateNumber, 
+        CYC: searchResults.engineCylindersNumber, 
+        VAXN: searchResults.vehicleAxlesNumber,
+        COM: searchResults.carModel,  
+        SEAN: searchResults.seatsNumber,
+        VN: searchResults.carName,
+        VC: searchResults.carColor,
+        VB: searchResults.carBrand,
+        VT: searchResults.vehicleType, 
+        USE: searchResults.usage,
+        AGN: searchResults.agency, 
+        LN: searchResults.location,
+        VID: searchResults.vehicleID,
+        ENT: searchResults.engineType, 
+        IIC: searchResults.isInspectionCertified,
+        SN: searchResults.stickerNumber,
+        SP: searchResults.stickerProvider,
       });
   
       QRCode.toDataURL(qrData)
-        .then((url) => {
-          if (url !== qrCodeDataUrl) {
-            setQrCodeDataUrl(url); 
-          }
-        })
+        .then((url) => setQrCodeDataUrl(url))
         .catch((error) => console.error("Error generating QR code:", error));
-    }, [searchResults]); 
-  
-    const formatDate = (dateString) => {
-      const date = new Date(dateString);
-      return date.toISOString().split("T")[0];
-    };
+  }, [searchResults]);
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toISOString().split("T")[0];
+  };
+
   const handlePrint = () => {
     if (!searchResults) return;
     const logoBase64 = logo;
     const imgStaticBase64 = imgStatic;
-    const printWindow = window.open("_blank");
-    printWindow.document.open();
-    printWindow.document.write(`
+    const printFrame = printFrameRef.current;
+    if (!printFrame) return;
+    const doc = printFrame.contentDocument || printFrame.contentWindow.document;
+    doc.open();
+    doc.write(`
      <!DOCTYPE html>
       <html lang="ar" dir="rtl">
       <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>شهادة فحص المركبة</title>
-        <script src="https://cdn.tailwindcss.com"></script>
+        <link href="/tailwind.css" rel="stylesheet">
         <style>
            @media print {
           @page {
@@ -160,35 +163,26 @@ const TruckForm = ({ searchResults }) => {
         ["رقم المركبة", searchResults.plateNumber],
         ["رقم الشاصي", searchResults.chassisNumber],
 
-        /* [
-          `<div class="flex justify-between w-full py-0.5 border border-black">
-            <span class="font-extrabold text-sm text-center w-1/4 border border-black">رقم المركبة</span>
-            <span class="font-semibold text-sm w-2/4 px-1 border border-black">${formData.plateNumber || "---"}</span>
-            <span class="font-extrabold text-center text-sm w-1/4 border border-black">رقم الشاصي</span>
-            <span class="font-semibold text-sm w-2/4 px-1 border border-black">${formData.chassisNumber || "---"}</span>
-          </div>`,
-          null,
-        ],
- */
-        [
+         // بيانات الملحق الأول
+         [
           `<div class="border-black">
             <h3 class="bg-gray-200 text-center font-semibold text-sm">بيانات الملحق الأول</h3>
             ${[
               [
                 `<div class="flex justify-between w-full py-0.5 border-black">
                   <span class="font-bold text-center text-md w-1/3">نوع الحمل</span>
-                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.category || "---"}</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.trailers[0]?.category || "---"}</span>
                   <span class="font-bold text-center text-md w-1/3">شاصي الحمل</span>
-                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.chassisNumbertrailer || "---"}</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.trailers[0]?.chassisNumber || "---"}</span>
                 </div>`,
                 null,
               ],
               [
                 `<div class="flex justify-between w-full border-black">
                   <span class="font-bold text-center text-md w-1/3">عدد المحاور</span>
-                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.numberOfAxes || "---"}</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.trailers[0]?.axelsNumber || "---"}</span>
                   <span class="font-bold text-center text-md w-1/3">الحمولة</span>
-                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.loadWeight || "---"}</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.trailers[0]?.loadWeight || "---"}</span>
                 </div>`,
                 null,
               ],
@@ -196,6 +190,8 @@ const TruckForm = ({ searchResults }) => {
           </div>`,
           null
         ],
+
+        // بيانات الملحق الثاني
         [
           `<div class="border-black">
             <h3 class="bg-gray-200 text-center font-semibold text-sm">بيانات الملحق الثاني</h3>
@@ -203,18 +199,18 @@ const TruckForm = ({ searchResults }) => {
               [
                 `<div class="flex justify-between w-full py-0.5 border-black">
                   <span class="font-bold text-center text-md w-1/3">نوع الحمل</span>
-                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.category || "---"}</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.trailers[1]?.category || "---"}</span>
                   <span class="font-bold text-center text-md w-1/3">شاصي الحمل</span>
-                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.chassisNumbertrailer || "---"}</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.trailers[1]?.chassisNumber || "---"}</span>
                 </div>`,
                 null,
               ],
               [
                 `<div class="flex justify-between w-full border-black">
                   <span class="font-bold text-center text-md w-1/3">عدد المحاور</span>
-                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.numberOfAxes || "---"}</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.trailers[1]?.axelsNumber || "---"}</span>
                   <span class="font-bold text-center text-md w-1/3">الحمولة</span>
-                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.loadWeight || "---"}</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.trailers[1]?.loadWeight || "---"}</span>
                 </div>`,
                 null,
               ],
@@ -222,6 +218,8 @@ const TruckForm = ({ searchResults }) => {
           </div>`,
           null
         ],
+
+        // بيانات الملحق الثالث
         [
           `<div class="border-black">
             <h3 class="bg-gray-200 text-center font-semibold text-sm">بيانات الملحق الثالث</h3>
@@ -229,18 +227,18 @@ const TruckForm = ({ searchResults }) => {
               [
                 `<div class="flex justify-between w-full py-0.5 border-black">
                   <span class="font-bold text-center text-md w-1/3">نوع الحمل</span>
-                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.category || "---"}</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.trailers[2]?.category || "---"}</span>
                   <span class="font-bold text-center text-md w-1/3">شاصي الحمل</span>
-                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.chassisNumbertrailer || "---"}</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.trailers[2]?.chassisNumber || "---"}</span>
                 </div>`,
                 null,
               ],
               [
                 `<div class="flex justify-between w-full border-black">
                   <span class="font-bold text-center text-md w-1/3">عدد المحاور</span>
-                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.numberOfAxes || "---"}</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.trailers[2]?.axelsNumber || "---"}</span>
                   <span class="font-bold text-center text-md w-1/3">الحمولة</span>
-                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.loadWeight || "---"}</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.trailers[2]?.loadWeight || "---"}</span>
                 </div>`,
                 null,
               ],
@@ -267,9 +265,9 @@ const TruckForm = ({ searchResults }) => {
             
              <div class="border border-black grid grid-rows-2 rounded-lg p-2" >
               <div class="w-full max-w-100 h-auto p-0" dir="rtl" >
-                ${searchResults.cropedCarImagePath
-                  ? `<img src="http://localhost:5273${searchResults.cropedCarImagePath}" class="object-contain w-full h-full rounded-md p-0.5 border border-black" />`
-                  : "صورة المركبة"}
+                ${searchResults.cropedChassisImagePath
+                  ? `<img src="http://localhost:5273${searchResults.cropedChassisImagePath}" class="object-contain w-full h-full rounded-md p-0.5 border border-black" />`
+                  : "صورة الشاصي"}
                  </div>  
                  <div class="w-full max-w-100 h-auto p-0 dir="rtl"">
                 ${searchResults.cropedCarImagePath
@@ -293,25 +291,27 @@ const TruckForm = ({ searchResults }) => {
         </body>
         </html>
     `);
-    printWindow.document.close();
-
-    // Add a delay of 500 milliseconds (0.5 seconds) before calling print()
+    doc.close();
+    
     setTimeout(() => {
-      printWindow.print();
-    }, 500);  // Adjust the 500 milliseconds as needed
+      printFrame.contentWindow.print();
+    }, 500);
   };
 
   return (
     <div>
       <button
-        className="bg-blue-500 text-white px-6 py-3 rounded-2xl hover:bg-blue-700"
-        onClick={handlePrint}
-      >
-        طباعة الاستمارة
+          className="group bg-gradient-to-r from-blue-500 to-blue-600 
+                    hover:from-blue-600 hover:to-blue-700 text-white px-5 py-3
+                    rounded-xl shadow-lg hover:shadow-xl transition-all 
+                    flex items-center gap-3 transform hover:scale-105"
+          onClick={handlePrint}
+        >
+          <PrinterIcon className="h-6 w-6 text-white/90 group-hover:text-white" />
+          <span className="text-md font-semibold">طباعة الاستمارة</span>
       </button>
-
+      <iframe ref={printFrameRef} style={{ display: "none" }} />
     </div>
   );
 };
-
 export default TruckForm;

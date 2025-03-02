@@ -8,7 +8,7 @@ const CheckboxField = ({ label, name, checked, onChange }) => {
         name={name}
         checked={checked}
         onChange={onChange}
-        className="mr-2"
+        className="mr-3"
       />
       <label className="text-right font-medium">{label}</label>
     </div>

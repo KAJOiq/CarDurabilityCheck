@@ -4,6 +4,7 @@ import QRCode from "qrcode";
 
 const CertificatesFormForTruck = ({ formData, disabled }) => {
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState("");
+  const printFrameRef = useRef(null);
 
   useEffect(() => {
     const qrData = JSON.stringify({
@@ -35,28 +36,30 @@ const CertificatesFormForTruck = ({ formData, disabled }) => {
     });
 
     QRCode.toDataURL(qrData)
-      .then((url) => {
-        if (url !== qrCodeDataUrl) setQrCodeDataUrl(url);
-      })
-      .catch((error) => console.error("Error generating QR code:", error));
-  }, [formData]);
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toISOString().split("T")[0];
-  };
-
-  const handlePrint = () => {
-    const printWindow = window.open("", "_blank");
-    printWindow.document.open();
-    printWindow.document.write(`
+          .then((url) => setQrCodeDataUrl(url))
+          .catch((error) => console.error("Error generating QR code:", error));
+      }, [searchResults]);
+    
+      const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return date.toISOString().split("T")[0];
+      };
+    
+      const handlePrint = () => {
+        if (!searchResults) return;
+        const printFrame = printFrameRef.current;
+        if (!printFrame) return;
+        
+        const doc = printFrame.contentDocument || printFrame.contentWindow.document;
+        doc.open();
+        doc.write(`
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>شهادة فحص المركبة</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="/tailwind.css" rel="stylesheet">
   <style>
     @media print {
       @page {
@@ -293,10 +296,10 @@ const CertificatesFormForTruck = ({ formData, disabled }) => {
 </body>
 </html>
     `);
-    printWindow.document.close();
-
+    doc.close();
+    
     setTimeout(() => {
-      printWindow.print();
+      printFrame.contentWindow.print();
     }, 500);
   };
 
@@ -325,6 +328,7 @@ const CertificatesFormForTruck = ({ formData, disabled }) => {
         </svg>
         طباعة شهادة الفحص
       </button>
+      <iframe ref={printFrameRef} style={{ display: "none" }} />
     </div>
   );
 };

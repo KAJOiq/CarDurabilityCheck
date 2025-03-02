@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Dialog } from "@headlessui/react";
 import { 
   XMarkIcon, 
@@ -8,6 +8,7 @@ import {
   TruckIcon,
   CogIcon,
   LinkIcon,
+  CameraIcon
 } from "@heroicons/react/24/outline";
 import InputField from "./InputField";
 import CheckboxField from "./CheckboxField";
@@ -16,77 +17,86 @@ import { useNavigate } from "react-router-dom";
 import DropDownListTemplate from "./DropDownListTemplate";
 import fetchData from "../utils/fetchData";
 import Select from 'react-select';
+import logo from "../assets/logo.jpg";
+import QRCode from "qrcode"; 
+import imgStaticCar from "../assets/car.jpeg";
+import imgStaticTruck from "../assets/truck.png";
+import imgStaticBike from "../assets/bike.png";
 
 const ReviewData = ({ formData }) => {
   return (
-    <div className="space-y-6 text-right">
+    <div dir="rtl" className="space-y-6 text-right p-6">
       <h3 className="text-2xl font-bold text-gray-800 mb-6">البيانات المدخلة</h3>
 
       <div className="bg-white p-6 rounded-lg shadow-md">
-        <div className="flex flex-row-reverse items-center space-x-3 space-x-reverse mb-4">
+        <div className="flex items-center space-x-3 mb-4">
           <UserCircleIcon className="w-8 h-8 text-blue-500" />
           <h4 className="text-xl font-semibold text-gray-700">بيانات المواطن</h4>
         </div>
         <div className="space-y-3">
-          <div className="flex flex-row-reverse justify-between items-center">
+          <div className="flex justify-between items-center">
             <span className="font-medium text-gray-600">اسم المواطن</span>
             <span className="text-gray-800">{formData.CarOwnerName}</span>
           </div>
-          <div className="flex flex-row-reverse justify-between items-center">
+          <div className="flex justify-between items-center">
             <span className="font-medium text-gray-600">حكومي</span>
             <span className="text-gray-800">
               {formData.Governmental ? "نعم" : "لا"}
             </span>
           </div>
           {!formData.Governmental && (
-            <div className="flex flex-row-reverse justify-between items-center">
+            <div className="flex justify-between items-center">
               <span className="font-medium text-gray-600">رقم وصل القبض</span>
               <span className="text-gray-800">{formData.ReceiptId}</span>
             </div>
           )}
+          <div className="flex justify-between items-center">
+            <span className="font-medium text-gray-600">رقم استمارة المرور</span>
+            <span className="text-gray-800">{formData.TrafficPoliceApplicationId}</span>
+          </div>
         </div>
       </div>
 
       {/* بطاقة بيانات المركبة */}
       <div className="bg-white p-6 rounded-lg shadow-md">
-        <div className="flex flex-row-reverse items-center space-x-3 space-x-reverse mb-4">
+        <div className="flex items-center space-x-3 mb-4">
           <TruckIcon className="w-8 h-8 text-green-500" />
           <h4 className="text-xl font-semibold text-gray-700">بيانات المركبة</h4>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-3">
-            <div className="flex flex-row-reverse justify-between items-center">
+            <div className="flex justify-between items-center">
               <span className="font-medium text-gray-600">نوع الاستمارة</span>
               <span className="text-gray-800">{formData.VehicleType}</span>
             </div>
-            <div className="flex flex-row-reverse justify-between items-center">
+            <div className="flex justify-between items-center">
               <span className="font-medium text-gray-600">نوع المركبة</span>
-              <span className="text-gray-800">{formData.CarBrandId}</span>
+              <span className="text-gray-800">{formData.CarBrand}</span>
             </div>
-            <div className="flex flex-row-reverse justify-between items-center">
+            <div className="flex justify-between items-center">
               <span className="font-medium text-gray-600">طراز المركبة</span>
-              <span className="text-gray-800">{formData.CarNameId}</span>
+              <span className="text-gray-800">{formData.CarName}</span>
             </div>
-            <div className="flex flex-row-reverse justify-between items-center">
+            <div className="flex justify-between items-center">
               <span className="font-medium text-gray-600">لون المركبة</span>
-              <span className="text-gray-800">{formData.CarColorId}</span>
+              <span className="text-gray-800">{formData.CarColor}</span>
             </div>
           </div>
           <div className="space-y-3">
-            <div className="flex flex-row-reverse justify-between items-center">
+            <div className="flex justify-between items-center">
               <span className="font-medium text-gray-600">رقم الشاصي</span>
               <span className="text-gray-800">{formData.ChassisNumber}</span>
             </div>
-            <div className="flex flex-row-reverse justify-between items-center">
+            <div className="flex justify-between items-center">
               <span className="font-medium text-gray-600">الموديل</span>
               <span className="text-gray-800">{formData.CarModel}</span>
             </div>
-            <div className="flex flex-row-reverse justify-between items-center">
+            <div className="flex justify-between items-center">
               <span className="font-medium text-gray-600">رقم المركبة</span>
               <span className="text-gray-800">{formData.PlateNumber}</span>
             </div>
-            <div className="flex flex-row-reverse justify-between items-center">
-              <span className="font-medium text-gray-600">الاستخدام</span>
+            <div className="flex justify-between items-center">
+              <span className="font-medium text-gray-600">نوع التسجيل</span>
               <span className="text-gray-800">{formData.Usage}</span>
             </div>
           </div>
@@ -95,27 +105,27 @@ const ReviewData = ({ formData }) => {
 
       {/* بطاقة بيانات المحرك */}
       <div className="bg-white p-6 rounded-lg shadow-md">
-        <div className="flex flex-row-reverse items-center space-x-3 space-x-reverse mb-4">
+        <div className="flex items-center space-x-3 mb-4">
           <CogIcon className="w-8 h-8 text-purple-500" />
           <h4 className="text-xl font-semibold text-gray-700">بيانات المحرك</h4>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-3">
-            <div className="flex flex-row-reverse justify-between items-center">
+            <div className="flex justify-between items-center">
               <span className="font-medium text-gray-600">نوع المحرك</span>
               <span className="text-gray-800">{formData.EngineType}</span>
             </div>
-            <div className="flex flex-row-reverse justify-between items-center">
+            <div className="flex justify-between items-center">
               <span className="font-medium text-gray-600">عدد السلندر</span>
               <span className="text-gray-800">{formData.EngineCylindersNumber}</span>
             </div>
           </div>
           <div className="space-y-3">
-            <div className="flex flex-row-reverse justify-between items-center">
+            <div className="flex justify-between items-center">
               <span className="font-medium text-gray-600">عدد المحاور</span>
               <span className="text-gray-800">{formData.VehicleAxlesNumber}</span>
             </div>
-            <div className="flex flex-row-reverse justify-between items-center">
+            <div className="flex justify-between items-center">
               <span className="font-medium text-gray-600">عدد الركاب</span>
               <span className="text-gray-800">{formData.SeatsNumber}</span>
             </div>
@@ -124,14 +134,14 @@ const ReviewData = ({ formData }) => {
       </div>
 
       {/* بطاقة بيانات المقطورة */}
-      {formData.VehicleType === "2" && (
+      {formData.VehicleType === "شاحنة" && (
         <div className="bg-white p-6 rounded-lg shadow-md">
-          <div className="flex flex-row-reverse items-center space-x-3 space-x-reverse mb-4">
+          <div className="flex items-center space-x-3 mb-4">
             <LinkIcon className="w-8 h-8 text-yellow-500" />
             <h4 className="text-xl font-semibold text-gray-700">بيانات المقطورة</h4>
           </div>
           <div className="space-y-3">
-            <div className="flex flex-row-reverse justify-between items-center">
+            <div className="flex justify-between items-center">
               <span className="font-medium text-gray-600">تفاصيل المقطورة</span>
               <span className="text-gray-800">{formData.TrailerData[0]?.details}</span>
             </div>
@@ -147,7 +157,8 @@ const CreateForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formErrors, setFormErrors] = useState([]);
-  
+  const [mergedData, setMergedData] = useState(null); 
+
   // States for photos
   const [carFullImage, setCarFullImage] = useState(null);
   const [carCroppedImage, setCarCroppedImage] = useState(null);
@@ -227,6 +238,10 @@ const CreateForm = () => {
     }
   };
 
+  useEffect(() => {
+    handlePlateNumberChange();
+  }, [provinceCode, plateLetter, plateNumber]);
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
@@ -234,12 +249,12 @@ const CreateForm = () => {
       [name]: type === "checkbox" ? checked : value
     }));
   
-    if (name === "VehicleType" && value === "2") {
+    if (name === "VehicleType" && value === "شاحنة") {
       setFormData(prev => ({
         ...prev,
         TrailerData: [{}] 
       }));
-    } else if (name === "VehicleType" && value !== "2") {
+    } else if (name === "VehicleType" && value !== "شاحنة") {
       setFormData(prev => ({
         ...prev,
         TrailerData: [] 
@@ -281,6 +296,10 @@ const CreateForm = () => {
       setIsSubmitting(true);
       const formDataToSend = new FormData();
   
+      delete formDataToSend.CarBrand;
+      delete formDataToSend.CarName;
+      delete formDataToSend.CarColor;
+
       Object.entries(formData).forEach(([key, value]) => {
         if (key !== 'TrailerData' && !(key === 'ReceiptId' && (formData.Governmental || value === null))) {
           formDataToSend.append(key, value);
@@ -304,7 +323,7 @@ const CreateForm = () => {
         formDataToSend.append('ApplicationImages', receiptIdImage, 'receiptIdImage.png');
       }
   
-      if (formData.VehicleType === '2' && formData.TrailerData.length > 0) {
+      if (formData.VehicleType === 'شاحنة' && formData.TrailerData.length > 0) {
         formDataToSend.append('TrailerData', JSON.stringify(formData.TrailerData));
       }
   
@@ -322,7 +341,24 @@ const CreateForm = () => {
         setFormErrors(errorMessages);
         return;
       }
-        navigate('/forms', { state: { success: true } });
+      const mergedData = {
+        ...formData, 
+        applicationId: result.results.applicationId,
+        vehicleId: result.results.vehicleId,
+        issueDate: result.results.issueDate,
+      };
+
+      setMergedData(mergedData);
+
+      if (mergedData.VehicleType === 'سيارة') {
+      handlePrintForCar(mergedData);
+      } else if (mergedData.VehicleType === 'شاحنة') {
+        handlePrintForTruck(mergedData);
+      } else if (mergedData.VehicleType === 'دراجة') {
+        handlePrintForBike(mergedData);
+      }
+
+      navigate('/forms', { state: { success: true } });
     } catch (error) {
       console.error('Error:', error);
       setFormErrors(['فشل في الاتصال بالخادم: ' + error.message]);
@@ -330,6 +366,665 @@ const CreateForm = () => {
       setIsSubmitting(false);
     }
   };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toISOString().split("T")[0];
+  };
+
+  const handlePrintForCar = (data) => {
+    if (!data) return;
+    const imgStaticBase64 = imgStaticCar;
+
+    const qrData = JSON.stringify({
+      ADDID: data.applicationId,
+      ISSD: data.issueDate,
+      TFPN: data.TrafficPoliceApplicationId,
+      RID: data.ReceiptId,
+      CON: data.CarOwnerName,
+      IG: data.Governmental,
+      CN: data.ChassisNumber,
+      PN: data.PlateNumber,
+      CYC: data.EngineCylindersNumber,
+      VAXN: data.VehicleAxlesNumber,
+      COM: data.CarModel,
+      SEAN: data.SeatsNumber,
+      VN: data.CarNameId,
+      VC: data.CarColorId,
+      VB: data.CarBrandId,
+      VT: data.VehicleType,
+      USE: data.Usage,
+      AGN: data.agency,
+      LN: data.location,
+      VID: data.vehicleId,
+      ENT: data.EngineType,
+      IIC: data.isInspectionCertified,
+      SN: data.stickerNumber,
+      SP: data.stickerProvider,
+    });
+
+    QRCode.toDataURL(qrData)
+      .then((qrCodeDataUrl) => {
+        const printFrame = document.createElement('iframe');
+        printFrame.style.display = 'none';
+        document.body.appendChild(printFrame);
+
+        const doc = printFrame.contentDocument || printFrame.contentWindow.document;
+        doc.open();
+        doc.write(`
+         <!DOCTYPE html>
+             <html lang="ar" dir="rtl">
+             <head>
+               <meta charset="UTF-8">
+               <meta name="viewport" content="width=device-width, initial-scale=1.0">
+               <title>شهادة فحص المركبة</title>
+               <link href="/tailwind.css" rel="stylesheet">
+               <style>
+                 @media print {
+                   @page {
+                     size: A4 portrait;
+                   }
+                   body {
+                     font-family: Arial, sans-serif;
+                     direction: rtl;
+                   }
+                 }
+               </style>
+             </head>
+             <body class="bg-white w-[210mm] h-[148mm] p-6 text-right">
+               <!-- Header -->
+               <div class="flex items-center justify-between border-b-2 border-black pb-2 w-full" dir="rtl">
+                 <div class="flex flex-col items-center w-1/4 text-sm space-y-2">
+                   <h1 class="text-2xl font-bold text-black-800">جمهورية العراق</h1>
+                   <h1 class="text-xl font-bold text-black-800">وزارة الداخلية</h1>
+                 </div>
+         
+                 <!-- Center QR and Logo -->
+                 <div class="relative flex items-center justify-center w-1/2">
+                   <div class="w-24 mb-2 absolute right-0 mr-4">
+                     <img src="${qrCodeDataUrl}" alt="QR Code" class="w-auto h-auto" />
+                   </div>
+                   <div class="mb-2 mx-auto absolute left-6 ml-10">
+                     <img src="${logo}" alt="Logo" class="w-24 h-auto" />
+                   </div>
+                 </div>
+         
+                 <!-- Right-side Details -->
+                 <div class="flex flex-col items-start w-2/5 text-sm text-right font-semibold">
+                   <div class="grid grid-cols-2 w-full">
+                     <div class="flex flex-col text-black-800">
+                       <span>رقم استمارة الفحص</span> 
+                       <span>رقم وصل القبض</span>
+                       <span>اسم الموقع</span>
+                       <span>تاريخ الاصدار</span>
+                     </div>
+                     <div class="flex flex-col text-black-800 font-bold text-right">
+                       <span>: ${localStorage.getItem("location")}-${data.applicationId}</span>
+                       <span>: ${formData.ReceiptId}</span>
+                       <span>: ${localStorage.getItem("agency")}</span>
+                       <span>: ${formatDate(data.issueDate)}</span>
+                     </div>
+                   </div>
+                 </div>
+               </div>
+         
+               <!-- Vehicle Data Section -->
+               <div class="border border-black rounded-lg p-1 mt-1">
+                 <h3 class="bg-gray-200 text-center font-bold py-0.5">بيانات المركبة</h3>
+                 <div class="grid grid-cols-2 gap-2 text-md">
+                   ${[
+                     ["اسم المالك", formData.CarOwnerName],
+                     ["نوع المركبة", formData.CarBrand],
+                     ["طراز المركبة", formData.CarName],
+                     ["لون المركبة", formData.CarColor],
+                     ["رقم المركبة", formData.PlateNumber],
+                     ["رقم الشاصي", formData.ChassisNumber],
+                     ["الموديل", formData.CarModel],
+                     ["نوع المحرك", formData.EngineType],
+                     ["عدد السلندر", formData.EngineCylindersNumber],
+                     ["عدد المحاور", formData.VehicleAxlesNumber],
+                     ["عدد الركاب", formData.SeatsNumber],
+                   ]
+                     .map(
+                       ([label, value]) =>
+                         `
+                         <div class="flex items-center py-0.5 border-black">
+                           <span class="font-bold text-md w-1/3">${label} :</span>
+                           <span class="font-bold text-md w-2/3 px-1 border border-black rounded">${value || "---"}</span>
+                         </div>
+                         `
+                     )
+                     .join("")}
+                     
+                 </div>
+               </div>
+               <div class="border border-black grid grid-cols-2 rounded-lg p-2" >
+               <!-- Vehicle Image -->
+                 <div class="w-full max-w-100 h-auto p-0 dir="ltr"">
+                      <img src="${imgStaticBase64}" class="object-contain w-full h-full rounded-md p-0.5 border border-white" />
+                   </div>
+
+                  <div class="border border-white grid grid-rows-2 rounded-lg p-2">
+                    <div class="w-full max-w-100 h-auto p-0" dir="rtl">
+                      ${carCroppedImage ? (
+                        `<img
+                          src=${URL.createObjectURL(carCroppedImage)}
+                          alt="صورة السيارة المقصوصة"
+                          class="object-contain w-full h-full rounded-md p-0.5 border border-black"
+                        />`
+                      ) : (
+                        "صورة السيارة المقصوصة"
+                      )}
+                    </div>
+                    <div class="w-full max-w-100 h-auto p-0" dir="rtl">
+                      ${chassisCroppedImage ? (
+                        `<img
+                          src=${URL.createObjectURL(chassisCroppedImage)}
+                          alt="صورة الشاصي المقصوصة"
+                          class="object-contain w-full h-full rounded-md p-0.5 border border-black"
+                        />`
+                      ) : (
+                        "صورة الشاصي المقصوصة"
+                      )}
+                    </div>
+                  </div>
+
+                 <div class="border border-black  rounded-lg p-2 min-h-40" >
+                   <span class="font-bold text-md text-center w-1/3">الفاحص : 
+                   </span> 
+                 </div>
+                 <div class="border border-black  rounded-lg p-2 min-h-40" >
+                   <span class="font-bold text-md text-center w-1/3">الفاحص :
+                 </span> 
+                 </div>
+                 </div>
+                </div> 
+             </body>
+             </html>
+        `);
+        doc.close();
+
+        setTimeout(() => {
+          printFrame.contentWindow.print();
+          document.body.removeChild(printFrame);
+        }, 500);
+      })
+      .catch((error) => console.error("Error generating QR code:", error));
+  };
+
+  const handlePrintForTruck = (data) => {
+    if (!data) return;
+    const imgStaticBase64 = imgStaticTruck;
+
+    const qrData = JSON.stringify({
+      ADDID: data.applicationId,
+      ISSD: data.issueDate,
+      TFPN: data.TrafficPoliceApplicationId,
+      RID: data.ReceiptId,
+      CON: data.CarOwnerName,
+      IG: data.Governmental,
+      CN: data.ChassisNumber,
+      PN: data.PlateNumber,
+      CYC: data.EngineCylindersNumber,
+      VAXN: data.VehicleAxlesNumber,
+      COM: data.CarModel,
+      SEAN: data.SeatsNumber,
+      VN: data.CarNameId,
+      VC: data.CarColorId,
+      VB: data.CarBrandId,
+      VT: data.VehicleType,
+      USE: data.Usage,
+      AGN: data.agency,
+      LN: data.location,
+      VID: data.vehicleId,
+      ENT: data.EngineType,
+      IIC: data.isInspectionCertified,
+      SN: data.stickerNumber,
+      SP: data.stickerProvider,
+    });
+
+    QRCode.toDataURL(qrData)
+      .then((qrCodeDataUrl) => {
+        const printFrame = document.createElement('iframe');
+        printFrame.style.display = 'none';
+        document.body.appendChild(printFrame);
+
+        const doc = printFrame.contentDocument || printFrame.contentWindow.document;
+        doc.open();
+        doc.write(`
+          <!DOCTYPE html>
+      <html lang="ar" dir="rtl">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>شهادة فحص المركبة</title>
+        <link href="/tailwind.css" rel="stylesheet">
+        <style>
+           @media print {
+          @page {
+            size: A4 portrait;
+          }
+            body {
+              font-family: Arial, sans-serif;
+              direction: rtl;
+            }
+          }
+        </style>
+      </head>
+      <body class="bg-white w-[210mm] h-[148mm] p-6 text-right">
+      <!-- Header -->
+      <div class="flex items-center justify-between border-b-2 border-black pb-2 w-full" dir="rtl">
+        <!-- Left-side Titles -->
+        <div class="flex flex-col items-center w-1/4 text-sm space-y-2">
+          <h1 class="text-2xl font-bold text-black-800">جمهورية العراق</h1>
+          <h1 class="text-xl font-bold text-black-800">وزارة الداخلية</h1>
+        </div>
+      
+        <!-- Centered Section (QR Code and Logo) -->
+        <div class="relative flex items-center justify-center w-1/2">
+          <!-- QR Code (Left) -->
+          <div class="w-24 mb-2 absolute right-0 mr-4">
+            <img src="${qrCodeDataUrl}" alt="QR Code" class="w-auto h-auto" />
+          </div>
+      
+          <!-- Logo (Centered) -->
+          <div class="mb-2 mx-auto absolute left-6 ml-10">
+            <img src="${logo}" alt="Logo" class="w-24 h-auto" />
+          </div>
+        </div>
+      
+        <!-- Right-side Details -->
+        <div class="flex flex-col items-start w-2/5 text-sm text-right font-semibold">
+          <!-- كل سطر راح يكون grid مكون من عمودين -->
+          <div class="grid grid-cols-2 w-full"> <!-- زيادة المسافة الأفقية هنا -->
+            <!-- العمود الأول للنصوص الثابتة -->
+            <div class="flex flex-col text-black-800"> <!-- زيادة المسافة الجانبية هنا -->
+              <span>رقم استمارة الفحص</span> 
+              <span>رقم وصل القبض</span>
+              <span>اسم الموقع</span>
+              <span>تاريخ الاصدار</span>
+            </div>
+      
+            <!-- العمود الثاني للقيم المتغيرة -->
+            <div class="flex flex-col text-black-800 font-bold text-right">
+              <span>: ${localStorage.getItem("location")}-${data.applicationId}</span>
+              <span>: ${formData.ReceiptId}</span>
+              <span>: ${localStorage.getItem("agency")}</span>
+              <span>: ${formatDate(data.issueDate)}</span>
+           
+            </div>
+          </div>
+        </div>
+      
+      </div>
+           <!-- Main Content with Grid -->
+<div class="grid grid-cols-3 gap-2 mt-2">
+  <!-- Vehicle Data (Left) -->
+  <div class="border border-black rounded-lg p-1 relative col-span-2" dir="rtl">
+    <h3 class="bg-gray-200 text-center font-bold">بيانات المركبة</h3>
+    <div class="text-sm">
+      ${[
+        [
+          `<div class="flex justify-between w-full py-0.5 border-black">
+            <span class="font-bold text-center text-md w-1/3">نوع المركبة</span>
+            <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.CarBrand || "---"}</span>
+            <span class="font-bold text-center text-md w-1/3">طراز المركبة</span>
+            <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.CarName || "---"}</span>
+          </div>`,
+          null,
+        ],
+
+        [
+          `<div class="flex justify-between w-full py-0.5 border-black">
+            <span class="font-bold text-center text-md w-1/3">لون المركبة</span>
+            <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.CarColor || "---"}</span>
+            <span class="font-bold text-center text-md w-1/3">نوع المحرك</span>
+            <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.CngineType || "---"}</span>
+          </div>`,
+          null,
+        ],
+        [
+          `<div class="flex justify-between w-full py-0.5 border-black">
+            <span class="font-bold text-center text-md w-1/3">الاستخدام</span>
+            <span class="font-bold text-md w-1/2 px-1 border border-black rounded">${formData.Usage || "---"}</span>
+            <span class="font-bold text-center text-md w-1/3">الموديل</span>
+            <span class="font-bold text-md w-1/2 px-1 border border-black rounded">${formData.CarModel || "---"}</span>
+            <span class="font-bold text-center text-md w-1/3">عدد السلندر</span>
+            <span class="font-bold text-md w-1/2 px-1 border border-black rounded">${formData.EngineCylindersNumber || "---"}</span>
+          </div>`,
+          null,
+        ],
+        
+        ["رقم المركبة", formData.PlateNumber],
+        ["رقم الشاصي", formData.ChassisNumber],
+
+         // بيانات الملحق الأول
+         [
+          `<div class="border-black">
+            <h3 class="bg-gray-200 text-center font-semibold text-sm">بيانات الملحق الأول</h3>
+            ${[
+              [
+                `<div class="flex justify-between w-full py-0.5 border-black">
+                  <span class="font-bold text-center text-md w-1/3">نوع الحمل</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[0]?.Category || "---"}</span>
+                  <span class="font-bold text-center text-md w-1/3">شاصي الحمل</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[0]?.TrailerChassisNumber  || "---"}</span>
+                </div>`,
+                null,
+              ],
+              [
+                `<div class="flex justify-between w-full border-black">
+                  <span class="font-bold text-center text-md w-1/3">عدد المحاور</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[0]?.TrailerAxlesNumber  || "---"}</span>
+                  <span class="font-bold text-center text-md w-1/3">الحمولة</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[0]?.LoadWeight  || "---"}</span>
+                </div>`,
+                null,
+              ],
+            ].map(([content]) => content).join('')}
+          </div>`,
+          null
+        ],
+
+        // بيانات الملحق الثاني
+        [
+          `<div class="border-black">
+            <h3 class="bg-gray-200 text-center font-semibold text-sm">بيانات الملحق الثاني</h3>
+            ${[
+              [
+                `<div class="flex justify-between w-full py-0.5 border-black">
+                  <span class="font-bold text-center text-md w-1/3">نوع الحمل</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[1]?.Category || "---"}</span>
+                  <span class="font-bold text-center text-md w-1/3">شاصي الحمل</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[1]?.TrailerChassisNumber  || "---"}</span>
+                </div>`,
+                null,
+              ],
+              [
+                `<div class="flex justify-between w-full border-black">
+                  <span class="font-bold text-center text-md w-1/3">عدد المحاور</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[1]?.TrailerAxlesNumber  || "---"}</span>
+                  <span class="font-bold text-center text-md w-1/3">الحمولة</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[1]?.LoadWeight  || "---"}</span>
+                </div>`,
+                null,
+              ],
+            ].map(([content]) => content).join('')}
+          </div>`,
+          null
+        ],
+
+        // بيانات الملحق الثالث
+        [
+          `<div class="border-black">
+            <h3 class="bg-gray-200 text-center font-semibold text-sm">بيانات الملحق الثالث</h3>
+            ${[
+              [
+                `<div class="flex justify-between w-full py-0.5 border-black">
+                  <span class="font-bold text-center text-md w-1/3">نوع الحمل</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[2]?.Category || "---"}</span>
+                  <span class="font-bold text-center text-md w-1/3">شاصي الحمل</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[2]?.TrailerChassisNumber  || "---"}</span>
+                </div>`,
+                null,
+              ],
+              [
+                `<div class="flex justify-between w-full border-black">
+                  <span class="font-bold text-center text-md w-1/3">عدد المحاور</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[2]?.TrailerAxlesNumber  || "---"}</span>
+                  <span class="font-bold text-center text-md w-1/3">الحمولة</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[2]?.LoadWeight  || "---"}</span>
+                </div>`,
+                null,
+              ],
+            ].map(([content]) => content).join('')}
+          </div>`,
+          null
+        ],
+      ]
+        .map(([label, value]) =>
+          value !== null
+            ? `
+              <div class="flex justify-between items-center py-0.5 border-black">
+                <span class="font-bold text-center text-md w-1/3">${label} :</span>
+                <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${value || "---"}</span>
+              </div>
+            `
+            : label
+        )
+        .join("")}
+    </div>
+
+  </div>
+          <!-- Vehicle Image -->
+            
+             <div class="border border-white grid grid-rows-2 rounded-lg p-2">
+                    <div class="w-full max-w-100 h-auto p-0" dir="rtl">
+                      ${carCroppedImage ? (
+                        `<img
+                          src=${URL.createObjectURL(carCroppedImage)}
+                          alt="صورة السيارة المقصوصة"
+                          class="object-contain w-full h-full rounded-md p-0.5 border border-black"
+                        />`
+                      ) : (
+                        "صورة السيارة المقصوصة"
+                      )}
+                    </div>
+                    <div class="w-full max-w-100 h-auto p-0" dir="rtl">
+                      ${chassisCroppedImage ? (
+                        `<img
+                          src=${URL.createObjectURL(chassisCroppedImage)}
+                          alt="صورة الشاصي المقصوصة"
+                          class="object-contain w-full h-full rounded-md p-0.5 border border-black"
+                        />`
+                      ) : (
+                        "صورة الشاصي المقصوصة"
+                      )}
+                    </div>
+              </div>
+          </div>
+    <div class="border border-black rounded-lg p-2 w-full mt-4 mx-auto">
+    <div class="h-auto p-0 w-full">
+        <img src="${imgStaticBase64}" 
+             class="w-full h-auto object-scale-down mx-auto" 
+             style="max-width: 90% !important;
+                    display: block !important;
+                    margin: 0 auto !important;" />
+    </div>
+</div>
+        </body>
+        </html>
+        `);
+        doc.close();
+
+        setTimeout(() => {
+          printFrame.contentWindow.print();
+          document.body.removeChild(printFrame);
+        }, 500);
+      })
+      .catch((error) => console.error("Error generating QR code:", error));
+  };
+
+  const handlePrintForBike = (data) => {
+    if (!data) return;
+    const imgStaticBase64 = imgStaticBike;
+
+    const qrData = JSON.stringify({
+      ADDID: data.applicationId,
+      ISSD: data.issueDate,
+      TFPN: data.TrafficPoliceApplicationId,
+      RID: data.ReceiptId,
+      CON: data.CarOwnerName,
+      IG: data.Governmental,
+      CN: data.ChassisNumber,
+      PN: data.PlateNumber,
+      CYC: data.EngineCylindersNumber,
+      VAXN: data.VehicleAxlesNumber,
+      COM: data.CarModel,
+      SEAN: data.SeatsNumber,
+      VN: data.CarNameId,
+      VC: data.CarColorId,
+      VB: data.CarBrandId,
+      VT: data.VehicleType,
+      USE: data.Usage,
+      AGN: data.agency,
+      LN: data.location,
+      VID: data.vehicleId,
+      ENT: data.EngineType,
+      IIC: data.isInspectionCertified,
+      SN: data.stickerNumber,
+      SP: data.stickerProvider,
+    });
+
+    QRCode.toDataURL(qrData)
+      .then((qrCodeDataUrl) => {
+        const printFrame = document.createElement('iframe');
+        printFrame.style.display = 'none';
+        document.body.appendChild(printFrame);
+
+        const doc = printFrame.contentDocument || printFrame.contentWindow.document;
+        doc.open();
+        doc.write(
+          `<!DOCTYPE html>
+            <html lang="ar" dir="rtl">
+            <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>شهادة فحص المركبة</title>
+              <link href="/tailwind.css" rel="stylesheet">
+              <style>
+                @media print {
+                  @page {
+                    size: A4 portrait;
+                  }
+                  body {
+                    font-family: Arial, sans-serif;
+                    direction: rtl;
+                  }
+                }
+              </style>
+            </head>
+            <body class="bg-white w-[210mm] h-[148mm] p-6 text-right">
+              <!-- Header -->
+              <div class="flex items-center justify-between border-b-2 border-black pb-2 w-full" dir="rtl">
+                <div class="flex flex-col items-center w-1/4 text-sm space-y-2">
+                  <h1 class="text-2xl font-bold text-black-800">جمهورية العراق</h1>
+                  <h1 class="text-xl font-bold text-black-800">وزارة الداخلية</h1>
+                </div>
+        
+                <!-- Center QR and Logo -->
+                <div class="relative flex items-center justify-center w-1/2">
+                  <div class="w-24 mb-2 absolute right-0 mr-4">
+                    <img src="${qrCodeDataUrl}" alt="QR Code" class="w-auto h-auto" />
+                  </div>
+                  <div class="mb-2 mx-auto absolute left-6 ml-10">
+                    <img src="${logo}" alt="Logo" class="w-24 h-auto" />
+                  </div>
+                </div>
+        
+                <!-- Right-side Details -->
+                <div class="flex flex-col items-start w-2/5 text-sm text-right font-semibold">
+                  <div class="grid grid-cols-2 w-full">
+                    <div class="flex flex-col text-black-800">
+                      <span>رقم استمارة الفحص</span> 
+                      <span>رقم وصل القبض</span>
+                      <span>اسم الموقع</span>
+                      <span>تاريخ الاصدار</span>
+                    </div>
+                    <div class="flex flex-col text-black-800 font-bold text-right">
+                      <span>: ${localStorage.getItem("location")}-${data.applicationId}</span>
+                      <span>: ${formData.ReceiptId}</span>
+                      <span>: ${localStorage.getItem("agecny")}</span>
+                      <span>: ${formatDate(data.issueDate)}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+        
+              <!-- Vehicle Data Section -->
+              <div class="border border-black rounded-lg p-1 mt-1">
+                <h3 class="bg-gray-200 text-center font-bold py-0.5">بيانات المركبة</h3>
+                <div class="grid grid-cols-2 gap-2 text-md">
+                  ${[
+                    ["اسم المالك", formData.CarOwnerName],
+                    ["نوع المركبة", formData.CarBrand],
+                    ["طراز المركبة", formData.CarName],
+                    ["لون المركبة", formData.CarColor],
+                    ["رقم المركبة", formData.PlateNumber],
+                    ["رقم الشاصي", formData.ChassisNumber],
+                    ["الموديل", formData.CarModel],
+                    ["نوع المحرك", formData.EngineType],
+                    ["عدد السلندر", formData.EngineCylindersNumber],
+                    ["عدد المحاور", formData.VehicleAxlesNumber],
+                    ["عدد الركاب", formData.SeatsNumber],
+                  ]
+                    .map(
+                      ([label, value]) =>
+                        `
+                        <div class="flex items-center py-0.5 border-black">
+                          <span class="font-bold text-md w-1/3">${label} :</span>
+                          <span class="font-bold text-md w-2/3 px-1 border border-black rounded">${value || "---"}</span>
+                        </div>
+                        `
+                    )
+                    .join("")}
+                    
+                </div>
+              </div>
+              <div class="border border-black grid grid-cols-2 rounded-lg p-2" >
+              <!-- Vehicle Image -->
+                <div class="w-full max-w-100 h-auto p-0 dir="ltr"">
+                     <img src="${imgStaticBase64}" class="object-contain w-full h-full rounded-md p-0.5 border border-white" />
+                  </div>
+                 <div class="border border-white grid grid-rows-2 rounded-lg p-2" >
+                                   <div class="border border-white grid grid-rows-2 rounded-lg p-2">
+                    <div class="w-full max-w-100 h-auto p-0" dir="rtl">
+                      ${carCroppedImage ? (
+                        `<img
+                          src=${URL.createObjectURL(carCroppedImage)}
+                          alt="صورة السيارة المقصوصة"
+                          class="object-contain w-full h-full rounded-md p-0.5 border border-black"
+                        />`
+                      ) : (
+                        "صورة السيارة المقصوصة"
+                      )}
+                    </div>
+                    <div class="w-full max-w-100 h-auto p-0" dir="rtl">
+                      ${chassisCroppedImage ? (
+                        `<img
+                          src=${URL.createObjectURL(chassisCroppedImage)}
+                          alt="صورة الشاصي المقصوصة"
+                          class="object-contain w-full h-full rounded-md p-0.5 border border-black"
+                        />`
+                      ) : (
+                        "صورة الشاصي المقصوصة"
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <div class="border border-black  rounded-lg p-2 min-h-40" >
+                  <span class="font-bold text-md text-center w-1/3">الفاحص : 
+                  </span> 
+                </div>
+                <div class="border border-black  rounded-lg p-2 min-h-40" >
+                  <span class="font-bold text-md text-center w-1/3">الفاحص :
+                </span> 
+                </div>
+                </div>
+                
+                </div>
+                
+            </body>
+            </html>`);
+            doc.close();
+    
+            setTimeout(() => {
+              printFrame.contentWindow.print();
+              document.body.removeChild(printFrame);
+            }, 500);
+          })
+          .catch((error) => console.error("Error generating QR code:", error));
+  };    
 
   const handleCarImage = ({ fullImage, croppedImage }) => {
     setCarCroppedImage(croppedImage); // File
@@ -356,55 +1051,45 @@ const CreateForm = () => {
   
   const yearOptions = generateYears();
 
+  const usageOptions = [
+    { value: "اجرة", label: "أجرة" },
+    { value: "خصوصي", label: "خصوصي" },
+    { value: "حمل", label: "حمل" },
+    { value: "زراعية", label: "زراعية" },
+    { value: "انشائية", label: "إنشائية" },
+    { value: "تخصصية", label: "تخصصية" },
+    { value: "فحص مؤقت", label: "فحص مؤقت" },
+  ];
+
   return (
-    <Dialog open={true} onClose={() => {}} className="relative z-50">
+    <Dialog open={true} onClose={() => {}} dir="rtl" className="relative z-50">
       <div className="fixed inset-0 bg-black/30 backdrop-blur-lg" />
       
-      <div className="fixed inset-0 flex items-center justify-center p-4">
-        <Dialog.Panel className="w-full max-w-4xl bg-white rounded-2xl shadow-xl flex flex-col max-h-[90vh]">
+      <div className="fixed inset-0 flex items-center justify-center p-6">
+        <Dialog.Panel className="w-full max-w-7xl bg-white rounded-2xl shadow-xl flex flex-col max-h-[90vh]">
           <div className="p-6 border-b flex justify-between items-center">
             <Dialog.Title className="text-2xl font-bold text-gray-800">إنشاء استمارة جديدة</Dialog.Title>
             <button onClick={() => navigate('/forms')} className="p-2 hover:bg-gray-100 rounded-lg transition-all">
-              <XMarkIcon className="w-6 h-6 text-gray-600" />
+              <XMarkIcon className="w-7 h-7 text-gray-600" />
             </button>
           </div>
 
           {/* Steps indicator */}
-          <div className="p-6 border-b bg-gray-50">
-            <div className="flex justify-center items-center">
-              {steps.map((step, index) => (
-                <React.Fragment key={index}>
-                  <div className="flex flex-col items-center relative">
-                    <div
-                      className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer
-                        ${
-                          currentStep > index + 1
-                            ? 'bg-green-500 text-white shadow-lg hover:bg-green-600'
-                            : currentStep === index + 1
-                            ? 'bg-blue-500 text-white shadow-lg hover:bg-blue-600'
-                            : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
-                        }`}
-                    >
-                      {index + 1}
-                    </div>
-                    <span
-                      className={`text-xs font-medium transition-all duration-300 mt-2
-                        ${
-                          currentStep === index + 1
-                            ? 'text-blue-600 font-semibold'
-                            : 'text-gray-500'
-                        }`}
-                    >
-                      {step.title}
-                    </span>
-                    {index < steps.length - 1 && (
-                      <div className="absolute top-5 left-full transform translate-x-4 w-24 h-0.5 bg-gray-300"></div>
-                    )}
-                  </div>
-                  {index < steps.length - 1 && <div className="mx-8"></div>}
-                </React.Fragment>
-              ))}
-            </div>
+          <div className="p-2 border-b bg-gray-50 flex justify-center gap-3 flex-wrap">
+            {steps.map((step, index) => (
+              <div key={index} className="flex items-center">
+                <button
+                  className={`px-3 py-1 rounded-lg text-xs font-medium cursor-pointer transition-all whitespace-nowrap
+                    ${currentStep > index + 1 ? "bg-green-500 text-white" : 
+                      currentStep === index + 1 ? "bg-blue-500 text-white" : 
+                      "bg-gray-200 text-gray-600"}`}
+                  onClick={() => setCurrentStep(index + 1)}
+                >
+                  {step.title}
+                </button>
+                {index < steps.length - 1 && <div className="w-8 h-0.5 bg-gray-300 mx-2"></div>}
+              </div>
+            ))}
           </div>
 
           {/* Form content */}
@@ -451,12 +1136,34 @@ const CreateForm = () => {
                   required
                 />
                 
-                <CheckboxField
-                  label="حكومي"
-                  name="Governmental"
-                  checked={formData.Governmental}
-                  onChange={handleChange}
+                {!formData.Governmental && (
+                <div>
+                <label className="block text-right mb-2 font-medium text-gray-700">نوع التسجيل</label>
+                <Select
+                  options={usageOptions}
+                  placeholder="اختر نوع التسجيل"
+                  value={usageOptions.find(option => option.value === formData.Usage)}
+                  onChange={(selectedOption) => {
+                    if (selectedOption) {
+                      handleChange({
+                        target: {
+                          name: 'Usage',
+                          value: selectedOption.value,
+                        },
+                      });
+                    }
+                  }}
+                  styles={{
+                    control: (provided) => ({
+                      ...provided,
+                      border: '1px solid #e2e8f0',
+                      borderRadius: '0.5rem',
+                      padding: '0.25rem',
+                    }),
+                  }}
                 />
+                </div>
+                )}
 
                 {!formData.Governmental && (
                 <InputField 
@@ -467,11 +1174,38 @@ const CreateForm = () => {
                   required
                 />
                 )}
+
+                <CheckboxField
+                  label="حكومي"
+                  name="Governmental"
+                  checked={formData.Governmental}
+                  onChange={handleChange}
+                />
+
               </div>
             )}
 
             {currentStep === 2 && (
               <div className="grid grid-cols-2 gap-4">
+                <div>
+                <label className="block text-right mb-2 font-medium text-gray-700">نوع المركبة</label>
+                <DropDownListTemplate
+                  endpoint="find-vehicle-company"
+                  queryParams={{ page: 0, pageSize: 5000 }}
+                  labelKey="name"
+                  valueKey="id"
+                  onSelect={(item) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      CarBrandId: item.id,
+                      CarBrand: item.name, 
+                    }));
+                  }}
+                  placeholder="اختر نوع المركبة"
+                  disabled={false}
+                />
+                </div>
+
                 <div>
                 <label className="block text-right mb-2 font-medium text-gray-700">طراز المركبة</label>
                 <DropDownListTemplate
@@ -483,29 +1217,14 @@ const CreateForm = () => {
                     setFormData((prev) => ({
                       ...prev,
                       CarNameId: item.id, 
+                      CarName: item.name,
                     }));
                   }}
                   placeholder="اختر طراز المركبة"
                   disabled={!formData.CarBrandId} 
                 />
                 </div>
-                <div>
-                <label className="block text-right mb-2 font-medium text-gray-700">نوع المركبة</label>
-                <DropDownListTemplate
-                  endpoint="find-vehicle-company"
-                  queryParams={{ page: 0, pageSize: 5000 }}
-                  labelKey="name"
-                  valueKey="id"
-                  onSelect={(item) => {
-                    setFormData((prev) => ({
-                      ...prev,
-                      CarBrandId: item.id, 
-                    }));
-                  }}
-                  placeholder="اختر نوع المركبة"
-                  disabled={false}
-                />
-                </div>
+
                 <div>
                 <label className="block text-right mb-2 font-medium text-gray-700">لون المركبة</label>
                 <DropDownListTemplate
@@ -516,7 +1235,8 @@ const CreateForm = () => {
                   onSelect={(item) => {
                     setFormData((prev) => ({
                       ...prev,
-                      CarColorId: item.id, 
+                      CarColorId: item.id,
+                      CarColor: item.color, 
                     }));
                   }}
                   placeholder="اختر لون المركبة"
@@ -556,7 +1276,7 @@ const CreateForm = () => {
                   name="EngineCylindersNumber"
                   value={formData.EngineCylindersNumber}
                   onChange={handleChange}
-                  required
+                  disabled={formData.EngineType === 'كهربائي'} 
                 />
 
                 <InputField
@@ -663,119 +1383,131 @@ const CreateForm = () => {
                   required
                 />
                 
-                <InputField
-                  label="الاستخدام"
-                  name="Usage"
-                  value={formData.Usage}
-                  onChange={handleChange}
-                  required
-                />
-{formData.VehicleType === "2" && (
-  <div>
-    <label className="block text-right mb-2 font-medium text-gray-700">تفاصيل المقطورات</label>
-    
+{formData.VehicleType === "شاحنة" && (
+  <div className="p-4 border rounded-lg shadow-sm">
+    <label className="block text-right mb-4 font-medium text-gray-700">تفاصيل المقطورات</label>
     {formData.TrailerData.map((trailer, index) => (
-      <div key={index} className="mb-4 p-2 border rounded-lg">
-        <label className="block text-right text-gray-700">رقم شاصي المقطورة</label>
-        <input
-          type="text"
-          name={`TrailerChassisNumber-${index}`}
-          value={trailer.TrailerChassisNumber || ""}
-          onChange={(e) => {
-            const updatedTrailerData = [...formData.TrailerData];
-            updatedTrailerData[index].TrailerChassisNumber = e.target.value;
-            setFormData(prev => ({
-              ...prev,
-              TrailerData: updatedTrailerData
-            }));
-          }}
-          className="w-full p-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="أدخل رقم شاصي المقطورة"
-        />
+      <div key={index} className="mb-6 p-4 border rounded-lg shadow-sm">
+        <div className="space-y-1 grid grid-cols-2 gap-4 w-full">
+          {/* رقم شاصي المقطورة */}
+          <div>
+            <label className="block text-right text-gray-700">رقم شاصي المقطورة</label>
+            <input
+              type="text"
+              name={`TrailerChassisNumber-${index}`}
+              value={trailer.TrailerChassisNumber || ""}
+              onChange={(e) => {
+                const updatedTrailerData = [...formData.TrailerData];
+                updatedTrailerData[index].TrailerChassisNumber = e.target.value;
+                setFormData((prev) => ({
+                  ...prev,
+                  TrailerData: updatedTrailerData,
+                }));
+              }}
+              className="w-full p-3 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="أدخل رقم شاصي المقطورة"
+            />
+          </div>
 
-        <label className="block text-right text-gray-700 mt-2">عدد المحاور</label>
-        <input
-          type="number"
-          name={`TrailerAxlesNumber-${index}`}
-          value={trailer.TrailerAxlesNumber || ""}
-          onChange={(e) => {
-            const updatedTrailerData = [...formData.TrailerData];
-            updatedTrailerData[index].TrailerAxlesNumber = e.target.value;
-            setFormData(prev => ({
-              ...prev,
-              TrailerData: updatedTrailerData
-            }));
-          }}
-          className="w-full p-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="أدخل عدد المحاور"
-        />
+          {/* عدد المحاور */}
+          <div>
+            <label className="block text-right text-gray-700">عدد المحاور</label>
+            <input
+              type="text"
+              name={`TrailerAxlesNumber-${index}`}
+              value={trailer.TrailerAxlesNumber || ""}
+              onChange={(e) => {
+                const updatedTrailerData = [...formData.TrailerData];
+                updatedTrailerData[index].TrailerAxlesNumber = e.target.value;
+                setFormData((prev) => ({
+                  ...prev,
+                  TrailerData: updatedTrailerData,
+                }));
+              }}
+              className="w-full p-3 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="أدخل عدد المحاور"
+            />
+          </div>
 
-        <label className="block text-right text-gray-700 mt-2">الحمولة</label>
-        <input
-          type="number"
-          name={`LoadWeight-${index}`}
-          value={trailer.LoadWeight || ""}
-          onChange={(e) => {
-            const updatedTrailerData = [...formData.TrailerData];
-            updatedTrailerData[index].LoadWeight = e.target.value;
-            setFormData(prev => ({
-              ...prev,
-              TrailerData: updatedTrailerData
-            }));
-          }}
-          className="w-full p-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="ادخل وزن الحمولة"
-        />
+          {/* الحمولة */}
+          <div>
+            <label className="block text-right text-gray-700">الحمولة</label>
+            <input
+              type="text"
+              name={`LoadWeight-${index}`}
+              value={trailer.LoadWeight || ""}
+              onChange={(e) => {
+                const updatedTrailerData = [...formData.TrailerData];
+                updatedTrailerData[index].LoadWeight = e.target.value;
+                setFormData((prev) => ({
+                  ...prev,
+                  TrailerData: updatedTrailerData,
+                }));
+              }}
+              className="w-full p-3 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="أدخل وزن الحمولة"
+            />
+          </div>
 
-        <label className="block text-right text-gray-700 mt-2">الفئة</label>
-        <input
-          type="text"
-          name={`Category-${index}`}
-          value={trailer.Category || ""}
-          onChange={(e) => {
-            const updatedTrailerData = [...formData.TrailerData];
-            updatedTrailerData[index].Category = e.target.value;
-            setFormData(prev => ({
-              ...prev,
-              TrailerData: updatedTrailerData
-            }));
-          }}
-          className="w-full p-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="أدخل فئة المقطورة"
-        />
+          {/* الفئة */}
+          <div>
+            <label className="block text-right text-gray-700">الفئة</label>
+            <input
+              type="text"
+              name={`Category-${index}`}
+              value={trailer.Category || ""}
+              onChange={(e) => {
+                const updatedTrailerData = [...formData.TrailerData];
+                updatedTrailerData[index].Category = e.target.value;
+                setFormData((prev) => ({
+                  ...prev,
+                  TrailerData: updatedTrailerData,
+                }));
+              }}
+              className="w-full p-3 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="أدخل فئة المقطورة"
+            />
+          </div>
 
-        <button
-          onClick={() => {
-            const updatedTrailerData = formData.TrailerData.filter((_, i) => i !== index);
-            setFormData(prev => ({
-              ...prev,
-              TrailerData: updatedTrailerData
-            }));
-          }}
-          className="mt-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
-        >
-          حذف المقطورة
-        </button>
+          {/* زر حذف المقطورة */}
+          <div className="text-right">
+            <button
+              onClick={() => {
+                const updatedTrailerData = formData.TrailerData.filter((_, i) => i !== index);
+                setFormData((prev) => ({
+                  ...prev,
+                  TrailerData: updatedTrailerData,
+                }));
+              }}
+              className="mt-4 px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+            >
+              حذف المقطورة
+            </button>
+          </div>
+        </div>
       </div>
     ))}
 
-    <button
-      onClick={() => {
-        const newTrailer = {
-          TrailerChassisNumber: "",
-          TrailerAxlesNumber: "",
-          LoadWeight: "",
-          Category: ""
-        };
-        setFormData(prev => ({
-          ...prev,
-          TrailerData: [...prev.TrailerData, newTrailer]
-        }));
-      }}
-      className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-    >
-      إضافة مقطورة جديدة
-    </button>
+    {/* زر إضافة مقطورة جديدة */}
+    <div className="text-center mt-6">
+      <button
+        onClick={() => {
+          const newTrailer = {
+            TrailerChassisNumber: "",
+            TrailerAxlesNumber: "",
+            LoadWeight: "",
+            Category: "",
+          };
+          setFormData((prev) => ({
+            ...prev,
+            TrailerData: [...prev.TrailerData, newTrailer],
+          }));
+        }}
+        className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+      >
+        إضافة مقطورة جديدة
+      </button>
+    </div>
   </div>
 )}
 
@@ -824,7 +1556,7 @@ const CreateForm = () => {
               disabled={currentStep === 1}
               className="px-4 py-2 bg-gray-100 rounded-lg disabled:opacity-50 flex items-center hover:bg-gray-200 transition-all"
             >
-              <ArrowLeftIcon className="w-5 h-5 ml-2 text-gray-700" />
+              <ArrowRightIcon className="w-5 h-5 ml-2 text-gray-700" />
               رجوع
             </button>
             
@@ -835,7 +1567,7 @@ const CreateForm = () => {
                 className="px-4 py-2 bg-blue-500 text-white rounded-lg flex items-center hover:bg-blue-600 transition-all"
               >
                 التالي
-                <ArrowRightIcon className="w-5 h-5 mr-2" />
+                <ArrowLeftIcon className="w-5 h-5 mr-2" />
               </button>
             ) : (
               <button

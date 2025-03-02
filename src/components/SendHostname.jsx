@@ -4,7 +4,7 @@ const SendHostname = () => {
   useEffect(() => {
     const sendHostnameToBackend = () => {
       const hostname = window.location.hostname;
-      fetch('https://your-backend-endpoint.com/hostname', {
+      fetch('', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

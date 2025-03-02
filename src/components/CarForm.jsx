@@ -1,24 +1,41 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import logo from "../assets/logo.jpg";
 import QRCode from "qrcode"; 
 import imgStatic from "../assets/car.jpeg";
+import { PrinterIcon } from "@heroicons/react/24/outline";
+
 const CarForm = ({ searchResults }) => {
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState("");
+  const printFrameRef = useRef(null);
 
   useEffect(() => {
     if (!searchResults) return;
 
     const qrData = JSON.stringify({
-      carOwnerName: searchResults.carOwnerName,
-      carBrand: searchResults.carBrand,
-      carName: searchResults.carName,
-      carColor: searchResults.carColor,
-      plateNumber: searchResults.plateNumber,
-      chassisNumber: searchResults.chassisNumber,
-      carModel: searchResults.carModel,
-      engineType: searchResults.engineType,
-      engineCylindersNumber: searchResults.engineCylindersNumber,
-      seatsNumber: searchResults.seatsNumber,
+      ADDID: searchResults.applicationId, 
+      ISSD: searchResults.issueDate, 
+      TFPN: searchResults.trafficPoliceApplicationId,
+      RID: searchResults.receiptId, 
+      CON: searchResults.carOwnerName, 
+      IG: searchResults.governmental, 
+      CN: searchResults.chassisNumber, 
+      PN: searchResults.plateNumber, 
+      CYC: searchResults.engineCylindersNumber, 
+      VAXN: searchResults.vehicleAxlesNumber,
+      COM: searchResults.carModel,  
+      SEAN: searchResults.seatsNumber,
+      VN: searchResults.carName,
+      VC: searchResults.carColor,
+      VB: searchResults.carBrand,
+      VT: searchResults.vehicleType, 
+      USE: searchResults.usage,
+      AGN: searchResults.agency, 
+      LN: searchResults.location,
+      VID: searchResults.vehicleID,
+      ENT: searchResults.engineType, 
+      IIC: searchResults.isInspectionCertified,
+      SN: searchResults.stickerNumber,
+      SP: searchResults.stickerProvider,
     });
 
     QRCode.toDataURL(qrData)
@@ -34,16 +51,19 @@ const CarForm = ({ searchResults }) => {
   const handlePrint = () => {
     if (!searchResults) return;
     const imgStaticBase64 = imgStatic;
-    const printWindow = window.open("_blank");
-    printWindow.document.open();
-    printWindow.document.write(`
+    const printFrame = printFrameRef.current;
+    if (!printFrame) return;
+    
+    const doc = printFrame.contentDocument || printFrame.contentWindow.document;
+    doc.open();
+    doc.write(`
     <!DOCTYPE html>
     <html lang="ar" dir="rtl">
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>شهادة فحص المركبة</title>
-      <script src="https://cdn.tailwindcss.com"></script>
+      <link href="/tailwind.css" rel="stylesheet">
       <style>
         @media print {
           @page {
@@ -84,9 +104,9 @@ const CarForm = ({ searchResults }) => {
               <span>تاريخ الاصدار</span>
             </div>
             <div class="flex flex-col text-black-800 font-bold text-right">
-              <span>: ${searchResults.applicationId}-${searchResults.applicationId}</span>
+              <span>: ${searchResults.location}-${searchResults.applicationId}</span>
               <span>: ${searchResults.receiptId}</span>
-              <span>: ${searchResults.receiptId}</span>
+              <span>: ${searchResults.agency}</span>
               <span>: ${formatDate(searchResults.issueDate)}</span>
             </div>
           </div>
@@ -94,8 +114,8 @@ const CarForm = ({ searchResults }) => {
       </div>
 
       <!-- Vehicle Data Section -->
-      <div class="border border-black rounded-lg p-1 mt-2">
-        <h3 class="bg-gray-200 text-center font-bold py-1">بيانات المركبة</h3>
+      <div class="border border-black rounded-lg p-1 mt-1">
+        <h3 class="bg-gray-200 text-center font-bold py-0.5">بيانات المركبة</h3>
         <div class="grid grid-cols-2 gap-2 text-md">
           ${[
             ["اسم المالك", searchResults.carOwnerName],
@@ -107,6 +127,7 @@ const CarForm = ({ searchResults }) => {
             ["الموديل", searchResults.carModel],
             ["نوع المحرك", searchResults.engineType],
             ["عدد السلندر", searchResults.engineCylindersNumber],
+            ["عدد المحاور", searchResults.vehicleAxlesNumber],
             ["عدد الركاب", searchResults.seatsNumber],
           ]
             .map(
@@ -129,9 +150,9 @@ const CarForm = ({ searchResults }) => {
           </div>
          <div class="border border-white grid grid-rows-2 rounded-lg p-2" >
           <div class="w-full max-w-100 h-auto p-0" dir="rtl" >
-            ${searchResults.cropedCarImagePath
-              ? `<img src="http://localhost:5273${searchResults.cropedCarImagePath}" class="object-contain w-full h-full rounded-md p-0.5 border border-black" />`
-              : "صورة المركبة"}
+            ${searchResults.cropedChassisImagePath
+              ? `<img src="http://localhost:5273${searchResults.cropedChassisImagePath}" class="object-contain w-full h-full rounded-md p-0.5 border border-black" />`
+              : "صورة الشاصي"}
              </div>  
              <div class="w-full max-w-100 h-auto p-0 dir="rtl"">
             ${searchResults.cropedCarImagePath
@@ -139,38 +160,42 @@ const CarForm = ({ searchResults }) => {
               : "صورة المركبة"}
           </div>
          
-          </div>
- <div class="border border-black  rounded-lg p-2 min-h-40" >
-      <span class="font-bold text-md text-center w-1/3">الفاحص : 
-      </span> 
         </div>
         <div class="border border-black  rounded-lg p-2 min-h-40" >
-       <span class="font-bold text-md text-center w-1/3">الفاحص :</span> 
+          <span class="font-bold text-md text-center w-1/3">الفاحص : 
+          </span> 
+        </div>
+        <div class="border border-black  rounded-lg p-2 min-h-40" >
+          <span class="font-bold text-md text-center w-1/3">الفاحص :
+        </span> 
         </div>
         </div>
         
-     
-
         </div>
         
     </body>
     </html>
     `);
-    printWindow.document.close();
-
+    doc.close();
+    
     setTimeout(() => {
-      printWindow.print();
+      printFrame.contentWindow.print();
     }, 500);
   };
 
   return (
     <div>
       <button
-        className="bg-blue-500 text-white px-6 py-3 rounded-2xl hover:bg-blue-600"
-        onClick={handlePrint}
-      >
-        طباعة الاستمارة
+          className="group bg-gradient-to-r from-blue-500 to-blue-600 
+                    hover:from-blue-600 hover:to-blue-700 text-white px-5 py-3
+                    rounded-xl shadow-lg hover:shadow-xl transition-all 
+                    flex items-center gap-3 transform hover:scale-105"
+          onClick={handlePrint}
+        >
+          <PrinterIcon className="h-6 w-6 text-white/90 group-hover:text-white" />
+          <span className="text-md font-semibold">طباعة الاستمارة</span>
       </button>
+      <iframe ref={printFrameRef} style={{ display: "none" }} />
     </div>
   );
 };

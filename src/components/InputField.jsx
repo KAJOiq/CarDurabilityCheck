@@ -1,6 +1,6 @@
 import React from "react";
 
-const InputField = ({ label, name, value, onChange, required }) => {
+const InputField = ({ label, name, value, onChange, disabled }) => {
   return (
     <div className="flex flex-col">
       <label className="text-right font-medium mb-1">{label}</label>
@@ -9,7 +9,7 @@ const InputField = ({ label, name, value, onChange, required }) => {
         name={name}
         value={value}
         onChange={onChange}
-        required={required}
+        disabled={disabled}
         className="border rounded px-3 py-2"
       />
     </div>

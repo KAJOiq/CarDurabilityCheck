@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TrashIcon } from "@heroicons/react/24/outline";
+import { TrashIcon, NoSymbolIcon } from "@heroicons/react/24/outline";
 import fetchData from "../utils/fetchData";
 
 const DeleteUsers = ({ userId, onDisable, isDisabled }) => {
@@ -49,15 +49,15 @@ const DeleteUsers = ({ userId, onDisable, isDisabled }) => {
         }`}
         disabled={isDisabled}
       >
-        <TrashIcon className="w-5 h-5" />
+        <NoSymbolIcon className="w-5 h-5" />
       </button>
 
       {showConfirmModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md">
             <div className="text-right mb-6">
-              <h3 className="text-xl font-bold text-gray-800">حذف المستخدم</h3>
-              <p className="text-gray-600 mt-2">هل أنت متأكد من رغبتك في حذف هذا المستخدم؟</p>
+              <h3 className="text-xl font-bold text-gray-800">تعطيل المستخدم</h3>
+              <p className="text-gray-600 mt-2">هل أنت متأكد من رغبتك في تعطيل هذا المستخدم؟</p>
             </div>
 
             {errorMessage && (
@@ -84,11 +84,11 @@ const DeleteUsers = ({ userId, onDisable, isDisabled }) => {
                          disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 {isLoading ? (
-                  <span className="animate-pulse">جاري الحذف...</span>
+                  <span className="animate-pulse">جاري التعطيل...</span>
                 ) : (
                   <>
-                    <TrashIcon className="w-5 h-5" />
-                    <span>تأكيد الحذف</span>
+                    <NoSymbolIcon className="w-5 h-5" />
+                    <span>تأكيد التعطيل</span>
                   </>
                 )}
               </button>

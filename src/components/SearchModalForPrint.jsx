@@ -13,17 +13,17 @@ const SearchModalForPrint = ({ isOpen, onClose, onSearch }) => {
 
   const searchTypes = {
     chassis: {
-      label: "بحث برقم الشاصي",
+      label: "بحث عبر رقم الشاصي",
       placeholder: "أدخل رقم الشاصي",
       param: "chassisNumber"
     },
     form: {
-      label: "بحث برقم الاستمارة",
+      label: "بحث عبر رقم الاستمارة",
       placeholder: "أدخل رقم الاستمارة",
       param: "applicationId"
     },
     citizen: {
-      label: "بحث برقم الوصل",
+      label: "بحث عبر رقم الوصل",
       placeholder: "أدخل رقم الوصل",
       param: "ReceiptId"
     }
