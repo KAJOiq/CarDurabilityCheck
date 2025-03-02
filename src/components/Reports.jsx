@@ -162,7 +162,6 @@ const ReportStatus = () => {
         <div className="w-full lg:w-80 bg-white p-6 rounded-2xl shadow-xl border border-gray-100/50 backdrop-blur-sm">
           <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2 text-right">
             <DocumentTextIcon className="w-6 h-6 text-blue-600" />
-            فلاتر البحث
           </h2>
 
           <div className="space-y-6">
