@@ -159,7 +159,7 @@ const TruckForm = ({ searchResults }) => {
           </div>`,
           null,
         ],
-        
+        ["اسم المالك", searchResults.ownerFirstName + " " + searchResults.fatherName + " " + searchResults.grandFatherName + " " + searchResults.surename],
         ["رقم المركبة", searchResults.plateNumber],
         ["رقم الشاصي", searchResults.chassisNumber],
 
@@ -180,7 +180,7 @@ const TruckForm = ({ searchResults }) => {
               [
                 `<div class="flex justify-between w-full border-black">
                   <span class="font-bold text-center text-md w-1/3">عدد المحاور</span>
-                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.trailers[0]?.axelsNumber || "---"}</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.trailers[0]?.axlesNumber || "---"}</span>
                   <span class="font-bold text-center text-md w-1/3">الحمولة</span>
                   <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.trailers[0]?.loadWeight || "---"}</span>
                 </div>`,
@@ -208,7 +208,7 @@ const TruckForm = ({ searchResults }) => {
               [
                 `<div class="flex justify-between w-full border-black">
                   <span class="font-bold text-center text-md w-1/3">عدد المحاور</span>
-                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.trailers[1]?.axelsNumber || "---"}</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.trailers[1]?.axlesNumber || "---"}</span>
                   <span class="font-bold text-center text-md w-1/3">الحمولة</span>
                   <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.trailers[1]?.loadWeight || "---"}</span>
                 </div>`,
@@ -236,7 +236,7 @@ const TruckForm = ({ searchResults }) => {
               [
                 `<div class="flex justify-between w-full border-black">
                   <span class="font-bold text-center text-md w-1/3">عدد المحاور</span>
-                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.trailers[2]?.axelsNumber || "---"}</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.trailers[2]?.axlesNumber || "---"}</span>
                   <span class="font-bold text-center text-md w-1/3">الحمولة</span>
                   <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${searchResults.trailers[2]?.loadWeight || "---"}</span>
                 </div>`,

@@ -118,7 +118,7 @@ const CarForm = ({ searchResults }) => {
         <h3 class="bg-gray-200 text-center font-bold py-0.5">بيانات المركبة</h3>
         <div class="grid grid-cols-2 gap-2 text-md">
           ${[
-            ["اسم المالك", searchResults.carOwnerName],
+            ["اسم المالك", searchResults.ownerFirstName + " " + searchResults.fatherName + " " + searchResults.grandFatherName + " " + searchResults.surename],
             ["نوع المركبة", searchResults.carBrand],
             ["طراز المركبة", searchResults.carName],
             ["لون المركبة", searchResults.carColor],
