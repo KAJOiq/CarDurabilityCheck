@@ -169,6 +169,10 @@ const CreateForm = () => {
   // Form data structure
   const [formData, setFormData] = useState({
     CarOwnerName: "",
+    FatherName: "", 
+    MotherName: "",
+    GrandFatherName: "",
+    Surename: "",
     VehicleType: "",
     CarBrandId: "",
     CarNameId: "",
@@ -188,7 +192,7 @@ const CreateForm = () => {
   });
 
   const steps = [
-    { title: "تفاصيل الاستمارة", fields: ['CarOwnerName', 'VehicleType', 'ReceiptId', 'TrafficPoliceApplicationId'] },
+    { title: "تفاصيل الاستمارة", fields: ['CarOwnerName', 'FatherName', 'MotherName', 'GrandFatherName', 'Surename', 'VehicleType', 'ReceiptId', 'TrafficPoliceApplicationId'] },
     { title: "تفاصيل المركبة", fields: ['CarBrandId', 'CarNameId', 'CarColorId', 'ChassisNumber', 'PlateNumber', 'CarModel', 'EngineCylindersNumber', 'VehicleAxlesNumber', 'EngineType', 'SeatsNumber', 'Usage', 'Governmental'] },
     { title: "صورة السيارة", fields: ['carFullImage', 'carCroppedImage'] },
     { title: "صورة الشاصي", fields: ['chassisFullImage', 'chassisCroppedImage'] },
@@ -372,6 +376,13 @@ const CreateForm = () => {
     return date.toISOString().split("T")[0];
   };
 
+  const ownerFullName = [
+    formData.CarOwnerName,
+    formData.FatherName,
+    formData.GrandFatherName,
+    formData.Surename
+].filter(name => name.trim() !== "").join(" ");
+
   const handlePrintForCar = (data) => {
     if (!data) return;
     const imgStaticBase64 = imgStaticCar;
@@ -473,7 +484,7 @@ const CreateForm = () => {
                  <h3 class="bg-gray-200 text-center font-bold py-0.5">بيانات المركبة</h3>
                  <div class="grid grid-cols-2 gap-2 text-md">
                    ${[
-                     ["اسم المالك", formData.CarOwnerName],
+                     ["اسم المالك", ownerFullName],
                      ["نوع المركبة", formData.CarBrand],
                      ["طراز المركبة", formData.CarName],
                      ["لون المركبة", formData.CarColor],
@@ -679,7 +690,7 @@ const CreateForm = () => {
             <span class="font-bold text-center text-md w-1/3">لون المركبة</span>
             <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.CarColor || "---"}</span>
             <span class="font-bold text-center text-md w-1/3">نوع المحرك</span>
-            <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.CngineType || "---"}</span>
+            <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.EngineType || "---"}</span>
           </div>`,
           null,
         ],
@@ -694,7 +705,7 @@ const CreateForm = () => {
           </div>`,
           null,
         ],
-        
+        ["اسم المالك", ownerFullName],
         ["رقم المركبة", formData.PlateNumber],
         ["رقم الشاصي", formData.ChassisNumber],
 
@@ -946,7 +957,7 @@ const CreateForm = () => {
                 <h3 class="bg-gray-200 text-center font-bold py-0.5">بيانات المركبة</h3>
                 <div class="grid grid-cols-2 gap-2 text-md">
                   ${[
-                    ["اسم المالك", formData.CarOwnerName],
+                    ["اسم المالك", ownerFullName],
                     ["نوع المركبة", formData.CarBrand],
                     ["طراز المركبة", formData.CarName],
                     ["لون المركبة", formData.CarColor],
@@ -1107,9 +1118,37 @@ const CreateForm = () => {
             {currentStep === 1 && (
               <div className="grid grid-cols-2 gap-4">
                 <InputField
-                  label="اسم المواطن"
+                  label="الإسم"
                   name="CarOwnerName"
                   value={formData.CarOwnerName}
+                  onChange={handleChange}
+                  required
+                />
+                <InputField
+                  label="اسم الأب"
+                  name="FatherName"
+                  value={formData.FatherName}
+                  onChange={handleChange}
+                  required
+                />
+                <InputField
+                  label="اسم الجد"
+                  name="GrandFatherName"
+                  value={formData.GrandFatherName}
+                  onChange={handleChange}
+                  required
+                />
+                <InputField
+                  label="اسم الأم"
+                  name="MotherName"
+                  value={formData.MotherName}
+                  onChange={handleChange}
+                  required
+                />
+                <InputField
+                  label="اللقب"
+                  name="Surename"
+                  value={formData.Surename}
                   onChange={handleChange}
                   required
                 />

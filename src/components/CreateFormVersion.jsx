@@ -80,7 +80,7 @@ const ReviewData = ({ formData }) => {
             </div>
             <div className="flex justify-between items-center">
               <span className="font-medium text-gray-600">لون المركبة</span>
-              <span className="text-gray-800">{formData.CarColorId}</span>
+              <span className="text-gray-800">{formData.CarColor}</span>
             </div>
           </div>
           <div className="space-y-3">
@@ -162,7 +162,6 @@ const CreateFormVersion = () => {
   const [formErrors, setFormErrors] = useState([]);
   const [lockedFields, setLockedFields] = useState(true);
   const [originalData, setOriginalData] = useState({});
-
   const [mergedData, setMergedData] = useState(null); 
   
   // States for photos
@@ -175,6 +174,10 @@ const CreateFormVersion = () => {
   // Form data structure
   const [formData, setFormData] = useState({
     CarOwnerName: "",
+    FatherName: "", 
+    MotherName: "",
+    GrandFatherName: "",
+    Surename: "",
     VehicleType: "",
     CarBrandId: "",
     CarNameId: "",
@@ -201,7 +204,8 @@ const CreateFormVersion = () => {
       setOriginalData({
         CarBrandId: vehicleData.carBrand,
         CarNameId: vehicleData.carName,
-        CarColorId: vehicleData.carColor,
+        CarColorId: vehicleData.carColorId,
+        CarColor: vehicleData.carColor,
         ChassisNumber: vehicleData.chassisNumber,
         CarModel: vehicleData.carModel,
         PlateNumber: vehicleData.plateNumber,
@@ -222,7 +226,8 @@ const CreateFormVersion = () => {
         CarNameId: vehicleData.carName,
         ChassisNumber: vehicleData.chassisNumber,
         CarModel: vehicleData.carModel,
-        CarColorId: vehicleData.carColor,
+        CarColorId: vehicleData.carColorId,
+        CarColor: vehicleData.carColor,
         PlateNumber: vehicleData.plateNumber,
         EngineType: vehicleData.engineType,
         VehicleAxlesNumber: vehicleData.vehicleAxlesNumber,
@@ -355,6 +360,10 @@ const CreateFormVersion = () => {
       formDataToSend.append("TrafficPoliceApplicationId", formData.TrafficPoliceApplicationId);
       formDataToSend.append("ReceiptId", formData.ReceiptId);
       formDataToSend.append("CarOwnerName", formData.CarOwnerName);
+      formDataToSend.append("FatherName", formData.FatherName);
+      formDataToSend.append("MotherName", formData.MotherName);
+      formDataToSend.append("GrandFatherName", formData.GrandFatherName);
+      formDataToSend.append("Surename", formData.Surename);
       formDataToSend.append("Governmental", formData.Governmental);
       formDataToSend.append("VehicleID", formData.VehicleID);
 
@@ -416,6 +425,13 @@ const CreateFormVersion = () => {
     const date = new Date(dateString);
     return date.toISOString().split("T")[0];
   };
+
+  const ownerFullName = [
+    formData.CarOwnerName,
+    formData.FatherName,
+    formData.GrandFatherName,
+    formData.Surename
+].filter(name => name.trim() !== "").join(" ");
 
   const usageOptions = [
       { value: "اجرة", label: "أجرة" },
@@ -528,9 +544,9 @@ const CreateFormVersion = () => {
                    <h3 class="bg-gray-200 text-center font-bold py-0.5">بيانات المركبة</h3>
                    <div class="grid grid-cols-2 gap-2 text-md">
                      ${[
-                       ["اسم المالك", formData.CarOwnerName],
-                       ["نوع المركبة", formData.CarBrand],
-                       ["طراز المركبة", formData.CarName],
+                       ["اسم المالك", ownerFullName],
+                       ["نوع المركبة", formData.CarBrandId],
+                       ["طراز المركبة", formData.CarNameId],
                        ["لون المركبة", formData.CarColor],
                        ["رقم المركبة", formData.PlateNumber],
                        ["رقم الشاصي", formData.ChassisNumber],
@@ -722,9 +738,9 @@ const CreateFormVersion = () => {
           [
             `<div class="flex justify-between w-full py-0.5 border-black">
               <span class="font-bold text-center text-md w-1/3">نوع المركبة</span>
-              <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.CarBrand || "---"}</span>
+              <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.CarBrandId || "---"}</span>
               <span class="font-bold text-center text-md w-1/3">طراز المركبة</span>
-              <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.CarName || "---"}</span>
+              <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.CarNameId || "---"}</span>
             </div>`,
             null,
           ],
@@ -734,7 +750,7 @@ const CreateFormVersion = () => {
               <span class="font-bold text-center text-md w-1/3">لون المركبة</span>
               <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.CarColor || "---"}</span>
               <span class="font-bold text-center text-md w-1/3">نوع المحرك</span>
-              <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.CngineType || "---"}</span>
+              <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.EngineType || "---"}</span>
             </div>`,
             null,
           ],
@@ -749,7 +765,7 @@ const CreateFormVersion = () => {
             </div>`,
             null,
           ],
-          
+          ["اسم المالك", ownerFullName],
           ["رقم المركبة", formData.PlateNumber],
           ["رقم الشاصي", formData.ChassisNumber],
   
@@ -1001,9 +1017,9 @@ const CreateFormVersion = () => {
                   <h3 class="bg-gray-200 text-center font-bold py-0.5">بيانات المركبة</h3>
                   <div class="grid grid-cols-2 gap-2 text-md">
                     ${[
-                      ["اسم المالك", formData.CarOwnerName],
-                      ["نوع المركبة", formData.CarBrand],
-                      ["طراز المركبة", formData.CarName],
+                      ["اسم المالك", ownerFullName],
+                      ["نوع المركبة", formData.CarBrandId],
+                      ["طراز المركبة", formData.CarNameId],
                       ["لون المركبة", formData.CarColor],
                       ["رقم المركبة", formData.PlateNumber],
                       ["رقم الشاصي", formData.ChassisNumber],
@@ -1140,10 +1156,38 @@ const CreateFormVersion = () => {
 
              {currentStep === 1 && (
               <div className="grid grid-cols-2 gap-4">
-                <InputField
-                  label="اسم المواطن"
+                 <InputField
+                  label="الإسم"
                   name="CarOwnerName"
                   value={formData.CarOwnerName}
+                  onChange={handleChange}
+                  required
+                />
+                <InputField
+                  label="اسم الأب"
+                  name="FatherName"
+                  value={formData.FatherName}
+                  onChange={handleChange}
+                  required
+                />
+                <InputField
+                  label="اسم الجد"
+                  name="GrandFatherName"
+                  value={formData.GrandFatherName}
+                  onChange={handleChange}
+                  required
+                />
+                <InputField
+                  label="اسم الأم"
+                  name="MotherName"
+                  value={formData.MotherName}
+                  onChange={handleChange}
+                  required
+                />
+                <InputField
+                  label="اللقب"
+                  name="Surename"
+                  value={formData.Surename}
                   onChange={handleChange}
                   required
                 />
@@ -1247,10 +1291,9 @@ const CreateFormVersion = () => {
                         setFormData((prev) => ({
                           ...prev,
                           CarBrandId: item.id,
-                          CarBrand: item.name, 
                         }));
                       }}
-                      placeholder={formData.CarBrand || "اختر نوع المركبة"}
+                      placeholder={formData.CarBrandId || "اختر نوع المركبة"}
                       disabled={true} // دائمًا مقفل
                     />
                   </div>
@@ -1265,10 +1308,9 @@ const CreateFormVersion = () => {
                         setFormData((prev) => ({
                           ...prev,
                           CarNameId: item.id,
-                          CarName: item.name,
                         }));
                       }}
-                      placeholder={formData.CarName || "اختر اسم المركبة"}
+                      placeholder={formData.CarNameId || "اختر اسم المركبة"}
                       disabled={true} // دائمًا مقفل
                     />
                   </div>
@@ -1283,7 +1325,6 @@ const CreateFormVersion = () => {
                         setFormData((prev) => ({
                           ...prev,
                           CarColorId: item.id,
-                          CarColor: item.color,
                         }));
                       }}
                       placeholder={formData.CarColor || "اختر لون المركبة"}
