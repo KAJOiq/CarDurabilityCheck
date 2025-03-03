@@ -267,7 +267,7 @@ const CreateForm = () => {
         fullPlateNumber = `${plateLetter}${plateNumber}`;
         break;
       case "old":
-        fullPlateNumber = `${plateNumber}${provinceCode}`;
+        fullPlateNumber = `${provinceCode}${plateNumber}`;
         break;
       default:
         fullPlateNumber = "";
