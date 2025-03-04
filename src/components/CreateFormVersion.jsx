@@ -163,7 +163,7 @@ const CreateFormVersion = () => {
   const [lockedFields, setLockedFields] = useState(true);
   const [originalData, setOriginalData] = useState({});
   const [mergedData, setMergedData] = useState(null); 
-  
+  const [transferredTrailer, setTransferredTrailer] = useState("");
   // States for photos
   const [carFullImage, setCarFullImage] = useState(null);
   const [carCroppedImage, setCarCroppedImage] = useState(null);
@@ -194,6 +194,7 @@ const CreateFormVersion = () => {
     PlateNumber: "",
     Governmental: false,
     TrailerData: [],
+    //transferredTrailer: [], 
     VehicleID: "", 
   });
 
@@ -217,6 +218,10 @@ const CreateFormVersion = () => {
         VehicleID: vehicleData.vehicleID,
         TrailerData: vehicleData.trailers,
       });
+
+      if (vehicleData.trailers.length > 0) {
+        setTransferredTrailer(vehicleData.trailers[0].chassisNumber); 
+      }
 
       setFormData((prev) => ({
         ...prev,
@@ -532,10 +537,8 @@ const CreateFormVersion = () => {
     try {
       setIsSubmitting(true);
       const formDataToSend = new FormData();
-
-      delete formDataToSend.CarBrand;
-      delete formDataToSend.CarName;
-      delete formDataToSend.CarColor;
+  
+      console.log("Form Data Before Submission:", formData);
 
       // إضافة البيانات العامة
       formDataToSend.append("TrafficPoliceApplicationId", formData.TrafficPoliceApplicationId);
@@ -547,53 +550,79 @@ const CreateFormVersion = () => {
       formDataToSend.append("Surename", formData.Surename);
       formDataToSend.append("Governmental", formData.Governmental);
       formDataToSend.append("VehicleID", formData.VehicleID);
-
+  
       // إضافة الصور
       if (carCroppedImage) formDataToSend.append("ApplicationImages", carCroppedImage, "carCroppedImage.png");
       if (carFullImage) formDataToSend.append("ApplicationImages", carFullImage, "carFullImage.png");
       if (chassisCroppedImage) formDataToSend.append("ApplicationImages", chassisCroppedImage, "chassisCroppedImage.png");
       if (chassisFullImage) formDataToSend.append("ApplicationImages", chassisFullImage, "chassisFullImage.png");
       if (receiptIdImage) formDataToSend.append("ApplicationImages", receiptIdImage, "receiptIdImage.png");
-
+  
       // إضافة بيانات المركبة إذا تم فتح القفل
       if (!lockedFields) {
         formDataToSend.append("PlateNumber", formData.PlateNumber);
         formDataToSend.append("CarColorId", formData.CarColorId);
         formDataToSend.append("VehicleAxlesNumber", formData.VehicleAxlesNumber);
-        formDataToSend.append("EngineCylindersNumber", formData.EngineCylindersNumber);  
-      }
+        formDataToSend.append("EngineCylindersNumber", formData.EngineCylindersNumber);
 
+        if (formData.VehicleType === "شاحنة") {
+          // Transform TrailerData to the desired format
+          const transformedTrailerData = formData.TrailerData.map(trailer => ({
+            TrailerChassisNumber: trailer.chassisNumber,
+            TrailerAxlesNumber: trailer.axlesNumber,
+            LoadWeight: trailer.loadWeight,
+            Category: trailer.category,
+          }));
+  
+          console.log("Transformed Trailer Data Before Serialization:", transformedTrailerData);
+          const trailerDataString = JSON.stringify(transformedTrailerData);
+          console.log("Serialized Trailer Data:", trailerDataString);
+
+          formDataToSend.append("TrailerData", trailerDataString);
+
+          if (formData.TrailerData.length > 0) {
+            formData.TrailerData.forEach(trailer => {
+              if (trailer.chassisNumber) { 
+                console.log("Transferred Trailer Chassis Number:", transferredTrailer);
+                formDataToSend.append("transferredTrailer", transferredTrailer);
+              }
+            });
+          }
+        }
+      }
+    
       const endpoint = lockedFields
         ? "user/application/create-application-to-same-version"
         : "user/application/create-application-to-different-version";
-
+  
       const result = await fetchData(endpoint, {
         method: 'POST',
         body: formDataToSend,
       });
-
+  
       if (!result.isSuccess) {
         const errorMessages = result.errors ? result.errors.map(error => error.message) : ['حدث خطأ غير متوقع'];
         setFormErrors(errorMessages);
         return;
       }
+  
       const mergedData = {
         ...formData, 
         applicationId: result.results.applicationId,
         vehicleId: result.results.vehicleId,
         issueDate: result.results.issueDate,
       };
-
+  
       setMergedData(mergedData);
-
+  
       if (mergedData.VehicleType === 'سيارة') {
-      handlePrintForCar(mergedData);
+        handlePrintForCar(mergedData);
       } else if (mergedData.VehicleType === 'شاحنة') {
         handlePrintForTruck(mergedData);
       } else if (mergedData.VehicleType === 'دراجة') {
         handlePrintForBike(mergedData);
       }
-
+  
       navigate("/forms", { state: { success: true } });
     } catch (error) {
       setFormErrors(["فشل في الاتصال بالخادم: " + error.message]);
@@ -958,18 +987,18 @@ const CreateFormVersion = () => {
                 [
                   `<div class="flex justify-between w-full py-0.5 border-black">
                     <span class="font-bold text-center text-md w-1/3">نوع الحمل</span>
-                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[0]?.Category || "---"}</span>
+                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[0]?.category || "---"}</span>
                     <span class="font-bold text-center text-md w-1/3">شاصي الحمل</span>
-                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[0]?.TrailerChassisNumber  || "---"}</span>
+                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[0]?.chassisNumber  || "---"}</span>
                   </div>`,
                   null,
                 ],
                 [
                   `<div class="flex justify-between w-full border-black">
                     <span class="font-bold text-center text-md w-1/3">عدد المحاور</span>
-                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[0]?.TrailerAxlesNumber  || "---"}</span>
+                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[0]?.axlesNumber  || "---"}</span>
                     <span class="font-bold text-center text-md w-1/3">الحمولة</span>
-                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[0]?.LoadWeight  || "---"}</span>
+                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[0]?.loadWeight  || "---"}</span>
                   </div>`,
                   null,
                 ],
@@ -986,18 +1015,18 @@ const CreateFormVersion = () => {
                 [
                   `<div class="flex justify-between w-full py-0.5 border-black">
                     <span class="font-bold text-center text-md w-1/3">نوع الحمل</span>
-                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[1]?.Category || "---"}</span>
+                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[1]?.category || "---"}</span>
                     <span class="font-bold text-center text-md w-1/3">شاصي الحمل</span>
-                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[1]?.TrailerChassisNumber  || "---"}</span>
+                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[1]?.chassisNumber  || "---"}</span>
                   </div>`,
                   null,
                 ],
                 [
                   `<div class="flex justify-between w-full border-black">
                     <span class="font-bold text-center text-md w-1/3">عدد المحاور</span>
-                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[1]?.TrailerAxlesNumber  || "---"}</span>
+                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[1]?.axlesNumber  || "---"}</span>
                     <span class="font-bold text-center text-md w-1/3">الحمولة</span>
-                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[1]?.LoadWeight  || "---"}</span>
+                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[1]?.loadWeight  || "---"}</span>
                   </div>`,
                   null,
                 ],
@@ -1014,18 +1043,18 @@ const CreateFormVersion = () => {
                 [
                   `<div class="flex justify-between w-full py-0.5 border-black">
                     <span class="font-bold text-center text-md w-1/3">نوع الحمل</span>
-                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[2]?.Category || "---"}</span>
+                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[2]?.category || "---"}</span>
                     <span class="font-bold text-center text-md w-1/3">شاصي الحمل</span>
-                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[2]?.TrailerChassisNumber  || "---"}</span>
+                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[2]?.chassisNumber  || "---"}</span>
                   </div>`,
                   null,
                 ],
                 [
                   `<div class="flex justify-between w-full border-black">
                     <span class="font-bold text-center text-md w-1/3">عدد المحاور</span>
-                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[2]?.TrailerAxlesNumber  || "---"}</span>
+                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[2]?.axlesNumber  || "---"}</span>
                     <span class="font-bold text-center text-md w-1/3">الحمولة</span>
-                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[2]?.LoadWeight  || "---"}</span>
+                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[2]?.loadWeight  || "---"}</span>
                   </div>`,
                   null,
                 ],
@@ -1505,6 +1534,7 @@ const CreateFormVersion = () => {
                         setFormData((prev) => ({
                           ...prev,
                           CarColorId: item.id,
+                          CarColor: item.color,
                         }));
                       }}
                       placeholder={formData.CarColor || "اختر لون المركبة"}
@@ -1791,10 +1821,10 @@ const CreateFormVersion = () => {
             <input
               type="text"
               name={`TrailerChassisNumber-${index}`}
-              value={trailer.TrailerChassisNumber || ""}
+              value={trailer.chassisNumber || ""}
               onChange={(e) => {
                 const updatedTrailerData = [...formData.TrailerData];
-                updatedTrailerData[index].TrailerChassisNumber = e.target.value;
+                updatedTrailerData[index].chassisNumber = e.target.value; // Update the chassis number
                 setFormData((prev) => ({
                   ...prev,
                   TrailerData: updatedTrailerData,
@@ -1811,10 +1841,10 @@ const CreateFormVersion = () => {
             <input
               type="text"
               name={`TrailerAxlesNumber-${index}`}
-              value={trailer.TrailerAxlesNumber || ""}
+              value={trailer.axlesNumber || ""}
               onChange={(e) => {
                 const updatedTrailerData = [...formData.TrailerData];
-                updatedTrailerData[index].TrailerAxlesNumber = e.target.value;
+                updatedTrailerData[index].axlesNumber = e.target.value; // Update the axles number
                 setFormData((prev) => ({
                   ...prev,
                   TrailerData: updatedTrailerData,
@@ -1831,10 +1861,10 @@ const CreateFormVersion = () => {
             <input
               type="text"
               name={`LoadWeight-${index}`}
-              value={trailer.LoadWeight || ""}
+              value={trailer.loadWeight || ""}
               onChange={(e) => {
                 const updatedTrailerData = [...formData.TrailerData];
-                updatedTrailerData[index].LoadWeight = e.target.value;
+                updatedTrailerData[index].loadWeight = e.target.value; // Update the load weight
                 setFormData((prev) => ({
                   ...prev,
                   TrailerData: updatedTrailerData,
@@ -1851,10 +1881,10 @@ const CreateFormVersion = () => {
             <input
               type="text"
               name={`Category-${index}`}
-              value={trailer.Category || ""}
+              value={trailer.category || ""}
               onChange={(e) => {
                 const updatedTrailerData = [...formData.TrailerData];
-                updatedTrailerData[index].Category = e.target.value;
+                updatedTrailerData[index].category = e.target.value; // Update the category
                 setFormData((prev) => ({
                   ...prev,
                   TrailerData: updatedTrailerData,
@@ -1889,10 +1919,10 @@ const CreateFormVersion = () => {
       <button
         onClick={() => {
           const newTrailer = {
-            TrailerChassisNumber: "",
-            TrailerAxlesNumber: "",
-            LoadWeight: "",
-            Category: "",
+            chassisNumber: "",
+            axlesNumber: "",
+            loadWeight: "",
+            category: "",
           };
           setFormData((prev) => ({
             ...prev,
