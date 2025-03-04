@@ -28,7 +28,7 @@ const AddUsers = ({ setShowAddUser, setUsers, refreshUsers }) => {
     { value: "reporter", label: "Reporter" },
     { value: "supervisor", label: "Supervisor" },
     { value: "superadmin", label: "Superadmin" },
-    {value: "printer", label: "Printer"},
+    { value: "printer", label: "Printer"},
   ];
 
   useEffect(() => {
