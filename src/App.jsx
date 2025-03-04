@@ -20,6 +20,7 @@ import CreateFormVersion from "./components/CreateFormVersion";
 import EnableUsers from "./components/EnableUsers";
 import UpdateUsers from "./components/UpdateUsers";
 import UpdateUsersBysuperadmin from "./components/UpdateUsersBysuperadmin";
+import ShowFormsForPrinter from "./components/ShowFormsForPrinter";
 const App = () => {
   const [userName, setUserName] = useState(localStorage.getItem("userName") || "");
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("accessToken"));
@@ -96,6 +97,14 @@ const App = () => {
             <Route path="/certificates" element={<CertificatesPage />} />
             <Route path="/change-password" element={<ChangePassword />} /> 
             <Route path="*" element={<Navigate to="/certificates" />} />
+          </Routes>
+        );
+      case "printer":
+        return (
+          <Routes>
+            <Route path="/print-app" element={<ShowFormsForPrinter/>}/>
+            <Route path="/change-password" element={<ChangePassword />} /> 
+            <Route path="*" element={<Navigate to="/print-app" />} />
           </Routes>
         );
       default:

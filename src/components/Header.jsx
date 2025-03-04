@@ -20,6 +20,16 @@ const Header = ({ userName, role, onLogout }) => {
       
       <nav className="flex items-center gap-4">
         <div className="flex items-center gap-4">
+        {(role === "printer") && (
+            <Link
+              to="/print-app"
+              className="group flex items-center gap-1 hover:text-purple-400 transition-all duration-300"
+            >
+              <DocumentTextIcon className="w-6 h-6 text-purple-400 group-hover:-translate-y-1 transition-transform" />
+              <span className="text-base font-medium">الاستمارات</span>
+            </Link>
+          )}
+
           {(role === "superadmin" || role === "admin") && (
             <Link
               to="/dropdown-list"
