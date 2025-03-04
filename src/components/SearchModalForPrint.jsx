@@ -26,6 +26,11 @@ const SearchModalForPrint = ({ isOpen, onClose, onSearch }) => {
       label: "بحث عبر رقم الوصل",
       placeholder: "أدخل رقم الوصل",
       param: "ReceiptId"
+    },
+    plate: {
+      label: "بحث عبر رقم اللوحة",
+      placeholder: "أدخل رقم اللوحة",
+      param: "PlateNumber"
     }
   };
 

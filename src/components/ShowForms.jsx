@@ -11,7 +11,7 @@ const ShowForms = () => {
   const [isSearchModalForPrintOpen, setIsSearchModalForPrintOpen] = useState(false);
   const [isSearchModalForFormOpen, setIsSearchModalForFormOpen] = useState(false);
   const [searchResults, setSearchResults] = useState(null);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false); // حالة فتح نموذج التعديل
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false); 
 
   const handleSearch = (formData) => {
     setSearchResults(formData);
@@ -117,7 +117,7 @@ const ShowForms = () => {
                 "رقم الاستمارة": searchResults.applicationId,
                 "رقم استمارة المرور": searchResults.trafficPoliceApplicationId,
                 "رقم الوصل": searchResults.receiptId || "---",
-                "اسم المواطن": searchResults.carOwnerName,
+                "اسم المواطن": searchResults.ownerFirstName+" "+searchResults.fatherName+" "+searchResults.grandFatherName+" "+searchResults.surename,
                 "نوع الاستمارة": searchResults.vehicleType,
                 "نوع التسجيل": searchResults.usage,
                 "الماركة": searchResults.carBrand,
@@ -156,7 +156,7 @@ const ShowForms = () => {
                     <div className="grid grid-cols-2 gap-4">
                       {Object.entries({
                         "رقم الشاصي": trailer.chassisNumber,
-                        "عدد المحاور": trailer.axelsNumber,
+                        "عدد المحاور": trailer.axlesNumber,
                         "الحمولة": trailer.loadWeight,
                         "الفئة": trailer.category,
                       }).map(([label, value]) => (

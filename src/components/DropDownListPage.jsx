@@ -74,7 +74,7 @@ const DropDownListPage = () => {
   const [tlTotal, setTlTotal] = useState(0);
 
   const [showAddCharecterPopup, setShowAddCharecterPopup] = useState(false);
-  const [characters, setCharecters] = useState({ result: [], total: 0 });
+  const [characters, setCharacters] = useState({ result: [], total: 0 });
   const [chFilters, setChFilters] = useState({
     page: 0,
     pageSize: 10,
@@ -220,7 +220,7 @@ const DropDownListPage = () => {
             setTlTotal(response.results.total);
             break;
           case "charecters":
-            setCharecters(response.results);
+            setCharacters(response.results);
             setChTotal(response.results.total);
             break;
         }
@@ -658,7 +658,7 @@ const DropDownListPage = () => {
                 />
               </div>
             </div>
-            {renderTable(characters.result, [{ key: "name", title: "الحرف" }], "charecters")}
+            {renderTable(characters.result, [{ key: "allowedChar", title: "الحرف" }], "charecters")}
             {renderPagination(chTotal, chFilters.pageSize, chFilters.page, "charecters")}
           </>
         );

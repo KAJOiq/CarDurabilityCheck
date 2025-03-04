@@ -169,6 +169,10 @@ const CreateForm = () => {
   // Form data structure
   const [formData, setFormData] = useState({
     CarOwnerName: "",
+    FatherName: "", 
+    MotherName: "",
+    GrandFatherName: "",
+    Surename: "",
     VehicleType: "",
     CarBrandId: "",
     CarNameId: "",
@@ -188,7 +192,7 @@ const CreateForm = () => {
   });
 
   const steps = [
-    { title: "تفاصيل الاستمارة", fields: ['CarOwnerName', 'VehicleType', 'ReceiptId', 'TrafficPoliceApplicationId'] },
+    { title: "تفاصيل الاستمارة", fields: ['CarOwnerName', 'FatherName', 'MotherName', 'GrandFatherName', 'Surename', 'VehicleType', 'ReceiptId', 'TrafficPoliceApplicationId'] },
     { title: "تفاصيل المركبة", fields: ['CarBrandId', 'CarNameId', 'CarColorId', 'ChassisNumber', 'PlateNumber', 'CarModel', 'EngineCylindersNumber', 'VehicleAxlesNumber', 'EngineType', 'SeatsNumber', 'Usage', 'Governmental'] },
     { title: "صورة السيارة", fields: ['carFullImage', 'carCroppedImage'] },
     { title: "صورة الشاصي", fields: ['chassisFullImage', 'chassisCroppedImage'] },
@@ -222,25 +226,206 @@ const CreateForm = () => {
     { value: '27', label: 'ذي قار 27' },
     { value: '28', label: 'النجف 28' },
     { value: '29', label: 'واسط 29' }
-];
+  ];
+  
+  const provinceOptions2 = [
+    { value: 'بغداد', label: 'بغداد' },
+    { value: 'نينوى', label: 'نينوى' },
+    { value: 'ميسان', label: 'ميسان' },
+    { value: 'البصرة', label: 'البصرة' },
+    { value: 'الأنبار', label: 'الأنبار' },
+    { value: 'القادسية', label: 'القادسية' },
+    { value: 'المثنى', label: 'المثنى' },
+    { value: 'بابل', label: 'بابل' },
+    { value: 'كربلاء', label: 'كربلاء' },
+    { value: 'ديالى', label: 'ديالى' },
+    { value: 'السليمانية', label: 'السليمانية' },
+    { value: 'أربيل', label: 'أربيل' },
+    { value: 'حلبجة', label: 'حلبجة' },
+    { value: 'دهوك', label: 'دهوك' },
+    { value: 'كركوك', label: 'كركوك' },
+    { value: 'صلاح الدين', label: 'صلاح الدين' },
+    { value: 'ذي قار', label: 'ذي قار' },
+    { value: 'النجف', label: 'النجف' },
+    { value: 'واسط', label: 'واسط' }
+  ];
 
+  const [plateType, setPlateType] = useState("national");
   const [provinceCode, setProvinceCode] = useState(''); // رمز المحافظة
   const [plateLetter, setPlateLetter] = useState(''); // الحرف
   const [plateNumber, setPlateNumber] = useState(''); // الرقم
 
+  // Handle plate number change based on type
   const handlePlateNumberChange = () => {
-    if (plateNumber.length === 5) {
-      const fullPlateNumber = `${provinceCode}${plateLetter}${plateNumber}`;
-      setFormData((prev) => ({
-        ...prev,
-        PlateNumber: fullPlateNumber,
-      }));
+    let fullPlateNumber = "";
+
+    switch (plateType) {
+      case "national":
+        fullPlateNumber = `${provinceCode}${plateLetter}${plateNumber}`;
+        break;
+      case "temporary":
+        fullPlateNumber = `${plateLetter}${plateNumber}`;
+        break;
+      case "old":
+        fullPlateNumber = `${provinceCode}${plateNumber}`;
+        break;
+      default:
+        fullPlateNumber = "";
     }
+
+    setFormData((prev) => ({
+      ...prev,
+      PlateNumber: fullPlateNumber,
+    }));
   };
 
-  useEffect(() => {
+ useEffect(() => {
     handlePlateNumberChange();
-  }, [provinceCode, plateLetter, plateNumber]);
+  }, [provinceCode, plateLetter, plateNumber, plateType]);
+
+// Render plate number input fields based on type
+  const renderPlateNumberFields = () => {
+    switch (plateType) {
+      case "national":
+        return (
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <label className="block text-right mb-2 font-medium text-gray-700">رمز المحافظة</label>
+              <Select
+                options={provinceOptions}
+                placeholder="اختر المحافظة"
+                value={provinceOptions.find(option => option.value === provinceCode)}
+                onChange={(selectedOption) => {
+                  setProvinceCode(selectedOption.value);
+                  handlePlateNumberChange();
+                }}
+                styles={{
+                  control: (provided) => ({
+                    ...provided,
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '0.5rem',
+                    padding: '0.25rem',
+                  }),
+                }}
+              />
+            </div>
+            <div>
+              <label className="block text-right mb-2 font-medium text-gray-700">الحرف</label>
+              <DropDownListTemplate
+                endpoint="find-plate-character"
+                queryParams={{ page: 0, pageSize: 1000 }}
+                labelKey="allowedChar"
+                valueKey="id"
+                onSelect={(item) => {
+                  setPlateLetter(item.allowedChar);
+                  handlePlateNumberChange();
+                }}
+                placeholder="اختر الحرف"
+                disabled={false}
+              />
+            </div>
+            <div>
+              <label className="block text-right mb-2 font-medium text-gray-700">الرقم</label>
+              <input
+                type="text"
+                className="w-full p-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="أدخل الرقم"
+                value={plateNumber}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value.length <= 5) {
+                    setPlateNumber(value);
+                    handlePlateNumberChange();
+                  }
+                }}
+                maxLength={5} 
+              />
+            </div>
+          </div>
+        );
+      case "temporary":
+        return (
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-right mb-2 font-medium text-gray-700">الحرف</label>
+              <DropDownListTemplate
+                endpoint="find-plate-character"
+                queryParams={{ page: 0, pageSize: 1000 }}
+                labelKey="allowedChar"
+                valueKey="id"
+                onSelect={(item) => {
+                  setPlateLetter(item.allowedChar);
+                  handlePlateNumberChange();
+                }}
+                placeholder="اختر الحرف"
+                disabled={false}
+              />
+            </div>
+            <div>
+              <label className="block text-right mb-2 font-medium text-gray-700">الرقم</label>
+              <input
+                type="text"
+                className="w-full p-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="أدخل الرقم"
+                value={plateNumber}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value.length <= 5) {
+                    setPlateNumber(value);
+                    handlePlateNumberChange();
+                  }
+                }}
+                maxLength={5} 
+              />
+            </div>
+          </div>
+        );
+      case "old":
+        return (
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-right mb-2 font-medium text-gray-700">الرقم</label>
+              <input
+                type="text"
+                className="w-full p-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="أدخل الرقم"
+                value={plateNumber}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value.length <= 6) {
+                    setPlateNumber(value);
+                    handlePlateNumberChange();
+                  }
+                }}
+                maxLength={6} 
+              />
+            </div>
+            <div>
+              <label className="block text-right mb-2 font-medium text-gray-700">رمز المحافظة</label>
+              <Select
+                options={provinceOptions}
+                placeholder="اختر المحافظة"
+                value={provinceOptions.find(option => option.value === provinceCode)}
+                onChange={(selectedOption) => {
+                  setProvinceCode(selectedOption.value);
+                  handlePlateNumberChange();
+                }}
+                styles={{
+                  control: (provided) => ({
+                    ...provided,
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '0.5rem',
+                    padding: '0.25rem',
+                  }),
+                }}
+              />
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -372,6 +557,13 @@ const CreateForm = () => {
     return date.toISOString().split("T")[0];
   };
 
+  const ownerFullName = [
+    formData.CarOwnerName,
+    formData.FatherName,
+    formData.GrandFatherName,
+    formData.Surename
+].filter(name => name.trim() !== "").join(" ");
+
   const handlePrintForCar = (data) => {
     if (!data) return;
     const imgStaticBase64 = imgStaticCar;
@@ -473,7 +665,7 @@ const CreateForm = () => {
                  <h3 class="bg-gray-200 text-center font-bold py-0.5">بيانات المركبة</h3>
                  <div class="grid grid-cols-2 gap-2 text-md">
                    ${[
-                     ["اسم المالك", formData.CarOwnerName],
+                     ["اسم المالك", ownerFullName],
                      ["نوع المركبة", formData.CarBrand],
                      ["طراز المركبة", formData.CarName],
                      ["لون المركبة", formData.CarColor],
@@ -679,7 +871,7 @@ const CreateForm = () => {
             <span class="font-bold text-center text-md w-1/3">لون المركبة</span>
             <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.CarColor || "---"}</span>
             <span class="font-bold text-center text-md w-1/3">نوع المحرك</span>
-            <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.CngineType || "---"}</span>
+            <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.EngineType || "---"}</span>
           </div>`,
           null,
         ],
@@ -694,7 +886,7 @@ const CreateForm = () => {
           </div>`,
           null,
         ],
-        
+        ["اسم المالك", ownerFullName],
         ["رقم المركبة", formData.PlateNumber],
         ["رقم الشاصي", formData.ChassisNumber],
 
@@ -946,7 +1138,7 @@ const CreateForm = () => {
                 <h3 class="bg-gray-200 text-center font-bold py-0.5">بيانات المركبة</h3>
                 <div class="grid grid-cols-2 gap-2 text-md">
                   ${[
-                    ["اسم المالك", formData.CarOwnerName],
+                    ["اسم المالك", ownerFullName],
                     ["نوع المركبة", formData.CarBrand],
                     ["طراز المركبة", formData.CarName],
                     ["لون المركبة", formData.CarColor],
@@ -1066,7 +1258,7 @@ const CreateForm = () => {
       <div className="fixed inset-0 bg-black/30 backdrop-blur-lg" />
       
       <div className="fixed inset-0 flex items-center justify-center p-6">
-        <Dialog.Panel className="w-full max-w-7xl bg-white rounded-2xl shadow-xl flex flex-col max-h-[90vh]">
+        <Dialog.Panel className="w-full max-w-8xl bg-white rounded-2xl shadow-xl flex flex-col max-h-[90vh]">
           <div className="p-6 border-b flex justify-between items-center">
             <Dialog.Title className="text-2xl font-bold text-gray-800">إنشاء استمارة جديدة</Dialog.Title>
             <button onClick={() => navigate('/forms')} className="p-2 hover:bg-gray-100 rounded-lg transition-all">
@@ -1107,9 +1299,37 @@ const CreateForm = () => {
             {currentStep === 1 && (
               <div className="grid grid-cols-2 gap-4">
                 <InputField
-                  label="اسم المواطن"
+                  label="الإسم"
                   name="CarOwnerName"
                   value={formData.CarOwnerName}
+                  onChange={handleChange}
+                  required
+                />
+                <InputField
+                  label="اسم الأب"
+                  name="FatherName"
+                  value={formData.FatherName}
+                  onChange={handleChange}
+                  required
+                />
+                <InputField
+                  label="اسم الجد"
+                  name="GrandFatherName"
+                  value={formData.GrandFatherName}
+                  onChange={handleChange}
+                  required
+                />
+                <InputField
+                  label="اسم الأم"
+                  name="MotherName"
+                  value={formData.MotherName}
+                  onChange={handleChange}
+                  required
+                />
+                <InputField
+                  label="اللقب"
+                  name="Surename"
+                  value={formData.Surename}
                   onChange={handleChange}
                   required
                 />
@@ -1321,57 +1541,204 @@ const CreateForm = () => {
                 />
                 </div>
 
-                <div className="grid grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-right mb-2 font-medium text-gray-700">رمز المحافظة</label>
-                    <Select
-                      options={provinceOptions}
-                      placeholder="اختر المحافظة"
-                      value={provinceOptions.find(option => option.value === provinceCode)}
-                      onChange={(selectedOption) => {
-                        setProvinceCode(selectedOption.value);
-                        handlePlateNumberChange();
-                      }}
-                      styles={{
-                        control: (provided) => ({
-                          ...provided,
-                          border: '1px solid #e2e8f0',
-                          borderRadius: '0.5rem',
-                          padding: '0.25rem',
-                        }),
-                      }}
-                    />
+                <div className="p-4 border rounded-lg bg-white shadow-md">
+                  {/* Radio Button Selection */}
+                  <div className="mb-4">
+                    <label className="block text-right font-medium text-gray-700 mb-2">
+                      اختر نوع الرقم
+                    </label>
+                    <div className="flex gap-4">
+                      <label className="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          name="plateType"
+                          value="national"
+                          checked={plateType === "national"}
+                          onChange={() => setPlateType("national")}
+                        />
+                        رقم المشروع الوطني
+                      </label>
+                      <label className="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          name="plateType"
+                          value="temporary"
+                          checked={plateType === "temporary"}
+                          onChange={() => setPlateType("temporary")}
+                        />
+                        رقم فحص مؤقت (الجمارك)
+                      </label>
+                      <label className="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          name="plateType"
+                          value="old"
+                          checked={plateType === "old"}
+                          onChange={() => setPlateType("old")}
+                        />
+                        الرقم القديم
+                      </label>
+                      <label className="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          name="plateType"
+                          value="noPlate"
+                          checked={plateType === "noPlate"}
+                          onChange={() => {
+                            setPlateType("noPlate");
+                            setPlateNumber("");
+                            setPlateLetter("");
+                            setProvinceCode("");
+                          }}
+                        />
+                        مركبة بلا رقم
+                      </label>
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-right mb-2 font-medium text-gray-700">الحرف</label>
-                    <input
-                      type="text"
-                      className="w-full p-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="أدخل الحرف"
-                      value={plateLetter}
-                      onChange={(e) => {
-                        setPlateLetter(e.target.value.toUpperCase());
-                        handlePlateNumberChange();
-                      }}
-                      maxLength={1} 
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-right mb-2 font-medium text-gray-700">الرقم</label>
-                    <input
-                      type="text"
-                      className="w-full p-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="أدخل الرقم"
-                      value={plateNumber}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        if (value.length <= 5) {
-                          setPlateNumber(value);
-                          handlePlateNumberChange();
-                        }
-                      }}
-                      maxLength={5} 
-                    />
+
+                  {/* Form Fields Based on Selection */}
+                  <div className="grid grid-cols-3 gap-4">
+                    {plateType === "national" && (
+                      <>
+                        <div>
+                          <label className="block text-right mb-2 font-medium text-gray-700">
+                            رمز المحافظة
+                          </label>
+                          <Select
+                            options={provinceOptions}
+                            placeholder="اختر رمز المحافظة"
+                            value={provinceOptions.find(
+                              (option) => option.value === provinceCode
+                            )}
+                            onChange={(selectedOption) => {
+                              setProvinceCode(selectedOption.value);
+                              handlePlateNumberChange();
+                            }}
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-right mb-2 font-medium text-gray-700">
+                            الحرف الانكليزي
+                          </label>
+                          <DropDownListTemplate
+                            endpoint="find-plate-character"
+                            queryParams={{ page: 0, pageSize: 1000 }}
+                            labelKey="allowedChar"
+                            valueKey="id"
+                            onSelect={(item) => {
+                              setPlateLetter(item.allowedChar.toUpperCase());
+                              handlePlateNumberChange();
+                            }}
+                            placeholder="اختر الحرف"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-right mb-2 font-medium text-gray-700">
+                            الرقم
+                          </label>
+                          <input
+                            type="text"
+                            className="w-full p-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="أدخل الرقم"
+                            value={plateNumber}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              if (value.length <= 5) {
+                                setPlateNumber(value);
+                                handlePlateNumberChange();
+                              }
+                            }}
+                            maxLength={5}
+                          />
+                        </div>
+                      </>
+                    )}
+
+                    {plateType === "temporary" && (
+                      <>
+                        <div>
+                          <label className="block text-right mb-2 font-medium text-gray-700">
+                            الحرف العربي
+                          </label>
+                          <input
+                            type="text"
+                            className="w-full p-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="أدخل الحرف"
+                            value={plateLetter}
+                            onChange={(e) => {
+                              setPlateLetter(e.target.value.toUpperCase());
+                              handlePlateNumberChange();
+                            }}
+                            maxLength={1}
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-right mb-2 font-medium text-gray-700">
+                            الرقم
+                          </label>
+                          <input
+                            type="text"
+                            className="w-full p-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="أدخل الرقم"
+                            value={plateNumber}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              if (value.length <= 5) {
+                                setPlateNumber(value);
+                                handlePlateNumberChange();
+                              }
+                            }}
+                            maxLength={5}
+                          />
+                        </div>
+                      </>
+                    )}
+
+                    {plateType === "old" && (
+                      <>
+                        <div>
+                          <label className="block text-right mb-2 font-medium text-gray-700">
+                            الرقم
+                          </label>
+                          <input
+                            type="text"
+                            className="w-full p-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="أدخل الرقم"
+                            value={plateNumber}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              if (value.length <= 6) {
+                                setPlateNumber(value);
+                                handlePlateNumberChange();
+                              }
+                            }}
+                            maxLength={6}
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-right mb-2 font-medium text-gray-700">
+                            المحافظة
+                          </label>
+                          <Select
+                            options={provinceOptions2}
+                            placeholder="اختر المحافظة"
+                            value={provinceOptions2.find(
+                              (option) => option.value === provinceCode
+                            )}
+                            onChange={(selectedOption) => {
+                              setProvinceCode(selectedOption.value);
+                              handlePlateNumberChange();
+                            }}
+                          />
+                        </div>
+                      </>
+                    )}
+
+                    {plateType === "noPlate" && (
+                      <div className="col-span-3 text-center text-gray-500">
+                        هذه المركبة لا تحمل أي رقم تسجيل
+                      </div>
+                    )}
                   </div>
                 </div>
 

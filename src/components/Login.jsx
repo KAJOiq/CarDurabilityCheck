@@ -22,12 +22,12 @@ const Login = ({ onLogin }) => {
     }
 
     getPCName();
-
+/* 
     const sessionExpiredMessage = localStorage.getItem("sessionExpired");
     if (sessionExpiredMessage) {
       setErrorMessage(sessionExpiredMessage);
       localStorage.removeItem("sessionExpired");
-    }
+    } */
   }, []);
 
   const getLocalPCName = async () => {

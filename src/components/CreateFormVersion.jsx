@@ -80,7 +80,7 @@ const ReviewData = ({ formData }) => {
             </div>
             <div className="flex justify-between items-center">
               <span className="font-medium text-gray-600">لون المركبة</span>
-              <span className="text-gray-800">{formData.CarColorId}</span>
+              <span className="text-gray-800">{formData.CarColor}</span>
             </div>
           </div>
           <div className="space-y-3">
@@ -162,9 +162,8 @@ const CreateFormVersion = () => {
   const [formErrors, setFormErrors] = useState([]);
   const [lockedFields, setLockedFields] = useState(true);
   const [originalData, setOriginalData] = useState({});
-
   const [mergedData, setMergedData] = useState(null); 
-  
+  const [transferredTrailer, setTransferredTrailer] = useState("");
   // States for photos
   const [carFullImage, setCarFullImage] = useState(null);
   const [carCroppedImage, setCarCroppedImage] = useState(null);
@@ -175,6 +174,10 @@ const CreateFormVersion = () => {
   // Form data structure
   const [formData, setFormData] = useState({
     CarOwnerName: "",
+    FatherName: "", 
+    MotherName: "",
+    GrandFatherName: "",
+    Surename: "",
     VehicleType: "",
     CarBrandId: "",
     CarNameId: "",
@@ -191,6 +194,7 @@ const CreateFormVersion = () => {
     PlateNumber: "",
     Governmental: false,
     TrailerData: [],
+    //transferredTrailer: [], 
     VehicleID: "", 
   });
 
@@ -201,7 +205,8 @@ const CreateFormVersion = () => {
       setOriginalData({
         CarBrandId: vehicleData.carBrand,
         CarNameId: vehicleData.carName,
-        CarColorId: vehicleData.carColor,
+        CarColorId: vehicleData.carColorId,
+        CarColor: vehicleData.carColor,
         ChassisNumber: vehicleData.chassisNumber,
         CarModel: vehicleData.carModel,
         PlateNumber: vehicleData.plateNumber,
@@ -214,6 +219,10 @@ const CreateFormVersion = () => {
         TrailerData: vehicleData.trailers,
       });
 
+      if (vehicleData.trailers.length > 0) {
+        setTransferredTrailer(vehicleData.trailers[0].chassisNumber); 
+      }
+
       setFormData((prev) => ({
         ...prev,
         VehicleID: vehicleData.vehicleID, 
@@ -222,7 +231,8 @@ const CreateFormVersion = () => {
         CarNameId: vehicleData.carName,
         ChassisNumber: vehicleData.chassisNumber,
         CarModel: vehicleData.carModel,
-        CarColorId: vehicleData.carColor,
+        CarColorId: vehicleData.carColorId,
+        CarColor: vehicleData.carColor,
         PlateNumber: vehicleData.plateNumber,
         EngineType: vehicleData.engineType,
         VehicleAxlesNumber: vehicleData.vehicleAxlesNumber,
@@ -269,29 +279,210 @@ const CreateFormVersion = () => {
     { value: '27', label: 'ذي قار 27' },
     { value: '28', label: 'النجف 28' },
     { value: '29', label: 'واسط 29' }
-];
+  ];
+  
+  const provinceOptions2 = [
+    { value: 'بغداد', label: 'بغداد' },
+    { value: 'نينوى', label: 'نينوى' },
+    { value: 'ميسان', label: 'ميسان' },
+    { value: 'البصرة', label: 'البصرة' },
+    { value: 'الأنبار', label: 'الأنبار' },
+    { value: 'القادسية', label: 'القادسية' },
+    { value: 'المثنى', label: 'المثنى' },
+    { value: 'بابل', label: 'بابل' },
+    { value: 'كربلاء', label: 'كربلاء' },
+    { value: 'ديالى', label: 'ديالى' },
+    { value: 'السليمانية', label: 'السليمانية' },
+    { value: 'أربيل', label: 'أربيل' },
+    { value: 'حلبجة', label: 'حلبجة' },
+    { value: 'دهوك', label: 'دهوك' },
+    { value: 'كركوك', label: 'كركوك' },
+    { value: 'صلاح الدين', label: 'صلاح الدين' },
+    { value: 'ذي قار', label: 'ذي قار' },
+    { value: 'النجف', label: 'النجف' },
+    { value: 'واسط', label: 'واسط' }
+  ];
 
+  const [plateType, setPlateType] = useState("national");
   const [provinceCode, setProvinceCode] = useState(''); // رمز المحافظة
   const [plateLetter, setPlateLetter] = useState(''); // الحرف
   const [plateNumber, setPlateNumber] = useState(''); // الرقم
 
+  // Handle plate number change based on type
   const handlePlateNumberChange = () => {
-    if (plateNumber.length === 5) {
-      const fullPlateNumber = `${provinceCode}${plateLetter}${plateNumber}`;
-      setFormData((prev) => ({
-        ...prev,
-        PlateNumber: fullPlateNumber,
-      }));
+    let fullPlateNumber = "";
+
+    switch (plateType) {
+      case "national":
+        fullPlateNumber = `${provinceCode}${plateLetter}${plateNumber}`;
+        break;
+      case "temporary":
+        fullPlateNumber = `${plateLetter}${plateNumber}`;
+        break;
+      case "old":
+        fullPlateNumber = `${provinceCode}${plateNumber}`;
+        break;
+      default:
+        fullPlateNumber = "";
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      PlateNumber: fullPlateNumber,
+    }));
+  };
+
+ useEffect(() => {
+    handlePlateNumberChange();
+  }, [provinceCode, plateLetter, plateNumber, plateType]);
+
+// Render plate number input fields based on type
+  const renderPlateNumberFields = () => {
+    switch (plateType) {
+      case "national":
+        return (
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <label className="block text-right mb-2 font-medium text-gray-700">رمز المحافظة</label>
+              <Select
+                options={provinceOptions}
+                placeholder="اختر المحافظة"
+                value={provinceOptions.find(option => option.value === provinceCode)}
+                onChange={(selectedOption) => {
+                  setProvinceCode(selectedOption.value);
+                  handlePlateNumberChange();
+                }}
+                styles={{
+                  control: (provided) => ({
+                    ...provided,
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '0.5rem',
+                    padding: '0.25rem',
+                  }),
+                }}
+              />
+            </div>
+            <div>
+              <label className="block text-right mb-2 font-medium text-gray-700">الحرف</label>
+              <DropDownListTemplate
+                endpoint="find-plate-character"
+                queryParams={{ page: 0, pageSize: 1000 }}
+                labelKey="allowedChar"
+                valueKey="id"
+                onSelect={(item) => {
+                  setPlateLetter(item.allowedChar);
+                  handlePlateNumberChange();
+                }}
+                placeholder="اختر الحرف"
+                disabled={false}
+              />
+            </div>
+            <div>
+              <label className="block text-right mb-2 font-medium text-gray-700">الرقم</label>
+              <input
+                type="text"
+                className="w-full p-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="أدخل الرقم"
+                value={plateNumber}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value.length <= 5) {
+                    setPlateNumber(value);
+                    handlePlateNumberChange();
+                  }
+                }}
+                maxLength={5} 
+              />
+            </div>
+          </div>
+        );
+      case "temporary":
+        return (
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-right mb-2 font-medium text-gray-700">الحرف</label>
+              <DropDownListTemplate
+                endpoint="find-plate-character"
+                queryParams={{ page: 0, pageSize: 1000 }}
+                labelKey="allowedChar"
+                valueKey="id"
+                onSelect={(item) => {
+                  setPlateLetter(item.allowedChar);
+                  handlePlateNumberChange();
+                }}
+                placeholder="اختر الحرف"
+                disabled={false}
+              />
+            </div>
+            <div>
+              <label className="block text-right mb-2 font-medium text-gray-700">الرقم</label>
+              <input
+                type="text"
+                className="w-full p-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="أدخل الرقم"
+                value={plateNumber}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value.length <= 5) {
+                    setPlateNumber(value);
+                    handlePlateNumberChange();
+                  }
+                }}
+                maxLength={5} 
+              />
+            </div>
+          </div>
+        );
+      case "old":
+        return (
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-right mb-2 font-medium text-gray-700">الرقم</label>
+              <input
+                type="text"
+                className="w-full p-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="أدخل الرقم"
+                value={plateNumber}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value.length <= 6) {
+                    setPlateNumber(value);
+                    handlePlateNumberChange();
+                  }
+                }}
+                maxLength={6} 
+              />
+            </div>
+            <div>
+              <label className="block text-right mb-2 font-medium text-gray-700">رمز المحافظة</label>
+              <Select
+                options={provinceOptions}
+                placeholder="اختر المحافظة"
+                value={provinceOptions.find(option => option.value === provinceCode)}
+                onChange={(selectedOption) => {
+                  setProvinceCode(selectedOption.value);
+                  handlePlateNumberChange();
+                }}
+                styles={{
+                  control: (provided) => ({
+                    ...provided,
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '0.5rem',
+                    padding: '0.25rem',
+                  }),
+                }}
+              />
+            </div>
+          </div>
+        );
+      default:
+        return null;
     }
   };
-  useEffect(() => {
-    handlePlateNumberChange();
-  }, [provinceCode, plateLetter, plateNumber]);
-  
+
   const toggleLock = () => {
     setLockedFields((prev) => !prev); 
   };
-
 
   const validateStep = () => {
     const currentFields = steps[currentStep - 1].fields;
@@ -346,64 +537,92 @@ const CreateFormVersion = () => {
     try {
       setIsSubmitting(true);
       const formDataToSend = new FormData();
-
-      delete formDataToSend.CarBrand;
-      delete formDataToSend.CarName;
-      delete formDataToSend.CarColor;
+  
+      console.log("Form Data Before Submission:", formData);
 
       // إضافة البيانات العامة
       formDataToSend.append("TrafficPoliceApplicationId", formData.TrafficPoliceApplicationId);
       formDataToSend.append("ReceiptId", formData.ReceiptId);
       formDataToSend.append("CarOwnerName", formData.CarOwnerName);
+      formDataToSend.append("FatherName", formData.FatherName);
+      formDataToSend.append("MotherName", formData.MotherName);
+      formDataToSend.append("GrandFatherName", formData.GrandFatherName);
+      formDataToSend.append("Surename", formData.Surename);
       formDataToSend.append("Governmental", formData.Governmental);
       formDataToSend.append("VehicleID", formData.VehicleID);
-
+  
       // إضافة الصور
       if (carCroppedImage) formDataToSend.append("ApplicationImages", carCroppedImage, "carCroppedImage.png");
       if (carFullImage) formDataToSend.append("ApplicationImages", carFullImage, "carFullImage.png");
       if (chassisCroppedImage) formDataToSend.append("ApplicationImages", chassisCroppedImage, "chassisCroppedImage.png");
       if (chassisFullImage) formDataToSend.append("ApplicationImages", chassisFullImage, "chassisFullImage.png");
       if (receiptIdImage) formDataToSend.append("ApplicationImages", receiptIdImage, "receiptIdImage.png");
-
+  
       // إضافة بيانات المركبة إذا تم فتح القفل
       if (!lockedFields) {
         formDataToSend.append("PlateNumber", formData.PlateNumber);
         formDataToSend.append("CarColorId", formData.CarColorId);
         formDataToSend.append("VehicleAxlesNumber", formData.VehicleAxlesNumber);
-        formDataToSend.append("EngineCylindersNumber", formData.EngineCylindersNumber);  
-      }
+        formDataToSend.append("EngineCylindersNumber", formData.EngineCylindersNumber);
 
+        if (formData.VehicleType === "شاحنة") {
+          // Transform TrailerData to the desired format
+          const transformedTrailerData = formData.TrailerData.map(trailer => ({
+            TrailerChassisNumber: trailer.chassisNumber,
+            TrailerAxlesNumber: trailer.axlesNumber,
+            LoadWeight: trailer.loadWeight,
+            Category: trailer.category,
+          }));
+  
+          console.log("Transformed Trailer Data Before Serialization:", transformedTrailerData);
+          const trailerDataString = JSON.stringify(transformedTrailerData);
+          console.log("Serialized Trailer Data:", trailerDataString);
+
+          formDataToSend.append("TrailerData", trailerDataString);
+
+          if (formData.TrailerData.length > 0) {
+            formData.TrailerData.forEach(trailer => {
+              if (trailer.chassisNumber) { 
+                console.log("Transferred Trailer Chassis Number:", transferredTrailer);
+                formDataToSend.append("transferredTrailer", transferredTrailer);
+              }
+            });
+          }
+        }
+      }
+    
       const endpoint = lockedFields
         ? "user/application/create-application-to-same-version"
         : "user/application/create-application-to-different-version";
-
+  
       const result = await fetchData(endpoint, {
         method: 'POST',
         body: formDataToSend,
       });
-
+  
       if (!result.isSuccess) {
         const errorMessages = result.errors ? result.errors.map(error => error.message) : ['حدث خطأ غير متوقع'];
         setFormErrors(errorMessages);
         return;
       }
+  
       const mergedData = {
         ...formData, 
         applicationId: result.results.applicationId,
         vehicleId: result.results.vehicleId,
         issueDate: result.results.issueDate,
       };
-
+  
       setMergedData(mergedData);
-
+  
       if (mergedData.VehicleType === 'سيارة') {
-      handlePrintForCar(mergedData);
+        handlePrintForCar(mergedData);
       } else if (mergedData.VehicleType === 'شاحنة') {
         handlePrintForTruck(mergedData);
       } else if (mergedData.VehicleType === 'دراجة') {
         handlePrintForBike(mergedData);
       }
-
+  
       navigate("/forms", { state: { success: true } });
     } catch (error) {
       setFormErrors(["فشل في الاتصال بالخادم: " + error.message]);
@@ -416,6 +635,13 @@ const CreateFormVersion = () => {
     const date = new Date(dateString);
     return date.toISOString().split("T")[0];
   };
+
+  const ownerFullName = [
+    formData.CarOwnerName,
+    formData.FatherName,
+    formData.GrandFatherName,
+    formData.Surename
+].filter(name => name.trim() !== "").join(" ");
 
   const usageOptions = [
       { value: "اجرة", label: "أجرة" },
@@ -528,9 +754,9 @@ const CreateFormVersion = () => {
                    <h3 class="bg-gray-200 text-center font-bold py-0.5">بيانات المركبة</h3>
                    <div class="grid grid-cols-2 gap-2 text-md">
                      ${[
-                       ["اسم المالك", formData.CarOwnerName],
-                       ["نوع المركبة", formData.CarBrand],
-                       ["طراز المركبة", formData.CarName],
+                       ["اسم المالك", ownerFullName],
+                       ["نوع المركبة", formData.CarBrandId],
+                       ["طراز المركبة", formData.CarNameId],
                        ["لون المركبة", formData.CarColor],
                        ["رقم المركبة", formData.PlateNumber],
                        ["رقم الشاصي", formData.ChassisNumber],
@@ -722,9 +948,9 @@ const CreateFormVersion = () => {
           [
             `<div class="flex justify-between w-full py-0.5 border-black">
               <span class="font-bold text-center text-md w-1/3">نوع المركبة</span>
-              <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.CarBrand || "---"}</span>
+              <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.CarBrandId || "---"}</span>
               <span class="font-bold text-center text-md w-1/3">طراز المركبة</span>
-              <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.CarName || "---"}</span>
+              <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.CarNameId || "---"}</span>
             </div>`,
             null,
           ],
@@ -734,7 +960,7 @@ const CreateFormVersion = () => {
               <span class="font-bold text-center text-md w-1/3">لون المركبة</span>
               <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.CarColor || "---"}</span>
               <span class="font-bold text-center text-md w-1/3">نوع المحرك</span>
-              <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.CngineType || "---"}</span>
+              <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.EngineType || "---"}</span>
             </div>`,
             null,
           ],
@@ -749,7 +975,7 @@ const CreateFormVersion = () => {
             </div>`,
             null,
           ],
-          
+          ["اسم المالك", ownerFullName],
           ["رقم المركبة", formData.PlateNumber],
           ["رقم الشاصي", formData.ChassisNumber],
   
@@ -761,18 +987,18 @@ const CreateFormVersion = () => {
                 [
                   `<div class="flex justify-between w-full py-0.5 border-black">
                     <span class="font-bold text-center text-md w-1/3">نوع الحمل</span>
-                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[0]?.Category || "---"}</span>
+                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[0]?.category || "---"}</span>
                     <span class="font-bold text-center text-md w-1/3">شاصي الحمل</span>
-                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[0]?.TrailerChassisNumber  || "---"}</span>
+                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[0]?.chassisNumber  || "---"}</span>
                   </div>`,
                   null,
                 ],
                 [
                   `<div class="flex justify-between w-full border-black">
                     <span class="font-bold text-center text-md w-1/3">عدد المحاور</span>
-                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[0]?.TrailerAxlesNumber  || "---"}</span>
+                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[0]?.axlesNumber  || "---"}</span>
                     <span class="font-bold text-center text-md w-1/3">الحمولة</span>
-                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[0]?.LoadWeight  || "---"}</span>
+                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[0]?.loadWeight  || "---"}</span>
                   </div>`,
                   null,
                 ],
@@ -789,18 +1015,18 @@ const CreateFormVersion = () => {
                 [
                   `<div class="flex justify-between w-full py-0.5 border-black">
                     <span class="font-bold text-center text-md w-1/3">نوع الحمل</span>
-                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[1]?.Category || "---"}</span>
+                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[1]?.category || "---"}</span>
                     <span class="font-bold text-center text-md w-1/3">شاصي الحمل</span>
-                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[1]?.TrailerChassisNumber  || "---"}</span>
+                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[1]?.chassisNumber  || "---"}</span>
                   </div>`,
                   null,
                 ],
                 [
                   `<div class="flex justify-between w-full border-black">
                     <span class="font-bold text-center text-md w-1/3">عدد المحاور</span>
-                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[1]?.TrailerAxlesNumber  || "---"}</span>
+                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[1]?.axlesNumber  || "---"}</span>
                     <span class="font-bold text-center text-md w-1/3">الحمولة</span>
-                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[1]?.LoadWeight  || "---"}</span>
+                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[1]?.loadWeight  || "---"}</span>
                   </div>`,
                   null,
                 ],
@@ -817,18 +1043,18 @@ const CreateFormVersion = () => {
                 [
                   `<div class="flex justify-between w-full py-0.5 border-black">
                     <span class="font-bold text-center text-md w-1/3">نوع الحمل</span>
-                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[2]?.Category || "---"}</span>
+                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[2]?.category || "---"}</span>
                     <span class="font-bold text-center text-md w-1/3">شاصي الحمل</span>
-                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[2]?.TrailerChassisNumber  || "---"}</span>
+                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[2]?.chassisNumber  || "---"}</span>
                   </div>`,
                   null,
                 ],
                 [
                   `<div class="flex justify-between w-full border-black">
                     <span class="font-bold text-center text-md w-1/3">عدد المحاور</span>
-                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[2]?.TrailerAxlesNumber  || "---"}</span>
+                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[2]?.axlesNumber  || "---"}</span>
                     <span class="font-bold text-center text-md w-1/3">الحمولة</span>
-                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[2]?.LoadWeight  || "---"}</span>
+                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.TrailerData[2]?.loadWeight  || "---"}</span>
                   </div>`,
                   null,
                 ],
@@ -1001,9 +1227,9 @@ const CreateFormVersion = () => {
                   <h3 class="bg-gray-200 text-center font-bold py-0.5">بيانات المركبة</h3>
                   <div class="grid grid-cols-2 gap-2 text-md">
                     ${[
-                      ["اسم المالك", formData.CarOwnerName],
-                      ["نوع المركبة", formData.CarBrand],
-                      ["طراز المركبة", formData.CarName],
+                      ["اسم المالك", ownerFullName],
+                      ["نوع المركبة", formData.CarBrandId],
+                      ["طراز المركبة", formData.CarNameId],
                       ["لون المركبة", formData.CarColor],
                       ["رقم المركبة", formData.PlateNumber],
                       ["رقم الشاصي", formData.ChassisNumber],
@@ -1095,12 +1321,11 @@ const CreateFormVersion = () => {
       setReceiptIdImage(fullImage); // File
     };
   
-
   return (
     <Dialog open={true} onClose={() => {}} dir="rtl" className="relative z-50">
       <div className="fixed inset-0 bg-black/30 backdrop-blur-lg" />
       <div className="fixed inset-0 flex items-center justify-center p-6">
-        <Dialog.Panel className="w-full max-w-7xl bg-white rounded-2xl shadow-xl flex flex-col max-h-[90vh]">
+        <Dialog.Panel className="w-full max-w-8xl bg-white rounded-2xl shadow-xl flex flex-col max-h-[90vh]">
           <div className="p-6 border-b flex justify-between items-center">
             <Dialog.Title className="text-2xl font-bold text-gray-800">إنشاء استمارة جديدة</Dialog.Title>
             <button onClick={() => navigate('/forms')} className="p-2 hover:bg-gray-100 rounded-lg transition-all">
@@ -1140,10 +1365,38 @@ const CreateFormVersion = () => {
 
              {currentStep === 1 && (
               <div className="grid grid-cols-2 gap-4">
-                <InputField
-                  label="اسم المواطن"
+                 <InputField
+                  label="الإسم"
                   name="CarOwnerName"
                   value={formData.CarOwnerName}
+                  onChange={handleChange}
+                  required
+                />
+                <InputField
+                  label="اسم الأب"
+                  name="FatherName"
+                  value={formData.FatherName}
+                  onChange={handleChange}
+                  required
+                />
+                <InputField
+                  label="اسم الجد"
+                  name="GrandFatherName"
+                  value={formData.GrandFatherName}
+                  onChange={handleChange}
+                  required
+                />
+                <InputField
+                  label="اسم الأم"
+                  name="MotherName"
+                  value={formData.MotherName}
+                  onChange={handleChange}
+                  required
+                />
+                <InputField
+                  label="اللقب"
+                  name="Surename"
+                  value={formData.Surename}
                   onChange={handleChange}
                   required
                 />
@@ -1247,10 +1500,9 @@ const CreateFormVersion = () => {
                         setFormData((prev) => ({
                           ...prev,
                           CarBrandId: item.id,
-                          CarBrand: item.name, 
                         }));
                       }}
-                      placeholder={formData.CarBrand || "اختر نوع المركبة"}
+                      placeholder={formData.CarBrandId || "اختر نوع المركبة"}
                       disabled={true} // دائمًا مقفل
                     />
                   </div>
@@ -1265,10 +1517,9 @@ const CreateFormVersion = () => {
                         setFormData((prev) => ({
                           ...prev,
                           CarNameId: item.id,
-                          CarName: item.name,
                         }));
                       }}
-                      placeholder={formData.CarName || "اختر اسم المركبة"}
+                      placeholder={formData.CarNameId || "اختر اسم المركبة"}
                       disabled={true} // دائمًا مقفل
                     />
                   </div>
@@ -1350,59 +1601,206 @@ const CreateFormVersion = () => {
                     disabled={true} // دائمًا مقفل
                   />
 
-                  <div className="grid grid-cols-3 gap-4">
-                    <div>
-                      <label className="block text-right mb-2 font-medium text-gray-700">رمز المحافظة</label>
-                      <Select
-                        options={provinceOptions}
-                        placeholder={provinceOptions.find(option => option.value === provinceCode)?.label || "اختر رمز المحافظة"}
-                        value={provinceOptions.find(option => option.value === provinceCode)}
-                        onChange={(selectedOption) => {
-                          setProvinceCode(selectedOption.value);
-                          handlePlateNumberChange();
-                        }}
-                        styles={{
-                          control: (provided) => ({
-                            ...provided,
-                            border: '1px solid #e2e8f0',
-                            borderRadius: '0.5rem',
-                            padding: '0.25rem',
-                          }),
-                        }}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-right mb-2 font-medium text-gray-700">الحرف</label>
-                      <input
-                        type="text"
-                        className="w-full p-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder={plateLetter}
-                        value={plateLetter}
-                        onChange={(e) => {
-                          setPlateLetter(e.target.value.toUpperCase());
-                          handlePlateNumberChange();
-                        }}
-                        maxLength={1} 
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-right mb-2 font-medium text-gray-700">الرقم</label>
-                      <input
-                        type="text"
-                        className="w-full p-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder={plateNumber}
-                        value={plateNumber}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          if (value.length <= 5) {
-                            setPlateNumber(value);
-                            handlePlateNumberChange();
-                          }
-                        }}
-                        maxLength={5} 
-                      />
+                  <div className="p-4 border rounded-lg bg-white shadow-md">
+                  {/* Radio Button Selection */}
+                  <div className="mb-4">
+                    <label className="block text-right font-medium text-gray-700 mb-2">
+                      اختر نوع الرقم
+                    </label>
+                    <div className="flex gap-4">
+                      <label className="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          name="plateType"
+                          value="national"
+                          checked={plateType === "national"}
+                          onChange={() => setPlateType("national")}
+                        />
+                        رقم المشروع الوطني
+                      </label>
+                      <label className="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          name="plateType"
+                          value="temporary"
+                          checked={plateType === "temporary"}
+                          onChange={() => setPlateType("temporary")}
+                        />
+                        رقم فحص مؤقت (الجمارك)
+                      </label>
+                      <label className="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          name="plateType"
+                          value="old"
+                          checked={plateType === "old"}
+                          onChange={() => setPlateType("old")}
+                        />
+                        الرقم القديم
+                      </label>
+                      <label className="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          name="plateType"
+                          value="noPlate"
+                          checked={plateType === "noPlate"}
+                          onChange={() => {
+                            setPlateType("noPlate");
+                            setPlateNumber("");
+                            setPlateLetter("");
+                            setProvinceCode("");
+                          }}
+                        />
+                        مركبة بلا رقم
+                      </label>
                     </div>
                   </div>
+
+                  {/* Form Fields Based on Selection */}
+                  <div className="grid grid-cols-3 gap-4">
+                    {plateType === "national" && (
+                      <>
+                        <div>
+                          <label className="block text-right mb-2 font-medium text-gray-700">
+                            رمز المحافظة
+                          </label>
+                          <Select
+                            options={provinceOptions}
+                            placeholder="اختر رمز المحافظة"
+                            value={provinceOptions.find(
+                              (option) => option.value === provinceCode
+                            )}
+                            onChange={(selectedOption) => {
+                              setProvinceCode(selectedOption.value);
+                              handlePlateNumberChange();
+                            }}
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-right mb-2 font-medium text-gray-700">
+                            الحرف الانكليزي
+                          </label>
+                          <DropDownListTemplate
+                            endpoint="find-plate-character"
+                            queryParams={{ page: 0, pageSize: 1000 }}
+                            labelKey="allowedChar"
+                            valueKey="id"
+                            onSelect={(item) => {
+                              setPlateLetter(item.allowedChar);
+                              handlePlateNumberChange();
+                            }}
+                            placeholder="اختر الحرف"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-right mb-2 font-medium text-gray-700">
+                            الرقم
+                          </label>
+                          <input
+                            type="text"
+                            className="w-full p-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="أدخل الرقم"
+                            value={plateNumber}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              if (value.length <= 5) {
+                                setPlateNumber(value);
+                                handlePlateNumberChange();
+                              }
+                            }}
+                            maxLength={5}
+                          />
+                        </div>
+                      </>
+                    )}
+
+                    {plateType === "temporary" && (
+                      <>
+                        <div>
+                          <label className="block text-right mb-2 font-medium text-gray-700">
+                            الحرف العربي
+                          </label>
+                          <input
+                            type="text"
+                            className="w-full p-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="أدخل الحرف"
+                            value={plateLetter}
+                            onChange={(e) => {
+                              setPlateLetter(e.target.value.toUpperCase());
+                              handlePlateNumberChange();
+                            }}
+                            maxLength={1}
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-right mb-2 font-medium text-gray-700">
+                            الرقم
+                          </label>
+                          <input
+                            type="text"
+                            className="w-full p-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="أدخل الرقم"
+                            value={plateNumber}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              if (value.length <= 5) {
+                                setPlateNumber(value);
+                                handlePlateNumberChange();
+                              }
+                            }}
+                            maxLength={5}
+                          />
+                        </div>
+                      </>
+                    )}
+
+                    {plateType === "old" && (
+                      <>
+                        <div>
+                          <label className="block text-right mb-2 font-medium text-gray-700">
+                            الرقم
+                          </label>
+                          <input
+                            type="text"
+                            className="w-full p-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="أدخل الرقم"
+                            value={plateNumber}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              if (value.length <= 6) {
+                                setPlateNumber(value);
+                                handlePlateNumberChange();
+                              }
+                            }}
+                            maxLength={6}
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-right mb-2 font-medium text-gray-700">
+                            المحافظة
+                          </label>
+                          <Select
+                            options={provinceOptions2}
+                            placeholder="اختر المحافظة"
+                            value={provinceOptions2.find(
+                              (option) => option.value === provinceCode
+                            )}
+                            onChange={(selectedOption) => {
+                              setProvinceCode(selectedOption.value);
+                              handlePlateNumberChange();
+                            }}
+                          />
+                        </div>
+                      </>
+                    )}
+
+                    {plateType === "noPlate" && (
+                      <div className="col-span-3 text-center text-gray-500">
+                        هذه المركبة لا تحمل أي رقم تسجيل
+                      </div>
+                    )}
+                  </div>
+                </div>
 
                   <InputField
                     label="عدد الركاب"
@@ -1423,10 +1821,10 @@ const CreateFormVersion = () => {
             <input
               type="text"
               name={`TrailerChassisNumber-${index}`}
-              value={trailer.TrailerChassisNumber || ""}
+              value={trailer.chassisNumber || ""}
               onChange={(e) => {
                 const updatedTrailerData = [...formData.TrailerData];
-                updatedTrailerData[index].TrailerChassisNumber = e.target.value;
+                updatedTrailerData[index].chassisNumber = e.target.value; // Update the chassis number
                 setFormData((prev) => ({
                   ...prev,
                   TrailerData: updatedTrailerData,
@@ -1443,10 +1841,10 @@ const CreateFormVersion = () => {
             <input
               type="text"
               name={`TrailerAxlesNumber-${index}`}
-              value={trailer.TrailerAxlesNumber || ""}
+              value={trailer.axlesNumber || ""}
               onChange={(e) => {
                 const updatedTrailerData = [...formData.TrailerData];
-                updatedTrailerData[index].TrailerAxlesNumber = e.target.value;
+                updatedTrailerData[index].axlesNumber = e.target.value; // Update the axles number
                 setFormData((prev) => ({
                   ...prev,
                   TrailerData: updatedTrailerData,
@@ -1463,10 +1861,10 @@ const CreateFormVersion = () => {
             <input
               type="text"
               name={`LoadWeight-${index}`}
-              value={trailer.LoadWeight || ""}
+              value={trailer.loadWeight || ""}
               onChange={(e) => {
                 const updatedTrailerData = [...formData.TrailerData];
-                updatedTrailerData[index].LoadWeight = e.target.value;
+                updatedTrailerData[index].loadWeight = e.target.value; // Update the load weight
                 setFormData((prev) => ({
                   ...prev,
                   TrailerData: updatedTrailerData,
@@ -1483,10 +1881,10 @@ const CreateFormVersion = () => {
             <input
               type="text"
               name={`Category-${index}`}
-              value={trailer.Category || ""}
+              value={trailer.category || ""}
               onChange={(e) => {
                 const updatedTrailerData = [...formData.TrailerData];
-                updatedTrailerData[index].Category = e.target.value;
+                updatedTrailerData[index].category = e.target.value; // Update the category
                 setFormData((prev) => ({
                   ...prev,
                   TrailerData: updatedTrailerData,
@@ -1521,10 +1919,10 @@ const CreateFormVersion = () => {
       <button
         onClick={() => {
           const newTrailer = {
-            TrailerChassisNumber: "",
-            TrailerAxlesNumber: "",
-            LoadWeight: "",
-            Category: "",
+            chassisNumber: "",
+            axlesNumber: "",
+            loadWeight: "",
+            category: "",
           };
           setFormData((prev) => ({
             ...prev,
