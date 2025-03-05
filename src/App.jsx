@@ -56,6 +56,7 @@ const App = () => {
             <Route path="/add-color" element={<AddColorPopup/>} />
             <Route path="/add-agency" element={<AddAgencyPopup/>} />
             <Route path="/add-location" element={<AddLocationPopup/>} />
+            <Route path="/reports" element={<ReportStatus />} />
             <Route path="*" element={<Navigate to="/users" />} />
           </Routes>
         );
