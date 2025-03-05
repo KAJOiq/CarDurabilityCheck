@@ -18,6 +18,7 @@ const CameraComponent = ({ setPhoto }) => {
   const [manualFocusEnabled, setManualFocusEnabled] = useState(false);
   const [manualBrightnessEnabled, setManualBrightnessEnabled] = useState(false);
   const [successMessage, setSuccessMessage] = useState(""); 
+  const [croppedImage, setCroppedImage] = useState(null);
 
   const dataURLtoFile = (dataURL, filename) => {
     if (!dataURL || typeof dataURL !== 'string') {
@@ -192,6 +193,7 @@ const CameraComponent = ({ setPhoto }) => {
         croppedImage: croppedImageFile,
       });
 
+      setCroppedImage(croppedImageDataURL);
       setIsEditing(false);
       setSuccessMessage("تم حفظ الصورة بنجاح!"); 
       setTimeout(() => setSuccessMessage(""), 3000); 
@@ -353,6 +355,13 @@ const CameraComponent = ({ setPhoto }) => {
       {successMessage && (
         <div className="mt-4 text-green-600 font-semibold">
           {successMessage}
+        </div>
+      )}
+
+      {croppedImage && (
+        <div className="mt-4">
+          <h2 className="text-lg font-semibold">الصورة المقتطعة:</h2>
+          <img src={croppedImage} alt="Cropped" className="mt-2 border-2 border-gray-300 rounded-lg" />
         </div>
       )}
     </div>
