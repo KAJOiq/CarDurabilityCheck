@@ -17,6 +17,7 @@ const CameraComponent = ({ setPhoto }) => {
   const [focusRange, setFocusRange] = useState({ min: 0, max: 100 });
   const [manualFocusEnabled, setManualFocusEnabled] = useState(false);
   const [manualBrightnessEnabled, setManualBrightnessEnabled] = useState(false);
+  const [successMessage, setSuccessMessage] = useState(""); 
 
   const dataURLtoFile = (dataURL, filename) => {
     if (!dataURL || typeof dataURL !== 'string') {
@@ -192,6 +193,8 @@ const CameraComponent = ({ setPhoto }) => {
       });
 
       setIsEditing(false);
+      setSuccessMessage("تم حفظ الصورة بنجاح!"); 
+      setTimeout(() => setSuccessMessage(""), 3000); 
     } catch (error) {
       console.error('Error saving cropped photo:', error);
       alert('فشل في حفظ الصورة المقصوصة: ' + error.message);
@@ -330,6 +333,11 @@ const CameraComponent = ({ setPhoto }) => {
               guides={false}
               ref={cropperRef}
               viewMode={1}
+              movable={false} 
+              zoomable={false} 
+              rotatable={false} 
+              scalable={false} 
+              background={false}
             />
           </div>
           <button
@@ -339,6 +347,12 @@ const CameraComponent = ({ setPhoto }) => {
           >
             حفظ الصورة الملتقطة
           </button>
+        </div>
+      )}
+
+      {successMessage && (
+        <div className="mt-4 text-green-600 font-semibold">
+          {successMessage}
         </div>
       )}
     </div>
