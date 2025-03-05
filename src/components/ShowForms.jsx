@@ -6,12 +6,17 @@ import CarForm from "./CarForm";
 import TruckForm from "./TruckForm";
 import BikeForm from "./BikeForm";
 import EditFormModal from "./EditFormModal";
+import fetchData from "../utils/fetchData";
 
 const ShowForms = () => {
   const [isSearchModalForPrintOpen, setIsSearchModalForPrintOpen] = useState(false);
   const [isSearchModalForFormOpen, setIsSearchModalForFormOpen] = useState(false);
   const [searchResults, setSearchResults] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false); 
+  const [fieldToEdit, setFieldToEdit] = useState(null); // الحقل المراد تعديله
+
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [error, setError] = React.useState(null);
 
   const handleSearch = (formData) => {
     setSearchResults(formData);
@@ -20,6 +25,52 @@ const ShowForms = () => {
   const formatArabicDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('ar-EG');
   };
+
+  const handleEditField = (label) => {
+    if (label === "رقم الاستمارة" && label === "تاريخ الإصدار" && label === "المديرية" && label === "الموقع") return;
+    setFieldToEdit(label);
+    setIsEditModalOpen(true);
+  };
+
+  const searchTypes = {
+    form: {
+      label: "بحث عبر رقم الاستمارة",
+      placeholder: "أدخل رقم الاستمارة",
+      param: "applicationId"
+    },
+  };
+
+  const handleReloadData = async () => {
+    setIsLoading(true);
+    setError(null); 
+  
+    try {
+      const applicationId = searchResults?.applicationId;
+      if (!applicationId) return;
+  
+      const paramKey = searchTypes.form.param; 
+      const url = `user/application/print-application?${paramKey}=${encodeURIComponent(applicationId)}`;
+  
+      const result = await fetchData(url, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+  
+      if (result.isSuccess) {
+        setSearchResults(result.results); 
+      } else {
+        throw new Error("فشل في استرجاع البيانات");
+      }
+    } catch (error) {
+      setError(error.message || "فشل في إعادة تحميل البيانات، يرجى المحاولة مرة أخرى");
+      console.error('Error reloading data:', error);
+    } finally {
+      setIsLoading(false); // إيقاف حالة التحميل
+    }
+  };
+
 
   return (
     <div className="max-w-6xl mx-auto bg-white rounded-2xl shadow-2xl p-8 transition-all duration-300 hover:shadow-3xl">
@@ -75,43 +126,16 @@ const ShowForms = () => {
               {searchResults?.vehicleType === "سيارة" && (
                 <div className="flex items-center gap-4">
                   <CarForm searchResults={searchResults} />
-                  <button
-                    className="group bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 
-                              text-white px-5 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all
-                              flex items-center gap-3 transform hover:scale-105"
-                    onClick={() => setIsEditModalOpen(true)}
-                  >
-                    <PencilIcon className="h-6 w-6 text-white/90 group-hover:text-white" />
-                    <span className="text-md font-semibold">تعديل الاستمارة</span>
-                  </button>
                 </div>
               )}
               {searchResults?.vehicleType === "شاحنة" && (
                 <div className="flex items-center gap-4">
                   <TruckForm searchResults={searchResults} />
-                  <button
-                    className="group bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 
-                              text-white px-5 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all
-                              flex items-center gap-3 transform hover:scale-105"
-                    onClick={() => setIsEditModalOpen(true)}
-                  >
-                    <PencilIcon className="h-6 w-6 text-white/90 group-hover:text-white" />
-                    <span className="text-md font-semibold">تعديل الاستمارة</span>
-                  </button>
                 </div>
               )}
               {searchResults?.vehicleType === "دراجة" && (
                 <div className="flex items-center gap-4">
                   <BikeForm searchResults={searchResults} />
-                  <button
-                    className="group bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 
-                              text-white px-5 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all
-                              flex items-center gap-3 transform hover:scale-105"
-                    onClick={() => setIsEditModalOpen(true)}
-                  >
-                    <PencilIcon className="h-6 w-6 text-white/90 group-hover:text-white" />
-                    <span className="text-md font-semibold">تعديل الاستمارة</span>
-                  </button>
                 </div>
               )}
             </div>    
@@ -133,16 +157,23 @@ const ShowForms = () => {
                 "عدد السلندر": searchResults.engineCylindersNumber,
                 "عدد المحاور": searchResults.vehicleAxlesNumber,
                 "عدد الركاب": searchResults.seatsNumber,
-                //"الحمولة": searchResults.loadWeight,
                 "حكومي ؟": searchResults.governmental ? "نعم" : "لا",
-                //"الفئة": searchResults.category,
                 "تاريخ الإصدار": formatArabicDate(searchResults.issueDate),
                 "المديرية": searchResults.agency,
                 "الموقع": searchResults.location,
               }).map(([label, value]) => (
-                <div key={label} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                <div key={label} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 relative">
                   <span className="block text-sm font-medium text-gray-500 mb-1">{label}</span>
                   <span className="block text-md font-semibold text-gray-800">{value}</span>
+                    {label !== "رقم الاستمارة" && label !== "تاريخ الإصدار" && label !== "المديرية" && label !== "الموقع" && (
+                      <button
+                        onClick={() => handleEditField(label)}
+                        className="absolute top-2 left-2 p-1 rounded-full hover:bg-gray-100 text-gray-600 transition-colors"
+                        title="تعديل الحقل"
+                      >
+                        <PencilIcon className="h-4 w-4" />
+                      </button>
+                    )}
                 </div>
               ))}
             </div>
@@ -205,11 +236,13 @@ const ShowForms = () => {
           {/*Edit button*/}
           <EditFormModal
             isOpen={isEditModalOpen}
-            onClose={() => setIsEditModalOpen(false)}
-            formData={{
-              ...searchResults,
-              TrailerData: searchResults.trailers || [], 
+            onClose={(reload) => {
+              setIsEditModalOpen(false);
+              setFieldToEdit(null);
+              if (reload) handleReloadData();
             }}
+            formData={searchResults}
+            fieldToEdit={fieldToEdit}
           />
         </div>
       )}

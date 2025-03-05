@@ -259,11 +259,10 @@ const CreateForm = () => {
   ];
 
   const [plateType, setPlateType] = useState("national");
-  const [provinceCode, setProvinceCode] = useState(''); // رمز المحافظة
-  const [plateLetter, setPlateLetter] = useState(''); // الحرف
-  const [plateNumber, setPlateNumber] = useState(''); // الرقم
+  const [provinceCode, setProvinceCode] = useState(''); 
+  const [plateLetter, setPlateLetter] = useState(''); 
+  const [plateNumber, setPlateNumber] = useState(''); 
 
-  // Handle plate number change based on type
   const handlePlateNumberChange = () => {
     let fullPlateNumber = "";
 
@@ -291,7 +290,6 @@ const CreateForm = () => {
     handlePlateNumberChange();
   }, [provinceCode, plateLetter, plateNumber, plateType]);
 
-// Render plate number input fields based on type
   const renderPlateNumberFields = () => {
     switch (plateType) {
       case "national":
@@ -497,36 +495,36 @@ const CreateForm = () => {
 
       Object.entries(formData).forEach(([key, value]) => {
         if (key !== 'TrailerData' && !(key === 'ReceiptId' && (formData.Governmental || value === null))) {
-          formDataToSend.append(key, value);
+                formDataToSend.append(key, key === 'EngineCylindersNumber' && value === null ? "" : value);
+            }
+        });
+        
+        if (formData.TrailerData.length > 0) {
+            formDataToSend.append('TrailerData', JSON.stringify(formData.TrailerData));
         }
-        if (key === 'EngineCylindersNumber' && value === null) {
-          formDataToSend.append(key, "");
-        } else {
-          formDataToSend.append(key, value);
+
+        if (carCroppedImage) {
+          formDataToSend.append('ApplicationImages', carCroppedImage, 'carCroppedImage.png');
         }
-      });
-      if (carCroppedImage) {
-        formDataToSend.append('ApplicationImages', carCroppedImage, 'carCroppedImage.png');
-      }
-      if (carFullImage) {
-        formDataToSend.append('ApplicationImages', carFullImage, 'carFullImage.png');
-      }
-  
-      if (chassisCroppedImage) {
-        formDataToSend.append('ApplicationImages', chassisCroppedImage, 'chassisCroppedImage.png');
-      }
-      if (chassisFullImage) {
-        formDataToSend.append('ApplicationImages', chassisFullImage, 'chassisFullImage.png');
-      }
-  
-      if (receiptIdImage) {
-        formDataToSend.append('ApplicationImages', receiptIdImage, 'receiptIdImage.png');
-      }
-  
-      if (formData.VehicleType === 'شاحنة' && formData.TrailerData.length > 0) {
-        formDataToSend.append('TrailerData', JSON.stringify(formData.TrailerData));
-      }
-  
+        if (carFullImage) {
+          formDataToSend.append('ApplicationImages', carFullImage, 'carFullImage.png');
+        }
+    
+        if (chassisCroppedImage) {
+          formDataToSend.append('ApplicationImages', chassisCroppedImage, 'chassisCroppedImage.png');
+        }
+        if (chassisFullImage) {
+          formDataToSend.append('ApplicationImages', chassisFullImage, 'chassisFullImage.png');
+        }
+    
+        if (receiptIdImage) {
+          formDataToSend.append('ApplicationImages', receiptIdImage, 'receiptIdImage.png');
+        }
+    
+        if (formData.VehicleType === 'شاحنة' && formData.TrailerData.length > 0) {
+          formDataToSend.append('TrailerData', JSON.stringify(formData.TrailerData));
+        }
+      
       for (let [key, value] of formDataToSend.entries()) {
         console.log(key, value);
       }
@@ -1821,7 +1819,7 @@ const CreateForm = () => {
               value={trailer.TrailerAxlesNumber || ""}
               onChange={(e) => {
                 const updatedTrailerData = [...formData.TrailerData];
-                updatedTrailerData[index].TrailerAxlesNumber = e.target.value;
+                updatedTrailerData[index].TrailerAxlesNumber = Number(e.target.value); // Convert to number
                 setFormData((prev) => ({
                   ...prev,
                   TrailerData: updatedTrailerData,
@@ -1841,7 +1839,7 @@ const CreateForm = () => {
               value={trailer.LoadWeight || ""}
               onChange={(e) => {
                 const updatedTrailerData = [...formData.TrailerData];
-                updatedTrailerData[index].LoadWeight = e.target.value;
+                updatedTrailerData[index].LoadWeight = Number(e.target.value); // Convert to number
                 setFormData((prev) => ({
                   ...prev,
                   TrailerData: updatedTrailerData,
