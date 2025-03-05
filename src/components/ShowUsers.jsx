@@ -185,8 +185,6 @@ const ShowUsers = () => {
               <option value="user">user</option>
               <option value="reporter">reporter</option>
               <option value="checker">checker</option>
-              <option value="supervisor">supervisor</option>
-              <option value="superadmin">superadmin</option>
               <option value="printer">printer</option>
             </select>
           </div>
