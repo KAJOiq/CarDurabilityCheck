@@ -158,8 +158,8 @@ const CameraComponent = ({ setPhoto }) => {
 
     if (canvas && video) {
       const context = canvas.getContext("2d");
-      const width = 320;
-      const height = 240;
+      const width = video.videoWidth;
+      const height = video.videoHeight;
       canvas.width = width;
       canvas.height = height;
       context.drawImage(video, 0, 0, width, height);
@@ -250,13 +250,13 @@ const CameraComponent = ({ setPhoto }) => {
         ref={videoRef}
         autoPlay
         playsInline
-        className="border-2 border-gray-300 rounded-lg w-full max-w-md h-64 object-cover"
+        className="border-2 border-gray-300 rounded-lg w-full max-w-3xl h-96 object-cover"
       ></video>
 
       <canvas ref={canvasRef} style={{ display: "none" }}></canvas>
 
       {focusSupported && (
-        <div className="w-full max-w-md mt-4">
+        <div className="w-full max-w-3xl mt-4">
           <label className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-gray-700">التركيز اليدوي</span>
             <input
@@ -282,7 +282,7 @@ const CameraComponent = ({ setPhoto }) => {
       )}
 
       {brightnessSupported && (
-        <div className="w-full max-w-md mt-4">
+        <div className="w-full max-w-3xl mt-4">
           <label className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-gray-700">السطوع اليدوي</span>
             <input
@@ -321,8 +321,8 @@ const CameraComponent = ({ setPhoto }) => {
       </button>
 
       {isEditing && (
-        <div className="w-full max-w-md mt-4">
-          <div className="relative w-full h-64 bg-gray-200 rounded-lg overflow-hidden">
+        <div className="w-full max-w-3xl mt-4">
+          <div className="relative w-full h-[500px] bg-gray-200 rounded-lg overflow-hidden">
             <Cropper
               src={imageSrc}
               style={{ height: "100%", width: "100%" }}
