@@ -144,9 +144,10 @@ const CertificatesPage = () => {
             <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-right">
             {Object.entries({
                 "رقم استمارة المرور": formData.trafficPoliceApplicationId,
-                "رقم وصل القبض": formData.receiptId,
-                "اسم المواطن": formData.carOwnerName,
+                "رقم وصل القبض": formData.governmental ? `حكومي ` : formData.receiptId,
+                "اسم المواطن": formData.ownerFirstName + " " + formData.fatherName + " " + formData.grandFatherName + " " + formData.surename,
                 "نوع الاستمارة": formData.vehicleType,
+                "حكومي؟": formData.governmental ? "نعم" : "لا",
                 "الاستخدام": formData.usage,
                 "نوع المركبة": formData.carBrand,
                 "طراز المركبة": formData.carName,
