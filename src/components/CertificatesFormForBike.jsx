@@ -110,7 +110,7 @@ const CertificatesFormForBike = ({ formData, disabled}) => {
               <!-- العمود الثاني للقيم المتغيرة -->
               <div class="flex flex-col text-black-800 font-bold text-right">
                 <span>: ${formData.locationName}-${formData.applicationId}</span>
-                <span>: ${formData.receiptId}</span>
+                <span>: ${formData.governmental ? `حكومي ` : formData.receiptId}</span>
                 <span>: ${formData.agencyName}</span>
                 <span>: ${formatDate(formData.issueDate)}</span>
                 <span>: ${formatDate(formData.expiryDate)}</span>
