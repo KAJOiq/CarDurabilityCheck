@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import logo from "../assets/logo.jpg";
 import QRCode from "qrcode";
 
@@ -38,7 +38,7 @@ const CertificatesFormForTruck = ({ formData, disabled }) => {
     QRCode.toDataURL(qrData)
           .then((url) => setQrCodeDataUrl(url))
           .catch((error) => console.error("Error generating QR code:", error));
-      }, [searchResults]);
+      }, [formData]);
     
       const formatDate = (dateString) => {
         const date = new Date(dateString);
@@ -46,7 +46,7 @@ const CertificatesFormForTruck = ({ formData, disabled }) => {
       };
     
       const handlePrint = () => {
-        if (!searchResults) return;
+        if (!formData) return;
         const printFrame = printFrameRef.current;
         if (!printFrame) return;
         
@@ -263,7 +263,7 @@ const CertificatesFormForTruck = ({ formData, disabled }) => {
       <h3 class="bg-gray-200 text-center font-bold">بيانات الاستمارة</h3>
       <div class="text-sm">
         ${[
-          ["اسم المواطن", formData.carOwnerName],
+          ["اسم المواطن", formData.ownerFirstName + " " + formData.fatherName + " " + formData.grandFatherName + " " + formData.surename],
           ["رقم الملصق", formData.stickerNumber],
         ]
           .map(

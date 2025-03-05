@@ -119,7 +119,7 @@ const ShowForms = () => {
               {Object.entries({
                 "رقم الاستمارة": searchResults.applicationId,
                 "رقم استمارة المرور": searchResults.trafficPoliceApplicationId,
-                "رقم الوصل": searchResults.receiptId || "---",
+                "رقم وصل القبض": searchResults.receiptId || "---",
                 "اسم المواطن": searchResults.ownerFirstName+" "+searchResults.fatherName+" "+searchResults.grandFatherName+" "+searchResults.surename,
                 "نوع الاستمارة": searchResults.vehicleType,
                 "نوع التسجيل": searchResults.usage,
@@ -134,7 +134,7 @@ const ShowForms = () => {
                 "عدد المحاور": searchResults.vehicleAxlesNumber,
                 "عدد الركاب": searchResults.seatsNumber,
                 //"الحمولة": searchResults.loadWeight,
-                "الحكومية": searchResults.governmental ? "نعم" : "لا",
+                "حكومي ؟": searchResults.governmental ? "نعم" : "لا",
                 //"الفئة": searchResults.category,
                 "تاريخ الإصدار": formatArabicDate(searchResults.issueDate),
                 "المديرية": searchResults.agency,
