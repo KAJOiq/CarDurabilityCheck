@@ -13,7 +13,7 @@ import {
 import InputField from "./InputField";
 import CheckboxField from "./CheckboxField";
 import CameraComponent from "./CameraComponent";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import DropDownListTemplate from "./DropDownListTemplate";
 import fetchData from "../utils/fetchData";
 import Select from 'react-select';
@@ -154,10 +154,13 @@ const ReviewData = ({ formData }) => {
 
 const CreateForm = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formErrors, setFormErrors] = useState([]);
   const [mergedData, setMergedData] = useState(null); 
+
+  const chassisNumber = location.state?.chassisNumber;
 
   // States for photos
   const [carFullImage, setCarFullImage] = useState(null);
@@ -178,7 +181,7 @@ const CreateForm = () => {
     CarNameId: "",
     CarModel: "",
     CarColorId: "",
-    ChassisNumber: "",
+    ChassisNumber: chassisNumber,
     Usage: "",
     TrafficPoliceApplicationId: "",
     ReceiptId: "",
@@ -1508,12 +1511,13 @@ const CreateForm = () => {
                 />
 
                 <InputField
-                  label="رقم الشاصي"
-                  name="ChassisNumber"
-                  value={formData.ChassisNumber}
-                  onChange={handleChange}
-                  required
+                    label="رقم الشاصي"
+                    name="ChassisNumber"
+                    value={formData.ChassisNumber || location.state?.chassisNumber || "لم يتم إدخال رقم شاصي"}
+                    onChange={handleChange}
+                    disabled={true} // دائمًا مقفل
                 />
+
                 <div>
                 <label className="block text-right mb-2 font-medium text-gray-700">الموديل</label>
                 <Select
