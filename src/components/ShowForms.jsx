@@ -119,7 +119,7 @@ const ShowForms = () => {
               {Object.entries({
                 "رقم الاستمارة": searchResults.applicationId,
                 "رقم استمارة المرور": searchResults.trafficPoliceApplicationId,
-                "رقم وصل القبض": searchResults.receiptId || "---",
+                "رقم وصل القبض": searchResults.governmental ? `حكومي ` : searchResults.receiptId,
                 "اسم المواطن": searchResults.ownerFirstName+" "+searchResults.fatherName+" "+searchResults.grandFatherName+" "+searchResults.surename,
                 "نوع الاستمارة": searchResults.vehicleType,
                 "نوع التسجيل": searchResults.usage,
@@ -208,7 +208,7 @@ const ShowForms = () => {
             onClose={() => setIsEditModalOpen(false)}
             formData={{
               ...searchResults,
-              TrailerData: searchResults.trailers || [], // تأكد من تمرير بيانات المقطورات
+              TrailerData: searchResults.trailers || [], 
             }}
           />
         </div>

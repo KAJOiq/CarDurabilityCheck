@@ -652,7 +652,7 @@ const CreateForm = () => {
                      </div>
                      <div class="flex flex-col text-black-800 font-bold text-right">
                        <span>: ${localStorage.getItem("location")}-${data.applicationId}</span>
-                       <span>: ${formData.ReceiptId}</span>
+                       <span>: ${formData.Governmental ? `حكومي ` : formData.ReceiptId}</span>
                        <span>: ${localStorage.getItem("agency")}</span>
                        <span>: ${formatDate(data.issueDate)}</span>
                      </div>
@@ -726,7 +726,7 @@ const CreateForm = () => {
                    </span> 
                  </div>
                  <div class="border border-black  rounded-lg p-2 min-h-40" >
-                   <span class="font-bold text-md text-center w-1/3">الفاحص :
+                   <span class="font-bold text-md text-center w-1/3">ضابط الكشف الفني :
                  </span> 
                  </div>
                  </div>
@@ -840,7 +840,7 @@ const CreateForm = () => {
             <!-- العمود الثاني للقيم المتغيرة -->
             <div class="flex flex-col text-black-800 font-bold text-right">
               <span>: ${localStorage.getItem("location")}-${data.applicationId}</span>
-              <span>: ${formData.ReceiptId}</span>
+              <span>: ${formData.Governmental ? `حكومي ` : formData.ReceiptId}</span>
               <span>: ${localStorage.getItem("agency")}</span>
               <span>: ${formatDate(data.issueDate)}</span>
            
@@ -1125,7 +1125,7 @@ const CreateForm = () => {
                     </div>
                     <div class="flex flex-col text-black-800 font-bold text-right">
                       <span>: ${localStorage.getItem("location")}-${data.applicationId}</span>
-                      <span>: ${formData.ReceiptId}</span>
+                      <span>: ${formData.Governmental ? `حكومي ` : formData.ReceiptId}</span>
                       <span>: ${localStorage.getItem("agecny")}</span>
                       <span>: ${formatDate(data.issueDate)}</span>
                     </div>
@@ -1199,7 +1199,7 @@ const CreateForm = () => {
                   </span> 
                 </div>
                 <div class="border border-black  rounded-lg p-2 min-h-40" >
-                  <span class="font-bold text-md text-center w-1/3">الفاحص :
+                  <span class="font-bold text-md text-center w-1/3">ضابط الكشف الفني :
                 </span> 
                 </div>
                 </div>

@@ -105,7 +105,7 @@ const CarForm = ({ searchResults }) => {
             </div>
             <div class="flex flex-col text-black-800 font-bold text-right">
               <span>: ${searchResults.location}-${searchResults.applicationId}</span>
-              <span>: ${searchResults.receiptId}</span>
+              <span>: ${searchResults.governmental ? `حكومي ` : searchResults.receiptId}</span>
               <span>: ${searchResults.agency}</span>
               <span>: ${formatDate(searchResults.issueDate)}</span>
             </div>
@@ -166,7 +166,7 @@ const CarForm = ({ searchResults }) => {
           </span> 
         </div>
         <div class="border border-black  rounded-lg p-2 min-h-40" >
-          <span class="font-bold text-md text-center w-1/3">الفاحص :
+          <span class="font-bold text-md text-center w-1/3">ضابط الكشف الفني :
         </span> 
         </div>
         </div>
