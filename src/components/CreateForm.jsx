@@ -434,7 +434,9 @@ const CreateForm = () => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value
+      [name]: type === "checkbox" ? checked : value === null ? "" :value,
+      ...(name === "EngineType" && value == "كهربائي" && { EngineCylindersNumber: "" })
+
     }));
   
     if (name === "VehicleType" && value === "شاحنة") {
@@ -449,7 +451,7 @@ const CreateForm = () => {
       }));
     }
   };
-
+  
   const validateStep = () => {
     const currentFields = steps[currentStep - 1].fields;
     const errors = [];
@@ -490,6 +492,11 @@ const CreateForm = () => {
 
       Object.entries(formData).forEach(([key, value]) => {
         if (key !== 'TrailerData' && !(key === 'ReceiptId' && (formData.Governmental || value === null))) {
+          formDataToSend.append(key, value);
+        }
+        if (key === 'EngineCylindersNumber' && value === null) {
+          formDataToSend.append(key, "");
+        } else {
           formDataToSend.append(key, value);
         }
       });
@@ -1254,18 +1261,24 @@ const CreateForm = () => {
     { value: "انشائية", label: "إنشائية" },
     { value: "تخصصية", label: "تخصصية" },
     { value: "فحص مؤقت", label: "فحص مؤقت" },
+    { value: "دراجة", label: "دراجة" },
+  ];
+
+  const vehicleTypeOptions = [
+    { value: "سيارة", label: "سيارة"},
+    { value: "شاحنة", label: "شاحنة"},
+    { value: "دراجة", label: "دراجة"},
   ];
 
   return (
     <Dialog open={true} onClose={() => {}} dir="rtl" className="relative z-50">
       <div className="fixed inset-0 bg-black/30 backdrop-blur-lg" />
-      
       <div className="fixed inset-0 flex items-center justify-center p-6">
-        <Dialog.Panel className="w-full max-w-8xl bg-white rounded-2xl shadow-xl flex flex-col max-h-[90vh]">
-          <div className="p-6 border-b flex justify-between items-center">
-            <Dialog.Title className="text-2xl font-bold text-gray-800">إنشاء استمارة جديدة</Dialog.Title>
+        <Dialog.Panel className="w-full max-w-8xl bg-white rounded-2xl shadow-xl flex flex-col max-h-[90vh] overflow-y-auto">
+          <div className="p-4 border-b flex justify-between items-center">
+            <Dialog.Title className="text-xl font-bold text-gray-800">إنشاء استمارة جديدة</Dialog.Title>
             <button onClick={() => navigate('/forms')} className="p-2 hover:bg-gray-100 rounded-lg transition-all">
-              <XMarkIcon className="w-7 h-7 text-gray-600" />
+              <XMarkIcon className="w-6 h-6 text-gray-600" />
             </button>
           </div>
 
@@ -1337,19 +1350,30 @@ const CreateForm = () => {
                   required
                 />
                 <div>
-                  <label className="block text-right mb-2 font-medium text-gray-700">نوع الاستمارة</label>
-                  <select
-                    name="VehicleType"
-                    value={formData.VehicleType}
-                    onChange={handleChange}
-                    className="w-full p-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                  >
-                    <option value="">اختر النوع</option>
-                    <option value="سيارة">سيارة</option>
-                    <option value="شاحنة">شاحنة</option>
-                    <option value="دراجة">دراجة</option>
-                  </select>
+                <label className="block text-right mb-2 font-medium text-gray-700">نوع الاستمارة</label>
+                <Select
+                  options={vehicleTypeOptions}
+                  placeholder="اختر نوع الاستمارة"
+                  value={vehicleTypeOptions.find(option => option.value === formData.VehicleType)}
+                  onChange={(selectedOption) => {
+                    if (selectedOption) {
+                      handleChange({
+                        target: {
+                          name: 'VehicleType',
+                          value: selectedOption.value,
+                        },
+                      });
+                    }
+                  }}
+                  styles={{
+                    control: (provided) => ({
+                      ...provided,
+                      border: '1px solid #e2e8f0',
+                      borderRadius: '0.5rem',
+                      padding: '0.25rem',
+                    }),
+                  }}
+                />
                 </div>
                 <InputField 
                   label="رقم استمارة المرور"
@@ -1494,13 +1518,16 @@ const CreateForm = () => {
                   />
                 </div>
 
+                {formData.EngineType !== 'كهربائي' && 
                 <InputField
                   label="عدد السلندر"
                   name="EngineCylindersNumber"
                   value={formData.EngineCylindersNumber}
                   onChange={handleChange}
-                  disabled={formData.EngineType === 'كهربائي'} 
-                />
+                  required
+                  // disabled={formData.EngineType == 'كهربائي'}
+                  />
+                } 
 
                 <InputField
                   label="عدد المحاور"

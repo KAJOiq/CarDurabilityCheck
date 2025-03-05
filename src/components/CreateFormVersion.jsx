@@ -517,7 +517,9 @@ const CreateFormVersion = () => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value
+      [name]: type === "checkbox" ? checked : value === null ? "" :value,
+      ...(name === "EngineType" && value == "كهربائي" && { EngineCylindersNumber: "" })
+
     }));
   
     if (name === "VehicleType" && value === "شاحنة") {
@@ -542,7 +544,7 @@ const CreateFormVersion = () => {
 
       // إضافة البيانات العامة
       formDataToSend.append("TrafficPoliceApplicationId", formData.TrafficPoliceApplicationId);
-      formDataToSend.append("ReceiptId", formData.ReceiptId);
+      formDataToSend.append("ReceiptId", formData.ReceiptId || "");
       formDataToSend.append("CarOwnerName", formData.CarOwnerName);
       formDataToSend.append("FatherName", formData.FatherName);
       formDataToSend.append("MotherName", formData.MotherName);
@@ -557,13 +559,13 @@ const CreateFormVersion = () => {
       if (chassisCroppedImage) formDataToSend.append("ApplicationImages", chassisCroppedImage, "chassisCroppedImage.png");
       if (chassisFullImage) formDataToSend.append("ApplicationImages", chassisFullImage, "chassisFullImage.png");
       if (receiptIdImage) formDataToSend.append("ApplicationImages", receiptIdImage, "receiptIdImage.png");
-  
+
       // إضافة بيانات المركبة إذا تم فتح القفل
       if (!lockedFields) {
         formDataToSend.append("PlateNumber", formData.PlateNumber);
         formDataToSend.append("CarColorId", formData.CarColorId);
         formDataToSend.append("VehicleAxlesNumber", formData.VehicleAxlesNumber);
-        formDataToSend.append("EngineCylindersNumber", formData.EngineCylindersNumber);
+        formDataToSend.append("EngineCylindersNumber", formData.EngineCylindersNumber || "");
 
         if (formData.VehicleType === "شاحنة") {
           // Transform TrailerData to the desired format
@@ -651,12 +653,19 @@ const CreateFormVersion = () => {
       { value: "انشائية", label: "إنشائية" },
       { value: "تخصصية", label: "تخصصية" },
       { value: "فحص مؤقت", label: "فحص مؤقت" },
+      { value: "دراجة", label: "دراجة" },
     ];
     
+    const vehicleTypeOptions = [
+      { value: "سيارة", label: "سيارة"},
+      { value: "شاحنة", label: "شاحنة"},
+      { value: "دراجة", label: "دراجة"},
+    ];
+
     const handlePrintForCar = (data) => {
       if (!data) return;
       const imgStaticBase64 = imgStaticCar;
-  
+
       const qrData = JSON.stringify({
         ADDID: data.applicationId,
         ISSD: data.issueDate,
@@ -683,108 +692,108 @@ const CreateFormVersion = () => {
         SN: data.stickerNumber,
         SP: data.stickerProvider,
       });
-  
+
       QRCode.toDataURL(qrData)
         .then((qrCodeDataUrl) => {
           const printFrame = document.createElement('iframe');
           printFrame.style.display = 'none';
           document.body.appendChild(printFrame);
-  
+
           const doc = printFrame.contentDocument || printFrame.contentWindow.document;
           doc.open();
           doc.write(`
-           <!DOCTYPE html>
-               <html lang="ar" dir="rtl">
-               <head>
-                 <meta charset="UTF-8">
-                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                 <title>شهادة فحص المركبة</title>
-                 <link href="/tailwind.css" rel="stylesheet">
-                 <style>
-                   @media print {
-                     @page {
-                       size: A4 portrait;
-                     }
-                     body {
-                       font-family: Arial, sans-serif;
-                       direction: rtl;
-                     }
-                   }
-                 </style>
-               </head>
-               <body class="bg-white w-[210mm] h-[148mm] p-6 text-right">
-                 <!-- Header -->
-                 <div class="flex items-center justify-between border-b-2 border-black pb-2 w-full" dir="rtl">
-                   <div class="flex flex-col items-center w-1/4 text-sm space-y-2">
-                     <h1 class="text-2xl font-bold text-black-800">جمهورية العراق</h1>
-                     <h1 class="text-xl font-bold text-black-800">وزارة الداخلية</h1>
-                   </div>
-           
-                   <!-- Center QR and Logo -->
-                   <div class="relative flex items-center justify-center w-1/2">
-                     <div class="w-24 mb-2 absolute right-0 mr-4">
-                       <img src="${qrCodeDataUrl}" alt="QR Code" class="w-auto h-auto" />
-                     </div>
-                     <div class="mb-2 mx-auto absolute left-6 ml-10">
-                       <img src="${logo}" alt="Logo" class="w-24 h-auto" />
-                     </div>
-                   </div>
-           
-                   <!-- Right-side Details -->
-                   <div class="flex flex-col items-start w-2/5 text-sm text-right font-semibold">
-                     <div class="grid grid-cols-2 w-full">
-                       <div class="flex flex-col text-black-800">
-                         <span>رقم استمارة الفحص</span> 
-                         <span>رقم وصل القبض</span>
-                         <span>اسم الموقع</span>
-                         <span>تاريخ الاصدار</span>
-                       </div>
-                       <div class="flex flex-col text-black-800 font-bold text-right">
-                         <span>: ${localStorage.getItem("location")}-${data.applicationId}</span>
-                         <span>: ${formData.Governmental ? `حكومي ` : formData.ReceiptId}</span>
-                         <span>: ${localStorage.getItem("agency")}</span>
-                         <span>: ${formatDate(data.issueDate)}</span>
-                       </div>
-                     </div>
-                   </div>
-                 </div>
-           
-                 <!-- Vehicle Data Section -->
-                 <div class="border border-black rounded-lg p-1 mt-1">
-                   <h3 class="bg-gray-200 text-center font-bold py-0.5">بيانات المركبة</h3>
-                   <div class="grid grid-cols-2 gap-2 text-md">
-                     ${[
-                       ["اسم المالك", ownerFullName],
-                       ["نوع المركبة", formData.CarBrandId],
-                       ["طراز المركبة", formData.CarNameId],
-                       ["لون المركبة", formData.CarColor],
-                       ["رقم المركبة", formData.PlateNumber],
-                       ["رقم الشاصي", formData.ChassisNumber],
-                       ["الموديل", formData.CarModel],
-                       ["نوع المحرك", formData.EngineType],
-                       ["عدد السلندر", formData.EngineCylindersNumber],
-                       ["عدد المحاور", formData.VehicleAxlesNumber],
-                       ["عدد الركاب", formData.SeatsNumber],
-                     ]
-                       .map(
-                         ([label, value]) =>
-                           `
-                           <div class="flex items-center py-0.5 border-black">
-                             <span class="font-bold text-md w-1/3">${label} :</span>
-                             <span class="font-bold text-md w-2/3 px-1 border border-black rounded">${value || "---"}</span>
-                           </div>
-                           `
-                       )
-                       .join("")}
-                       
-                   </div>
-                 </div>
-                 <div class="border border-black grid grid-cols-2 rounded-lg p-2" >
-                 <!-- Vehicle Image -->
-                   <div class="w-full max-w-100 h-auto p-0 dir="ltr"">
+            <!DOCTYPE html>
+                <html lang="ar" dir="rtl">
+                <head>
+                  <meta charset="UTF-8">
+                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                  <title>شهادة فحص المركبة</title>
+                  <link href="/tailwind.css" rel="stylesheet">
+                  <style>
+                    @media print {
+                      @page {
+                        size: A4 portrait;
+                      }
+                      body {
+                        font-family: Arial, sans-serif;
+                        direction: rtl;
+                      }
+                    }
+                  </style>
+                </head>
+                <body class="bg-white w-[210mm] h-[148mm] p-6 text-right">
+                  <!-- Header -->
+                  <div class="flex items-center justify-between border-b-2 border-black pb-2 w-full" dir="rtl">
+                    <div class="flex flex-col items-center w-1/4 text-sm space-y-2">
+                      <h1 class="text-2xl font-bold text-black-800">جمهورية العراق</h1>
+                      <h1 class="text-xl font-bold text-black-800">وزارة الداخلية</h1>
+                    </div>
+            
+                    <!-- Center QR and Logo -->
+                    <div class="relative flex items-center justify-center w-1/2">
+                      <div class="w-24 mb-2 absolute right-0 mr-4">
+                        <img src="${qrCodeDataUrl}" alt="QR Code" class="w-auto h-auto" />
+                      </div>
+                      <div class="mb-2 mx-auto absolute left-6 ml-10">
+                        <img src="${logo}" alt="Logo" class="w-24 h-auto" />
+                      </div>
+                    </div>
+            
+                    <!-- Right-side Details -->
+                    <div class="flex flex-col items-start w-2/5 text-sm text-right font-semibold">
+                      <div class="grid grid-cols-2 w-full">
+                        <div class="flex flex-col text-black-800">
+                          <span>رقم استمارة الفحص</span> 
+                          <span>رقم وصل القبض</span>
+                          <span>اسم الموقع</span>
+                          <span>تاريخ الاصدار</span>
+                        </div>
+                        <div class="flex flex-col text-black-800 font-bold text-right">
+                          <span>: ${localStorage.getItem("location")}-${data.applicationId}</span>
+                          <span>: ${formData.Governmental ? `حكومي ` : formData.ReceiptId}</span>
+                          <span>: ${localStorage.getItem("agency")}</span>
+                          <span>: ${formatDate(data.issueDate)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+            
+                  <!-- Vehicle Data Section -->
+                  <div class="border border-black rounded-lg p-1 mt-1">
+                    <h3 class="bg-gray-200 text-center font-bold py-0.5">بيانات المركبة</h3>
+                    <div class="grid grid-cols-2 gap-2 text-md">
+                      ${[
+                        ["اسم المالك", ownerFullName],
+                        ["نوع المركبة", formData.CarBrandId],
+                        ["طراز المركبة", formData.CarNameId],
+                        ["لون المركبة", formData.CarColor],
+                        ["رقم المركبة", formData.PlateNumber],
+                        ["رقم الشاصي", formData.ChassisNumber],
+                        ["الموديل", formData.CarModel],
+                        ["نوع المحرك", formData.EngineType],
+                        ["عدد السلندر", formData.EngineCylindersNumber],
+                        ["عدد المحاور", formData.VehicleAxlesNumber],
+                        ["عدد الركاب", formData.SeatsNumber],
+                      ]
+                        .map(
+                          ([label, value]) =>
+                            `
+                            <div class="flex items-center py-0.5 border-black">
+                              <span class="font-bold text-md w-1/3">${label} :</span>
+                              <span class="font-bold text-md w-2/3 px-1 border border-black rounded">${value || "---"}</span>
+                            </div>
+                            `
+                        )
+                        .join("")}
+                        
+                    </div>
+                  </div>
+                  <div class="border border-black grid grid-cols-2 rounded-lg p-2" >
+                  <!-- Vehicle Image -->
+                    <div class="w-full max-w-100 h-auto p-0 dir="ltr"">
                         <img src="${imgStaticBase64}" class="object-contain w-full h-full rounded-md p-0.5 border border-white" />
-                     </div>
-  
+                      </div>
+
                     <div class="border border-white grid grid-rows-2 rounded-lg p-2">
                       <div class="w-full max-w-100 h-auto p-0" dir="rtl">
                         ${carCroppedImage ? (
@@ -809,22 +818,22 @@ const CreateFormVersion = () => {
                         )}
                       </div>
                     </div>
-  
-                   <div class="border border-black  rounded-lg p-2 min-h-40" >
-                     <span class="font-bold text-md text-center w-1/3">الفاحص : 
-                     </span> 
-                   </div>
-                   <div class="border border-black  rounded-lg p-2 min-h-40" >
-                     <span class="font-bold text-md text-center w-1/3">ضابط الكشف الفني :
-                   </span> 
-                   </div>
-                   </div>
+
+                    <div class="border border-black  rounded-lg p-2 min-h-40" >
+                      <span class="font-bold text-md text-center w-1/3">الفاحص : 
+                      </span> 
+                    </div>
+                    <div class="border border-black  rounded-lg p-2 min-h-40" >
+                      <span class="font-bold text-md text-center w-1/3">ضابط الكشف الفني :
+                    </span> 
+                    </div>
+                    </div>
                   </div> 
-               </body>
-               </html>
+                </body>
+                </html>
           `);
           doc.close();
-  
+
           setTimeout(() => {
             printFrame.contentWindow.print();
             document.body.removeChild(printFrame);
@@ -832,11 +841,11 @@ const CreateFormVersion = () => {
         })
         .catch((error) => console.error("Error generating QR code:", error));
     };
-  
+
     const handlePrintForTruck = (data) => {
       if (!data) return;
       const imgStaticBase64 = imgStaticTruck;
-  
+
       const qrData = JSON.stringify({
         ADDID: data.applicationId,
         ISSD: data.issueDate,
@@ -863,13 +872,13 @@ const CreateFormVersion = () => {
         SN: data.stickerNumber,
         SP: data.stickerProvider,
       });
-  
+
       QRCode.toDataURL(qrData)
         .then((qrCodeDataUrl) => {
           const printFrame = document.createElement('iframe');
           printFrame.style.display = 'none';
           document.body.appendChild(printFrame);
-  
+
           const doc = printFrame.contentDocument || printFrame.contentWindow.document;
           doc.open();
           doc.write(`
@@ -881,7 +890,7 @@ const CreateFormVersion = () => {
           <title>شهادة فحص المركبة</title>
           <link href="/tailwind.css" rel="stylesheet">
           <style>
-             @media print {
+              @media print {
             @page {
               size: A4 portrait;
             }
@@ -932,13 +941,13 @@ const CreateFormVersion = () => {
                 <span>: ${formData.Governmental ? `حكومي ` : formData.ReceiptId}</span>
                 <span>: ${localStorage.getItem("agency")}</span>
                 <span>: ${formatDate(data.issueDate)}</span>
-             
+              
               </div>
             </div>
           </div>
         
         </div>
-             <!-- Main Content with Grid -->
+              <!-- Main Content with Grid -->
   <div class="grid grid-cols-3 gap-2 mt-2">
     <!-- Vehicle Data (Left) -->
     <div class="border border-black rounded-lg p-1 relative col-span-2" dir="rtl">
@@ -954,7 +963,7 @@ const CreateFormVersion = () => {
             </div>`,
             null,
           ],
-  
+
           [
             `<div class="flex justify-between w-full py-0.5 border-black">
               <span class="font-bold text-center text-md w-1/3">لون المركبة</span>
@@ -978,9 +987,9 @@ const CreateFormVersion = () => {
           ["اسم المالك", ownerFullName],
           ["رقم المركبة", formData.PlateNumber],
           ["رقم الشاصي", formData.ChassisNumber],
-  
-           // بيانات الملحق الأول
-           [
+
+            // بيانات الملحق الأول
+            [
             `<div class="border-black">
               <h3 class="bg-gray-200 text-center font-semibold text-sm">بيانات الملحق الأول</h3>
               ${[
@@ -1006,7 +1015,7 @@ const CreateFormVersion = () => {
             </div>`,
             null
           ],
-  
+
           // بيانات الملحق الثاني
           [
             `<div class="border-black">
@@ -1034,7 +1043,7 @@ const CreateFormVersion = () => {
             </div>`,
             null
           ],
-  
+
           // بيانات الملحق الثالث
           [
             `<div class="border-black">
@@ -1075,11 +1084,11 @@ const CreateFormVersion = () => {
           )
           .join("")}
       </div>
-  
+
     </div>
             <!-- Vehicle Image -->
               
-               <div class="border border-white grid grid-rows-2 rounded-lg p-2">
+                <div class="border border-white grid grid-rows-2 rounded-lg p-2">
                       <div class="w-full max-w-100 h-auto p-0" dir="rtl">
                         ${carCroppedImage ? (
                           `<img
@@ -1107,8 +1116,8 @@ const CreateFormVersion = () => {
       <div class="border border-black rounded-lg p-2 w-full mt-4 mx-auto">
       <div class="h-auto p-0 w-full">
           <img src="${imgStaticBase64}" 
-               class="w-full h-auto object-scale-down mx-auto" 
-               style="max-width: 90% !important;
+                class="w-full h-auto object-scale-down mx-auto" 
+                style="max-width: 90% !important;
                       display: block !important;
                       margin: 0 auto !important;" />
       </div>
@@ -1117,7 +1126,7 @@ const CreateFormVersion = () => {
           </html>
           `);
           doc.close();
-  
+
           setTimeout(() => {
             printFrame.contentWindow.print();
             document.body.removeChild(printFrame);
@@ -1125,11 +1134,11 @@ const CreateFormVersion = () => {
         })
         .catch((error) => console.error("Error generating QR code:", error));
     };
-  
+
     const handlePrintForBike = (data) => {
       if (!data) return;
       const imgStaticBase64 = imgStaticBike;
-  
+
       const qrData = JSON.stringify({
         ADDID: data.applicationId,
         ISSD: data.issueDate,
@@ -1156,13 +1165,13 @@ const CreateFormVersion = () => {
         SN: data.stickerNumber,
         SP: data.stickerProvider,
       });
-  
+
       QRCode.toDataURL(qrData)
         .then((qrCodeDataUrl) => {
           const printFrame = document.createElement('iframe');
           printFrame.style.display = 'none';
           document.body.appendChild(printFrame);
-  
+
           const doc = printFrame.contentDocument || printFrame.contentWindow.document;
           doc.open();
           doc.write(
@@ -1255,10 +1264,10 @@ const CreateFormVersion = () => {
                 <div class="border border-black grid grid-cols-2 rounded-lg p-2" >
                 <!-- Vehicle Image -->
                   <div class="w-full max-w-100 h-auto p-0 dir="ltr"">
-                       <img src="${imgStaticBase64}" class="object-contain w-full h-full rounded-md p-0.5 border border-white" />
+                        <img src="${imgStaticBase64}" class="object-contain w-full h-full rounded-md p-0.5 border border-white" />
                     </div>
-                   <div class="border border-white grid grid-rows-2 rounded-lg p-2" >
-                                     <div class="border border-white grid grid-rows-2 rounded-lg p-2">
+                    <div class="border border-white grid grid-rows-2 rounded-lg p-2" >
+                                      <div class="border border-white grid grid-rows-2 rounded-lg p-2">
                       <div class="w-full max-w-100 h-auto p-0" dir="rtl">
                         ${carCroppedImage ? (
                           `<img
@@ -1306,7 +1315,7 @@ const CreateFormVersion = () => {
             })
             .catch((error) => console.error("Error generating QR code:", error));
     };    
-  
+
     const handleCarImage = ({ fullImage, croppedImage }) => {
       setCarCroppedImage(croppedImage); // File
       setCarFullImage(fullImage); // File
@@ -1325,11 +1334,11 @@ const CreateFormVersion = () => {
     <Dialog open={true} onClose={() => {}} dir="rtl" className="relative z-50">
       <div className="fixed inset-0 bg-black/30 backdrop-blur-lg" />
       <div className="fixed inset-0 flex items-center justify-center p-6">
-        <Dialog.Panel className="w-full max-w-8xl bg-white rounded-2xl shadow-xl flex flex-col max-h-[90vh]">
-          <div className="p-6 border-b flex justify-between items-center">
-            <Dialog.Title className="text-2xl font-bold text-gray-800">إنشاء استمارة جديدة</Dialog.Title>
+        <Dialog.Panel className="w-full max-w-8xl bg-white rounded-2xl shadow-xl flex flex-col max-h-[90vh] overflow-y-auto">
+          <div className="p-4 border-b flex justify-between items-center">
+            <Dialog.Title className="text-xl font-bold text-gray-800">إنشاء استمارة جديدة</Dialog.Title>
             <button onClick={() => navigate('/forms')} className="p-2 hover:bg-gray-100 rounded-lg transition-all">
-              <XMarkIcon className="w-7 h-7 text-gray-600" />
+              <XMarkIcon className="w-6 h-6 text-gray-600" />
             </button>
           </div>
 
@@ -1401,19 +1410,31 @@ const CreateFormVersion = () => {
                   required
                 />
                 <div>
-                  <label className="block text-right mb-2 font-medium text-gray-700">نوع الاستمارة</label>
-                  <select
-                    name="VehicleType"
-                    value={formData.VehicleType}
-                    onChange={handleChange}
-                    className="w-full p-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                  >
-                    <option value="">اختر النوع</option>
-                    <option value="سيارة">سيارة</option>
-                    <option value="شاحنة">شاحنة</option>
-                    <option value="دراجة">دراجة</option>
-                  </select>
+                <label className="block text-right mb-2 font-medium text-gray-700">نوع الاستمارة</label>
+                <Select
+                  options={vehicleTypeOptions}
+                  placeholder="اختر نوع الاستمارة"
+                  value={vehicleTypeOptions.find(option => option.value === formData.VehicleType)}
+                  onChange={(selectedOption) => {
+                    if (selectedOption) {
+                      handleChange({
+                        target: {
+                          name: 'VehicleType',
+                          value: selectedOption.value,
+                        },
+                      });
+                    }
+                  }}
+                  isDisabled={true} 
+                  styles={{
+                    control: (provided) => ({
+                      ...provided,
+                      border: '1px solid #e2e8f0',
+                      borderRadius: '0.5rem',
+                      padding: '0.25rem',
+                    }),
+                  }}
+                />
                 </div>
                 <InputField 
                   label="رقم استمارة المرور"
@@ -1440,6 +1461,7 @@ const CreateFormVersion = () => {
                       });
                     }
                   }}
+                  isDisabled={true}
                   styles={{
                     control: (provided) => ({
                       ...provided,
@@ -1558,6 +1580,7 @@ const CreateFormVersion = () => {
                           });
                         }
                       }}
+                      isDisabled={true} 
                       styles={{
                         control: (provided) => ({
                           ...provided,
@@ -1568,15 +1591,15 @@ const CreateFormVersion = () => {
                       }}
                     />
                   </div>
-
+                  {formData.EngineType !== 'كهربائي' && 
                   <InputField
                     label="عدد السلندر"
                     name="EngineCylindersNumber"
                     value={formData.EngineCylindersNumber}
                     onChange={handleChange}
-                    disabled={formData.EngineType === 'كهربائي' && lockedFields} 
+                    disabled={lockedFields} 
                   />
-
+                  }
                   <InputField
                     label="عدد المحاور"
                     name="VehicleAxlesNumber"
