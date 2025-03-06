@@ -14,27 +14,40 @@ const SearchModalForForm = ({ isOpen, onClose, onSearch }) => {
   const handleSearch = async (e) => {
     e.preventDefault();
     if (!searchTerm) return;
-    
+  
     setIsLoading(true);
     setError(null);
-
+  
     try {
       const url = `user/application/find-vehicle?chassisNumber=${encodeURIComponent(searchTerm)}`;
       const data = await fetchData(url);
-      
+  
       if (data.isSuccess) {
         navigate("/create-form-version", { state: { vehicleData: data.results } });
         onClose();
       } else {
-        setError(data.errors?.[0]?.message || "المركبة غير مخزونة في النظام");
-        navigate("/create-form", { state: { chassisNumber: searchTerm } });  
+        const errorMap = {
+          "400": "تأكد من رقم الشاصي، قد يكون هناك خطأ في الإدخال.",
+          "404": "لم يتم العثور على المركبة في النظام.",
+          "500": "خطأ داخلي في الخادم، يرجى المحاولة لاحقًا."
+        };
+  
+        const errorCode = data.errors?.[0]?.code;
+        const errorMessage = errorMap[errorCode] || "حدث خطأ غير متوقع، يرجى المحاولة لاحقًا.";
+  
+        setError(errorMessage);
+  
+        if (errorCode !== "400") {
+          navigate("/create-form", { state: { chassisNumber: searchTerm } });
+        }
       }
     } catch (error) {
-      setError(error.message || "فشل الاتصال بالخادم، يرجى المحاولة لاحقًا");
+      setError("فشل الاتصال بالخادم، يرجى المحاولة لاحقًا");
     } finally {
       setIsLoading(false);
     }
   };
+  
 
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur-lg flex items-center justify-center p-4">
