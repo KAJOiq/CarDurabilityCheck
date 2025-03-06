@@ -1701,6 +1701,8 @@ const CreateFormVersion = () => {
                               setProvinceCode(selectedOption.value);
                               handlePlateNumberChange();
                             }}
+                            menuPlacement="top" 
+                            menuPosition="fixed"
                           />
                         </div>
                         <div>
@@ -1816,6 +1818,8 @@ const CreateFormVersion = () => {
                               setProvinceCode(selectedOption.value);
                               handlePlateNumberChange();
                             }}
+                            menuPlacement="top" 
+                            menuPosition="fixed"
                           />
                         </div>
                       </>
