@@ -69,6 +69,9 @@ const DropDownListTemplate = ({
             onSelect(selectedItem);
           }
         }}
+        menuPlacement="auto" 
+        menuPosition="fixed"
+        menuShouldScrollIntoView={true}
         noOptionsMessage={() => (error ? `خطأ: ${error}` : "لا توجد خيارات متاحة")}
         styles={{
           control: (provided) => ({

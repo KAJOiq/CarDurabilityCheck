@@ -41,23 +41,32 @@ const SearchModalForPrint = ({ isOpen, onClose, onSearch }) => {
     try {
       const paramKey = searchTypes[selectedSearchType].param;
       const url = `user/application/print-application?${paramKey}=${encodeURIComponent(searchTerm)}`;
-
+  
       const response = await fetchData(url);
-      
+  
       if (response.isSuccess) {
         setSearchResult(response.results);
         onSearch(response.results);
         onClose();
       } else {
-        throw new Error("فشل في استرجاع البيانات");
+        const errorMap = {
+          "400": "الرجاء التحقق من البيانات المدخلة",
+          "404": "الاستمارة غير مخزونة في النظام، تأكد من الرقم المدخل",
+          "500": "حدث خطأ في الخادم، يرجى المحاولة لاحقًا"
+        };
+  
+        const errorCode = response.errors?.[0]?.code;
+        const errorMessage = errorMap[errorCode] || "حدث خطأ غير متوقع، يرجى المحاولة مرة أخرى";
+  
+        setError(errorMessage);
       }
     } catch (error) {
-      setError(error.message || "فشل البحث، يرجى المحاولة مرة أخرى");
+      setError("فشل الاتصال بالخادم، يرجى المحاولة لاحقًا.");
     } finally {
       setIsLoading(false);
     }
   };
-
+  
   return (
       <div className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center p-4 z-[1000]">
         <div className="bg-gradient-to-br from-white to-gray-50 p-6 rounded-2xl w-full max-w-md shadow-2xl border border-gray-200/70">
@@ -115,7 +124,7 @@ const SearchModalForPrint = ({ isOpen, onClose, onSearch }) => {
   
           {/* Error Message */}
           {error && (
-            <div className="mb-4 p-3.5 bg-red-50/80 border border-red-200 text-red-700 text-sm rounded-lg flex items-center gap-3 animate-pulse">
+            <div className="mb-4 p-3.5 bg-red-50/80 border border-red-200 text-red-700 text-sm rounded-lg flex items-center gap-3 animate-pulse text-right">
               <XMarkIcon className="w-5 h-5 flex-shrink-0 text-red-500" />
               <span className="flex-1">{error}</span>
             </div>

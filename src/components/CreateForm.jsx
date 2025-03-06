@@ -313,6 +313,8 @@ const CreateForm = () => {
                     padding: '0.25rem',
                   }),
                 }}
+                menuPlacement="top"  
+                menuPosition="fixed"
               />
             </div>
             <div>
@@ -1403,6 +1405,8 @@ const CreateForm = () => {
                       });
                     }
                   }}
+                  menuPlacement="auto" 
+                  menuPosition="fixed"
                   styles={{
                     control: (provided) => ({
                       ...provided,
@@ -1648,6 +1652,8 @@ const CreateForm = () => {
                               setProvinceCode(selectedOption.value);
                               handlePlateNumberChange();
                             }}
+                            menuPlacement="top" 
+                            menuPosition="fixed"
                           />
                         </div>
                         <div>
@@ -1763,6 +1769,8 @@ const CreateForm = () => {
                               setProvinceCode(selectedOption.value);
                               handlePlateNumberChange();
                             }}
+                            menuPlacement="top" 
+                            menuPosition="fixed"
                           />
                         </div>
                       </>
