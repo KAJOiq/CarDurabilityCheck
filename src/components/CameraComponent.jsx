@@ -17,6 +17,8 @@ const CameraComponent = ({ setPhoto }) => {
   const [focusRange, setFocusRange] = useState({ min: 0, max: 100 });
   const [manualFocusEnabled, setManualFocusEnabled] = useState(false);
   const [manualBrightnessEnabled, setManualBrightnessEnabled] = useState(false);
+  const [successMessage, setSuccessMessage] = useState(""); 
+  const [croppedImage, setCroppedImage] = useState(null);
 
   const dataURLtoFile = (dataURL, filename) => {
     if (!dataURL || typeof dataURL !== 'string') {
@@ -158,8 +160,8 @@ const CameraComponent = ({ setPhoto }) => {
 
     if (canvas && video) {
       const context = canvas.getContext("2d");
-      const width = 320;
-      const height = 240;
+      const width = video.videoWidth;
+      const height = video.videoHeight;
       canvas.width = width;
       canvas.height = height;
       context.drawImage(video, 0, 0, width, height);
@@ -191,7 +193,10 @@ const CameraComponent = ({ setPhoto }) => {
         croppedImage: croppedImageFile,
       });
 
+      setCroppedImage(croppedImageDataURL);
       setIsEditing(false);
+      setSuccessMessage("تم حفظ الصورة بنجاح!"); 
+      setTimeout(() => setSuccessMessage(""), 3000); 
     } catch (error) {
       console.error('Error saving cropped photo:', error);
       alert('فشل في حفظ الصورة المقصوصة: ' + error.message);
@@ -250,13 +255,13 @@ const CameraComponent = ({ setPhoto }) => {
         ref={videoRef}
         autoPlay
         playsInline
-        className="border-2 border-gray-300 rounded-lg w-full max-w-md h-64 object-cover"
+        className="border-2 border-gray-300 rounded-lg w-full max-w-3xl h-96 object-cover"
       ></video>
 
       <canvas ref={canvasRef} style={{ display: "none" }}></canvas>
 
       {focusSupported && (
-        <div className="w-full max-w-md mt-4">
+        <div className="w-full max-w-3xl mt-4">
           <label className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-gray-700">التركيز اليدوي</span>
             <input
@@ -282,7 +287,7 @@ const CameraComponent = ({ setPhoto }) => {
       )}
 
       {brightnessSupported && (
-        <div className="w-full max-w-md mt-4">
+        <div className="w-full max-w-3xl mt-4">
           <label className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-gray-700">السطوع اليدوي</span>
             <input
@@ -321,8 +326,8 @@ const CameraComponent = ({ setPhoto }) => {
       </button>
 
       {isEditing && (
-        <div className="w-full max-w-md mt-4">
-          <div className="relative w-full h-64 bg-gray-200 rounded-lg overflow-hidden">
+        <div className="w-full max-w-3xl mt-4">
+          <div className="relative w-full h-[500px] bg-gray-200 rounded-lg overflow-hidden">
             <Cropper
               src={imageSrc}
               style={{ height: "100%", width: "100%" }}
@@ -330,6 +335,11 @@ const CameraComponent = ({ setPhoto }) => {
               guides={false}
               ref={cropperRef}
               viewMode={1}
+              movable={false} 
+              zoomable={false} 
+              rotatable={false} 
+              scalable={false} 
+              background={false}
             />
           </div>
           <button
@@ -339,6 +349,19 @@ const CameraComponent = ({ setPhoto }) => {
           >
             حفظ الصورة الملتقطة
           </button>
+        </div>
+      )}
+
+      {successMessage && (
+        <div className="mt-4 text-green-600 font-semibold">
+          {successMessage}
+        </div>
+      )}
+
+      {croppedImage && (
+        <div className="mt-4">
+          <h2 className="text-lg font-semibold">الصورة المقتطعة:</h2>
+          <img src={croppedImage} alt="Cropped" className="mt-2 border-2 border-gray-300 rounded-lg" />
         </div>
       )}
     </div>

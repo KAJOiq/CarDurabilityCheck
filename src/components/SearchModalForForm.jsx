@@ -27,7 +27,7 @@ const SearchModalForForm = ({ isOpen, onClose, onSearch }) => {
         onClose();
       } else {
         setError(data.errors?.[0]?.message || "المركبة غير مخزونة في النظام");
-        navigate("/create-form");  
+        navigate("/create-form", { state: { chassisNumber: searchTerm } });  
       }
     } catch (error) {
       setError(error.message || "فشل الاتصال بالخادم، يرجى المحاولة لاحقًا");

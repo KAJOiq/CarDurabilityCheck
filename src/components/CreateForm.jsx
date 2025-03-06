@@ -13,7 +13,7 @@ import {
 import InputField from "./InputField";
 import CheckboxField from "./CheckboxField";
 import CameraComponent from "./CameraComponent";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import DropDownListTemplate from "./DropDownListTemplate";
 import fetchData from "../utils/fetchData";
 import Select from 'react-select';
@@ -25,109 +25,114 @@ import imgStaticBike from "../assets/bike.png";
 
 const ReviewData = ({ formData }) => {
   return (
-    <div dir="rtl" className="space-y-6 text-right p-6">
-      <h3 className="text-2xl font-bold text-gray-800 mb-6">البيانات المدخلة</h3>
+    <div dir="rtl" className="space-y-6 text-right p-6 bg-gray-50 min-h-screen">
+      <h3 className="text-3xl font-bold text-gray-800 mb-8 border-b-2 border-blue-500 pb-4">
+        البيانات المدخلة
+      </h3>
 
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <div className="flex items-center space-x-3 mb-4">
-          <UserCircleIcon className="w-8 h-8 text-blue-500" />
-          <h4 className="text-xl font-semibold text-gray-700">بيانات المواطن</h4>
+      {/* بطاقة بيانات المواطن */}
+      <div className="bg-white p-6 rounded-xl shadow-lg">
+        <div className="flex items-center space-x-3 mb-6">
+          <UserCircleIcon className="w-10 h-10 text-blue-600" />
+          <h4 className="text-2xl font-semibold text-gray-800">بيانات المواطن</h4>
         </div>
-        <div className="space-y-3">
-          <div className="flex justify-between items-center">
-            <span className="font-medium text-gray-600">اسم المواطن</span>
-            <span className="text-gray-800">{formData.CarOwnerName}</span>
+        <div className="space-y-4">
+          <div className="flex items-baseline bg-gray-100 p-3 rounded-lg gap-2">
+            <span className="font-medium text-gray-700">اسم المواطن:</span>
+            <span className="text-gray-900 font-semibold">
+              {formData.CarOwnerName} {formData.FatherName} {formData.GrandFatherName} {formData.Surename}
+            </span>
           </div>
-          <div className="flex justify-between items-center">
-            <span className="font-medium text-gray-600">حكومي</span>
-            <span className="text-gray-800">
+          <div className="flex items-baseline bg-gray-100 p-3 rounded-lg gap-2">
+            <span className="font-medium text-gray-700">حكومي:</span>
+            <span className="text-gray-900 font-semibold">
               {formData.Governmental ? "نعم" : "لا"}
             </span>
           </div>
           {!formData.Governmental && (
-            <div className="flex justify-between items-center">
-              <span className="font-medium text-gray-600">رقم وصل القبض</span>
-              <span className="text-gray-800">{formData.ReceiptId}</span>
+            <div className="flex items-baseline bg-gray-100 p-3 rounded-lg gap-2">
+              <span className="font-medium text-gray-700">رقم وصل القبض:</span>
+              <span className="text-gray-900 font-semibold">{formData.ReceiptId}</span>
             </div>
           )}
-          <div className="flex justify-between items-center">
-            <span className="font-medium text-gray-600">رقم استمارة المرور</span>
-            <span className="text-gray-800">{formData.TrafficPoliceApplicationId}</span>
+          <div className="flex items-baseline bg-gray-100 p-3 rounded-lg gap-2">
+            <span className="font-medium text-gray-700">رقم استمارة المرور:</span>
+            <span className="text-gray-900 font-semibold">{formData.TrafficPoliceApplicationId}</span>
           </div>
         </div>
       </div>
 
       {/* بطاقة بيانات المركبة */}
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <div className="flex items-center space-x-3 mb-4">
-          <TruckIcon className="w-8 h-8 text-green-500" />
-          <h4 className="text-xl font-semibold text-gray-700">بيانات المركبة</h4>
+      <div className="bg-white p-6 rounded-xl shadow-lg">
+        <div className="flex items-center space-x-3 mb-6">
+          <TruckIcon className="w-10 h-10 text-green-600" />
+          <h4 className="text-2xl font-semibold text-gray-800">بيانات المركبة</h4>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="font-medium text-gray-600">نوع الاستمارة</span>
-              <span className="text-gray-800">{formData.VehicleType}</span>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            <div className="flex items-baseline bg-gray-100 p-3 rounded-lg gap-2">
+              <span className="font-medium text-gray-700">نوع الاستمارة:</span>
+              <span className="text-gray-900 font-semibold">{formData.VehicleType}</span>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="font-medium text-gray-600">نوع المركبة</span>
-              <span className="text-gray-800">{formData.CarBrand}</span>
+            <div className="flex items-baseline bg-gray-100 p-3 rounded-lg gap-2">
+              <span className="font-medium text-gray-700">نوع المركبة:</span>
+              <span className="text-gray-900 font-semibold">{formData.CarBrand}</span>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="font-medium text-gray-600">طراز المركبة</span>
-              <span className="text-gray-800">{formData.CarName}</span>
+            <div className="flex items-baseline bg-gray-100 p-3 rounded-lg gap-2">
+              <span className="font-medium text-gray-700">طراز المركبة:</span>
+              <span className="text-gray-900 font-semibold">{formData.CarName}</span>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="font-medium text-gray-600">لون المركبة</span>
-              <span className="text-gray-800">{formData.CarColor}</span>
+            <div className="flex items-baseline bg-gray-100 p-3 rounded-lg gap-2">
+              <span className="font-medium text-gray-700">لون المركبة:</span>
+              <span className="text-gray-900 font-semibold">{formData.CarColor}</span>
             </div>
           </div>
-          <div className="space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="font-medium text-gray-600">رقم الشاصي</span>
-              <span className="text-gray-800">{formData.ChassisNumber}</span>
+          <div className="space-y-4">
+            <div className="flex items-baseline bg-gray-100 p-3 rounded-lg gap-2">
+              <span className="font-medium text-gray-700">رقم الشاصي:</span>
+              <span className="text-gray-900 font-semibold">{formData.ChassisNumber}</span>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="font-medium text-gray-600">الموديل</span>
-              <span className="text-gray-800">{formData.CarModel}</span>
+            <div className="flex items-baseline bg-gray-100 p-3 rounded-lg gap-2">
+              <span className="font-medium text-gray-700">الموديل:</span>
+              <span className="text-gray-900 font-semibold">{formData.CarModel}</span>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="font-medium text-gray-600">رقم المركبة</span>
-              <span className="text-gray-800">{formData.PlateNumber}</span>
+            <div className="flex items-baseline bg-gray-100 p-3 rounded-lg gap-2">
+              <span className="font-medium text-gray-700">رقم المركبة:</span>
+              <span className="text-gray-900 font-semibold">{formData.PlateNumber}</span>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="font-medium text-gray-600">نوع التسجيل</span>
-              <span className="text-gray-800">{formData.Usage}</span>
+            <div className="flex items-baseline bg-gray-100 p-3 rounded-lg gap-2">
+              <span className="font-medium text-gray-700">نوع التسجيل:</span>
+              <span className="text-gray-900 font-semibold">{formData.Usage}</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* بطاقة بيانات المحرك */}
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <div className="flex items-center space-x-3 mb-4">
-          <CogIcon className="w-8 h-8 text-purple-500" />
-          <h4 className="text-xl font-semibold text-gray-700">بيانات المحرك</h4>
+      <div className="bg-white p-6 rounded-xl shadow-lg">
+        <div className="flex items-center space-x-3 mb-6">
+          <CogIcon className="w-10 h-10 text-purple-600" />
+          <h4 className="text-2xl font-semibold text-gray-800">بيانات المحرك</h4>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="font-medium text-gray-600">نوع المحرك</span>
-              <span className="text-gray-800">{formData.EngineType}</span>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            <div className="flex items-baseline bg-gray-100 p-3 rounded-lg gap-2">
+              <span className="font-medium text-gray-700">نوع المحرك:</span>
+              <span className="text-gray-900 font-semibold">{formData.EngineType}</span>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="font-medium text-gray-600">عدد السلندر</span>
-              <span className="text-gray-800">{formData.EngineCylindersNumber}</span>
+            <div className="flex items-baseline bg-gray-100 p-3 rounded-lg gap-2">
+              <span className="font-medium text-gray-700">عدد السلندر:</span>
+              <span className="text-gray-900 font-semibold">{formData.EngineCylindersNumber}</span>
             </div>
           </div>
-          <div className="space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="font-medium text-gray-600">عدد المحاور</span>
-              <span className="text-gray-800">{formData.VehicleAxlesNumber}</span>
+          <div className="space-y-4">
+            <div className="flex items-baseline bg-gray-100 p-3 rounded-lg gap-2">
+              <span className="font-medium text-gray-700">عدد المحاور:</span>
+              <span className="text-gray-900 font-semibold">{formData.VehicleAxlesNumber}</span>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="font-medium text-gray-600">عدد الركاب</span>
-              <span className="text-gray-800">{formData.SeatsNumber}</span>
+            <div className="flex items-baseline bg-gray-100 p-3 rounded-lg gap-2">
+              <span className="font-medium text-gray-700">عدد الركاب:</span>
+              <span className="text-gray-900 font-semibold">{formData.SeatsNumber}</span>
             </div>
           </div>
         </div>
@@ -135,15 +140,15 @@ const ReviewData = ({ formData }) => {
 
       {/* بطاقة بيانات المقطورة */}
       {formData.VehicleType === "شاحنة" && (
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <div className="flex items-center space-x-3 mb-4">
-            <LinkIcon className="w-8 h-8 text-yellow-500" />
-            <h4 className="text-xl font-semibold text-gray-700">بيانات المقطورة</h4>
+        <div className="bg-white p-6 rounded-xl shadow-lg">
+          <div className="flex items-center space-x-3 mb-6">
+            <LinkIcon className="w-10 h-10 text-yellow-600" />
+            <h4 className="text-2xl font-semibold text-gray-800">بيانات المقطورة</h4>
           </div>
-          <div className="space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="font-medium text-gray-600">تفاصيل المقطورة</span>
-              <span className="text-gray-800">{formData.TrailerData[0]?.details}</span>
+          <div className="space-y-4">
+            <div className="flex items-baseline bg-gray-100 p-3 rounded-lg gap-2">
+              <span className="font-medium text-gray-700">تفاصيل المقطورة:</span>
+              <span className="text-gray-900 font-semibold">{formData.TrailerData[0]?.details}</span>
             </div>
           </div>
         </div>
@@ -154,10 +159,13 @@ const ReviewData = ({ formData }) => {
 
 const CreateForm = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formErrors, setFormErrors] = useState([]);
   const [mergedData, setMergedData] = useState(null); 
+
+  const chassisNumber = location.state?.chassisNumber;
 
   // States for photos
   const [carFullImage, setCarFullImage] = useState(null);
@@ -178,7 +186,7 @@ const CreateForm = () => {
     CarNameId: "",
     CarModel: "",
     CarColorId: "",
-    ChassisNumber: "",
+    ChassisNumber: chassisNumber,
     Usage: "",
     TrafficPoliceApplicationId: "",
     ReceiptId: "",
@@ -251,11 +259,10 @@ const CreateForm = () => {
   ];
 
   const [plateType, setPlateType] = useState("national");
-  const [provinceCode, setProvinceCode] = useState(''); // رمز المحافظة
-  const [plateLetter, setPlateLetter] = useState(''); // الحرف
-  const [plateNumber, setPlateNumber] = useState(''); // الرقم
+  const [provinceCode, setProvinceCode] = useState(''); 
+  const [plateLetter, setPlateLetter] = useState(''); 
+  const [plateNumber, setPlateNumber] = useState(''); 
 
-  // Handle plate number change based on type
   const handlePlateNumberChange = () => {
     let fullPlateNumber = "";
 
@@ -283,7 +290,6 @@ const CreateForm = () => {
     handlePlateNumberChange();
   }, [provinceCode, plateLetter, plateNumber, plateType]);
 
-// Render plate number input fields based on type
   const renderPlateNumberFields = () => {
     switch (plateType) {
       case "national":
@@ -431,7 +437,9 @@ const CreateForm = () => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value
+      [name]: type === "checkbox" ? checked : value === null ? "" :value,
+      ...(name === "EngineType" && value == "كهربائي" && { EngineCylindersNumber: "" })
+
     }));
   
     if (name === "VehicleType" && value === "شاحنة") {
@@ -446,7 +454,7 @@ const CreateForm = () => {
       }));
     }
   };
-
+  
   const validateStep = () => {
     const currentFields = steps[currentStep - 1].fields;
     const errors = [];
@@ -487,31 +495,36 @@ const CreateForm = () => {
 
       Object.entries(formData).forEach(([key, value]) => {
         if (key !== 'TrailerData' && !(key === 'ReceiptId' && (formData.Governmental || value === null))) {
-          formDataToSend.append(key, value);
+                formDataToSend.append(key, key === 'EngineCylindersNumber' && value === null ? "" : value);
+            }
+        });
+        
+        if (formData.TrailerData.length > 0) {
+            formDataToSend.append('TrailerData', JSON.stringify(formData.TrailerData));
         }
-      });
-      if (carCroppedImage) {
-        formDataToSend.append('ApplicationImages', carCroppedImage, 'carCroppedImage.png');
-      }
-      if (carFullImage) {
-        formDataToSend.append('ApplicationImages', carFullImage, 'carFullImage.png');
-      }
-  
-      if (chassisCroppedImage) {
-        formDataToSend.append('ApplicationImages', chassisCroppedImage, 'chassisCroppedImage.png');
-      }
-      if (chassisFullImage) {
-        formDataToSend.append('ApplicationImages', chassisFullImage, 'chassisFullImage.png');
-      }
-  
-      if (receiptIdImage) {
-        formDataToSend.append('ApplicationImages', receiptIdImage, 'receiptIdImage.png');
-      }
-  
-      if (formData.VehicleType === 'شاحنة' && formData.TrailerData.length > 0) {
-        formDataToSend.append('TrailerData', JSON.stringify(formData.TrailerData));
-      }
-  
+
+        if (carCroppedImage) {
+          formDataToSend.append('ApplicationImages', carCroppedImage, 'carCroppedImage.png');
+        }
+        if (carFullImage) {
+          formDataToSend.append('ApplicationImages', carFullImage, 'carFullImage.png');
+        }
+    
+        if (chassisCroppedImage) {
+          formDataToSend.append('ApplicationImages', chassisCroppedImage, 'chassisCroppedImage.png');
+        }
+        if (chassisFullImage) {
+          formDataToSend.append('ApplicationImages', chassisFullImage, 'chassisFullImage.png');
+        }
+    
+        if (receiptIdImage) {
+          formDataToSend.append('ApplicationImages', receiptIdImage, 'receiptIdImage.png');
+        }
+    
+        if (formData.VehicleType === 'شاحنة' && formData.TrailerData.length > 0) {
+          formDataToSend.append('TrailerData', JSON.stringify(formData.TrailerData));
+        }
+      
       for (let [key, value] of formDataToSend.entries()) {
         console.log(key, value);
       }
@@ -652,7 +665,7 @@ const CreateForm = () => {
                      </div>
                      <div class="flex flex-col text-black-800 font-bold text-right">
                        <span>: ${localStorage.getItem("location")}-${data.applicationId}</span>
-                       <span>: ${formData.ReceiptId}</span>
+                       <span>: ${formData.Governmental ? `حكومي ` : formData.ReceiptId}</span>
                        <span>: ${localStorage.getItem("agency")}</span>
                        <span>: ${formatDate(data.issueDate)}</span>
                      </div>
@@ -726,7 +739,7 @@ const CreateForm = () => {
                    </span> 
                  </div>
                  <div class="border border-black  rounded-lg p-2 min-h-40" >
-                   <span class="font-bold text-md text-center w-1/3">الفاحص :
+                   <span class="font-bold text-md text-center w-1/3">ضابط الكشف الفني :
                  </span> 
                  </div>
                  </div>
@@ -840,7 +853,7 @@ const CreateForm = () => {
             <!-- العمود الثاني للقيم المتغيرة -->
             <div class="flex flex-col text-black-800 font-bold text-right">
               <span>: ${localStorage.getItem("location")}-${data.applicationId}</span>
-              <span>: ${formData.ReceiptId}</span>
+              <span>: ${formData.Governmental ? `حكومي ` : formData.ReceiptId}</span>
               <span>: ${localStorage.getItem("agency")}</span>
               <span>: ${formatDate(data.issueDate)}</span>
            
@@ -1125,7 +1138,7 @@ const CreateForm = () => {
                     </div>
                     <div class="flex flex-col text-black-800 font-bold text-right">
                       <span>: ${localStorage.getItem("location")}-${data.applicationId}</span>
-                      <span>: ${formData.ReceiptId}</span>
+                      <span>: ${formData.Governmental ? `حكومي ` : formData.ReceiptId}</span>
                       <span>: ${localStorage.getItem("agecny")}</span>
                       <span>: ${formatDate(data.issueDate)}</span>
                     </div>
@@ -1199,7 +1212,7 @@ const CreateForm = () => {
                   </span> 
                 </div>
                 <div class="border border-black  rounded-lg p-2 min-h-40" >
-                  <span class="font-bold text-md text-center w-1/3">الفاحص :
+                  <span class="font-bold text-md text-center w-1/3">ضابط الكشف الفني :
                 </span> 
                 </div>
                 </div>
@@ -1251,18 +1264,24 @@ const CreateForm = () => {
     { value: "انشائية", label: "إنشائية" },
     { value: "تخصصية", label: "تخصصية" },
     { value: "فحص مؤقت", label: "فحص مؤقت" },
+    { value: "دراجة", label: "دراجة" },
+  ];
+
+  const vehicleTypeOptions = [
+    { value: "سيارة", label: "سيارة"},
+    { value: "شاحنة", label: "شاحنة"},
+    { value: "دراجة", label: "دراجة"},
   ];
 
   return (
     <Dialog open={true} onClose={() => {}} dir="rtl" className="relative z-50">
       <div className="fixed inset-0 bg-black/30 backdrop-blur-lg" />
-      
       <div className="fixed inset-0 flex items-center justify-center p-6">
-        <Dialog.Panel className="w-full max-w-8xl bg-white rounded-2xl shadow-xl flex flex-col max-h-[90vh]">
-          <div className="p-6 border-b flex justify-between items-center">
-            <Dialog.Title className="text-2xl font-bold text-gray-800">إنشاء استمارة جديدة</Dialog.Title>
+        <Dialog.Panel className="w-full max-w-8xl bg-white rounded-2xl shadow-xl flex flex-col max-h-[90vh] overflow-y-auto">
+          <div className="p-4 border-b flex justify-between items-center">
+            <Dialog.Title className="text-xl font-bold text-gray-800">إنشاء استمارة جديدة</Dialog.Title>
             <button onClick={() => navigate('/forms')} className="p-2 hover:bg-gray-100 rounded-lg transition-all">
-              <XMarkIcon className="w-7 h-7 text-gray-600" />
+              <XMarkIcon className="w-6 h-6 text-gray-600" />
             </button>
           </div>
 
@@ -1334,19 +1353,30 @@ const CreateForm = () => {
                   required
                 />
                 <div>
-                  <label className="block text-right mb-2 font-medium text-gray-700">نوع الاستمارة</label>
-                  <select
-                    name="VehicleType"
-                    value={formData.VehicleType}
-                    onChange={handleChange}
-                    className="w-full p-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                  >
-                    <option value="">اختر النوع</option>
-                    <option value="سيارة">سيارة</option>
-                    <option value="شاحنة">شاحنة</option>
-                    <option value="دراجة">دراجة</option>
-                  </select>
+                <label className="block text-right mb-2 font-medium text-gray-700">نوع الاستمارة</label>
+                <Select
+                  options={vehicleTypeOptions}
+                  placeholder="اختر نوع الاستمارة"
+                  value={vehicleTypeOptions.find(option => option.value === formData.VehicleType)}
+                  onChange={(selectedOption) => {
+                    if (selectedOption) {
+                      handleChange({
+                        target: {
+                          name: 'VehicleType',
+                          value: selectedOption.value,
+                        },
+                      });
+                    }
+                  }}
+                  styles={{
+                    control: (provided) => ({
+                      ...provided,
+                      border: '1px solid #e2e8f0',
+                      borderRadius: '0.5rem',
+                      padding: '0.25rem',
+                    }),
+                  }}
+                />
                 </div>
                 <InputField 
                   label="رقم استمارة المرور"
@@ -1491,13 +1521,16 @@ const CreateForm = () => {
                   />
                 </div>
 
+                {formData.EngineType !== 'كهربائي' && 
                 <InputField
                   label="عدد السلندر"
                   name="EngineCylindersNumber"
                   value={formData.EngineCylindersNumber}
                   onChange={handleChange}
-                  disabled={formData.EngineType === 'كهربائي'} 
-                />
+                  required
+                  // disabled={formData.EngineType == 'كهربائي'}
+                  />
+                } 
 
                 <InputField
                   label="عدد المحاور"
@@ -1508,12 +1541,13 @@ const CreateForm = () => {
                 />
 
                 <InputField
-                  label="رقم الشاصي"
-                  name="ChassisNumber"
-                  value={formData.ChassisNumber}
-                  onChange={handleChange}
-                  required
+                    label="رقم الشاصي"
+                    name="ChassisNumber"
+                    value={formData.ChassisNumber || location.state?.chassisNumber || "لم يتم إدخال رقم شاصي"}
+                    onChange={handleChange}
+                    disabled={true} // دائمًا مقفل
                 />
+
                 <div>
                 <label className="block text-right mb-2 font-medium text-gray-700">الموديل</label>
                 <Select
@@ -1785,7 +1819,7 @@ const CreateForm = () => {
               value={trailer.TrailerAxlesNumber || ""}
               onChange={(e) => {
                 const updatedTrailerData = [...formData.TrailerData];
-                updatedTrailerData[index].TrailerAxlesNumber = e.target.value;
+                updatedTrailerData[index].TrailerAxlesNumber = Number(e.target.value); // Convert to number
                 setFormData((prev) => ({
                   ...prev,
                   TrailerData: updatedTrailerData,
@@ -1805,7 +1839,7 @@ const CreateForm = () => {
               value={trailer.LoadWeight || ""}
               onChange={(e) => {
                 const updatedTrailerData = [...formData.TrailerData];
-                updatedTrailerData[index].LoadWeight = e.target.value;
+                updatedTrailerData[index].LoadWeight = Number(e.target.value); // Convert to number
                 setFormData((prev) => ({
                   ...prev,
                   TrailerData: updatedTrailerData,

@@ -26,8 +26,6 @@ const AddUsers = ({ setShowAddUser, setUsers, refreshUsers }) => {
     { value: "user", label: "User" },
     { value: "checker", label: "Checker" },
     { value: "reporter", label: "Reporter" },
-    { value: "supervisor", label: "Supervisor" },
-    { value: "superadmin", label: "Superadmin" },
     { value: "printer", label: "Printer"},
   ];
 

@@ -113,7 +113,7 @@ const TruckForm = ({ searchResults }) => {
             <!-- العمود الثاني للقيم المتغيرة -->
             <div class="flex flex-col text-black-800 font-bold text-right">
               <span>: ${searchResults.location}-${searchResults.applicationId}</span>
-              <span>: ${searchResults.receiptId}</span>
+              <span>: ${searchResults.governmental ? `حكومي ` : searchResults.receiptId}</span>
               <span>: ${searchResults.agency}</span>
               <span>: ${formatDate(searchResults.issueDate)}</span>
            
