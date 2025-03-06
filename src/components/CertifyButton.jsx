@@ -21,33 +21,40 @@ const CertifyButton = ({ formData, disabled, onCertificationSuccess }) => {
     form.append("StickerProvider", stickerProvider);
 
     try {
-      const response = await fetchData("checker/application/certify-durability-application", {
-        method: "PUT",
-        body: form,
-      });
+        const response = await fetchData("checker/application/certify-durability-application", {
+            method: "PUT",
+            body: form,
+        });
 
-      if (response.isSuccess) {
-        setSuccessMessage("تم التوثيق بنجاح!");
-        onCertificationSuccess();
-        
-      } else {
-        if (response.errors) {
-          const errorMessage = response.errors[0].message;
-          if (response.errors[0].code === "400") {
-            setError("رقم الملصق مسجل بالفعل, يرجى التأكد من رقم الملصق مرة اخرى.");
-          } else {
-            setError(errorMessage);
-          }
+        if (response.isSuccess) {
+            setSuccessMessage("تم التوثيق بنجاح!");
+            onCertificationSuccess();
         } else {
-          setError("فشل في توثيق الشهادة، يرجى المحاولة لاحقًا.");
+            if (response.errors && response.errors.length > 0) {
+                const errorCode = response.errors[0].code;
+                const errorMessage = response.errors[0].message;
+
+                if (errorCode === "400") {
+                    if (errorMessage.includes("الرجاء ادخال الاسم الكامل لمثبت الملصق")) {
+                        setError("يرجى إدخال الاسم الكامل لمُثبِّت الملصق قبل المتابعة.");
+                    } else if (errorMessage.includes("رقم الملصق مسجل بالفعل")) {
+                        setError("رقم الملصق مسجل بالفعل، يرجى التأكد من رقم الملصق مرة أخرى.");
+                    } else {
+                        setError(errorMessage);
+                    }
+                } else {
+                    setError(errorMessage);
+                }
+            } else {
+                setError("فشل في توثيق الشهادة، يرجى المحاولة لاحقًا.");
+            }
         }
-      }
     } catch (err) {
-      setError("حدث خطأ أثناء التوثيق، يرجى المحاولة مرة أخرى.");
+        setError("حدث خطأ أثناء التوثيق، يرجى المحاولة مرة أخرى.");
     } finally {
-      setCertifying(false);
+        setCertifying(false);
     }
-  };
+};
 
   return (
     <div>
