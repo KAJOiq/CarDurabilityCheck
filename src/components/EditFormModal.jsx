@@ -65,8 +65,8 @@ const EditFormModal = ({ isOpen, onClose, formData: initialFormData, fieldToEdit
   
       if (actualField) {
         if (fieldToEdit === "اسم المواطن") {
-          const [ownerFirstName, fatherName, grandFatherName, surename] = editedValue.split(" ");
-          formData.append("ownerFirstName", ownerFirstName);
+          const [CarOwnerName, fatherName, grandFatherName, surename] = editedValue.split(" ");
+          formData.append("CarOwnerName", CarOwnerName);
           formData.append("fatherName", fatherName);
           formData.append("grandFatherName", grandFatherName);
           formData.append("surename", surename);
