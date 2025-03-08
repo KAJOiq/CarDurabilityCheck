@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import fetchData from "../utils/fetchData";
 import { MagnifyingGlassIcon, CheckBadgeIcon } from "@heroicons/react/24/outline";
 import CertificatesFormForCar from "./CertificatesFormForCar";  
 import CertificatesFormForTruck from "./CertificatesFormForTruck";
 import CertificatesFormForBike from "./CertificatesFormForBike";
 import CertifyButton from "./CertifyButton";
-import { QrReader } from "react-qr-reader";
+
 const CertificatesPage = () => {
   const [searchInput, setSearchInput] = useState("");
   const [applicationId, setApplicationId] = useState(null);
@@ -13,7 +13,8 @@ const CertificatesPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
-  const [showQrReader, setShowQrReader] = useState(false);
+  const [showQrScanner, setShowQrScanner] = useState(false);
+  const inputRef = useRef(null);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -64,13 +65,15 @@ const CertificatesPage = () => {
     if (data) {
       setSearchInput(data);
       setApplicationId(data);
-      setShowQrReader(false);
+      setShowQrScanner(false);
     }
   };
 
-  const handleError = (err) => {
-    console.error("Error scanning QR code:", err);
-  };
+  useEffect(() => {
+    if (showQrScanner && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [showQrScanner]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-6" dir="rtl">
@@ -93,21 +96,22 @@ const CertificatesPage = () => {
             </button>
             <button
               type="button"
-              onClick={() => setShowQrReader(!showQrReader)}
+              onClick={() => setShowQrScanner(!showQrScanner)}
               className="bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 px-8 py-4 text-white font-semibold transition-all flex items-center gap-3"
             >
-              البحث من خلال مسح الكود ضوئيًا
+              {showQrScanner ? "إخفاء الماسح" : "البحث من خلال مسح الكود ضوئيًا"}
             </button>
           </div>
         </form>
 
-        {showQrReader && (
+        {showQrScanner && (
           <div className="flex justify-center">
-            <QrReader
-              delay={300}
-              onError={handleError}
-              onScan={handleScan}
-              style={{ width: "100%", maxWidth: "300px" }}
+            <input
+              type="text"
+              ref={inputRef}
+              onChange={(e) => handleScan(e.target.value)}
+              placeholder="امسح QR Code هنا"
+              className="flex-1 p-4 text-lg border-2 border-green-500 focus:ring-2 focus:ring-green-500 rounded-xl bg-white/95 text-right"
             />
           </div>
         )}
