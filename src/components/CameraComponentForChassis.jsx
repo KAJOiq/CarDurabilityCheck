@@ -346,7 +346,7 @@ const CameraComponentForChassis = ({ setPhoto }) => {
               ready={() => {
                 const cropper = cropperRef.current?.cropper;
                 if (cropper) {
-                  const width = 600; 
+                  const width = 800; 
                   cropper.setCropBoxData({
                     width: width,
                     height: width * (3 / 4),
