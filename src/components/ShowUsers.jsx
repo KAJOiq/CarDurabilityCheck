@@ -119,7 +119,7 @@ const ShowUsers = () => {
     <div className="p-4 max-w-6xl mx-auto">
       <div className="flex justify-between items-center mb-8">
         <h2 className="text-2xl font-bold text-gray-800">قائمة المستخدمين</h2>
-        {localStorage.getItem("role") === "superadmin" && (
+        {isSuperAdmin && (
         <button
           className="group bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-lg 
                      hover:from-green-600 hover:to-green-700 transition-all duration-300

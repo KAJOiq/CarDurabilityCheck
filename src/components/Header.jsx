@@ -30,7 +30,7 @@ const Header = ({ userName, role, onLogout }) => {
             </Link>
           )}
 
-          {(role === "superadmin" || role === "admin") && (
+          {(role === "superadmin") && (
             <Link
               to="/dropdown-list"
               className="group flex items-center gap-1 hover:text-cyan-400 transition-all duration-300"
