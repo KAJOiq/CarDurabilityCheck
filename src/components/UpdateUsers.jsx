@@ -3,7 +3,7 @@ import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import fetchData from "../utils/fetchData";
 
 const UpdateUsers = ({ userId, closeModal, refreshUsers }) => {
-  const [name, setName] = useState("");
+  // const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -12,7 +12,7 @@ const UpdateUsers = ({ userId, closeModal, refreshUsers }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!name || !password) {
+    if (!password) {
       setError("يرجى تعبئة كلا الحقلين.");
       return;
     }
@@ -22,13 +22,13 @@ const UpdateUsers = ({ userId, closeModal, refreshUsers }) => {
     setSuccessMessage(null);
 
     try {
-      const response = await fetchData(`Users/update-user-information?UserId=${userId}`, {
+      const response = await fetchData(`Users/update-user-password?UserId=${userId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
-        body: JSON.stringify({ name, password }),
+        body: JSON.stringify({ password }),
       });
 
       if (response.isSuccess) {
@@ -52,14 +52,14 @@ const UpdateUsers = ({ userId, closeModal, refreshUsers }) => {
       <div className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md">
         <div className="text-right mb-6">
           <h3 className="text-xl font-bold text-gray-800">تحديث بيانات المستخدم</h3>
-          <p className="text-gray-600 mt-2">يمكنك تعديل الاسم وكلمة المرور لهذا المستخدم</p>
+          <p className="text-gray-600 mt-2">يمكنك تعديل كلمة المرور لهذا المستخدم</p>
         </div>
 
         {error && <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-lg">{error}</div>}
         {successMessage && <div className="mb-4 p-3 bg-green-50 text-green-700 text-right rounded-lg">{successMessage}</div>}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
+{/*           <div>
             <label className="block text-right text-gray-700 mb-1">الاسم</label>
             <input
               type="text"
@@ -67,7 +67,7 @@ const UpdateUsers = ({ userId, closeModal, refreshUsers }) => {
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
-          </div>
+          </div> */}
           <div>
             <label className="block text-right text-gray-700 mb-1">كلمة المرور</label>
             <input
