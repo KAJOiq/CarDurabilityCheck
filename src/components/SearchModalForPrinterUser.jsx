@@ -17,11 +17,10 @@ const SearchModalForPrinterUser = ({ isOpen, onClose, onSearch }) => {
     }
   }, [isOpen]);
 
-  // دالة لفك تشفير البيانات
   const decryptData = (encodedData) => {
     try {
-      const decodedData = decodeURIComponent(encodedData); // فك ترميز البيانات
-      return JSON.parse(decodedData); // تحويل النص إلى كائن JSON
+      const decodedData = decodeURIComponent(encodedData); 
+      return JSON.parse(decodedData); 
     } catch (error) {
       throw new Error("فشل في تحليل QR Code. يرجى التأكد من البيانات.");
     }
@@ -32,7 +31,6 @@ const SearchModalForPrinterUser = ({ isOpen, onClose, onSearch }) => {
       const qrData = prompt("الرجاء مسح QR Code");
 
       if (qrData) {
-        // فك تشفير البيانات
         const decryptedData = decryptData(qrData);
         const applicationId = decryptedData.ADDID;
 
