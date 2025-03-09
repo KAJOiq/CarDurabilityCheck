@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState } from "react";
 import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
 
-const CameraComponent = ({ setPhoto }) => {
+const CameraComponentForReceiptId = ({ setPhoto }) => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const mediaStreamRef = useRef(null);
@@ -331,7 +331,7 @@ const CameraComponent = ({ setPhoto }) => {
             <Cropper
               src={imageSrc}
               style={{ height: "100%", width: "100%" }}
-              aspectRatio={NaN}
+              aspectRatio={4/3}
               guides={false}
               ref={cropperRef}
               viewMode={1}
@@ -340,6 +340,9 @@ const CameraComponent = ({ setPhoto }) => {
               rotatable={false} 
               scalable={false} 
               background={false}
+              cropBoxResizable={false}
+              cropBoxMovable={true}
+              dragMode={"none"} 
             />
           </div>
           <button
@@ -368,4 +371,4 @@ const CameraComponent = ({ setPhoto }) => {
   );
 };
 
-export default CameraComponent;
+export default CameraComponentForReceiptId;
