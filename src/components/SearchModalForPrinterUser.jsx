@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import fetchData from "../utils/fetchData";
 import { MagnifyingGlassIcon, XMarkIcon, ArrowPathIcon, QrCodeIcon } from "@heroicons/react/24/outline";
 
@@ -17,13 +17,24 @@ const SearchModalForPrinterUser = ({ isOpen, onClose, onSearch }) => {
     }
   }, [isOpen]);
 
+  // دالة لفك تشفير البيانات
+  const decryptData = (encodedData) => {
+    try {
+      const decodedData = decodeURIComponent(encodedData); // فك ترميز البيانات
+      return JSON.parse(decodedData); // تحويل النص إلى كائن JSON
+    } catch (error) {
+      throw new Error("فشل في تحليل QR Code. يرجى التأكد من البيانات.");
+    }
+  };
+
   const handleSearchFromQR = async () => {
     try {
       const qrData = prompt("الرجاء مسح QR Code");
 
       if (qrData) {
-        const parsedData = JSON.parse(qrData);
-        const applicationId = parsedData.ADDID;
+        // فك تشفير البيانات
+        const decryptedData = decryptData(qrData);
+        const applicationId = decryptedData.ADDID;
 
         if (applicationId) {
           setSearchTerm(applicationId.toString());
@@ -33,27 +44,27 @@ const SearchModalForPrinterUser = ({ isOpen, onClose, onSearch }) => {
         }
       }
     } catch (error) {
-      setError("فشل في تحليل QR Code. يرجى التأكد من البيانات.");
+      setError(error.message || "فشل في تحليل QR Code. يرجى التأكد من البيانات.");
     }
   };
 
   const handleSearch = async () => {
     setIsLoading(true);
-    setError(null); 
-  
+    setError(null);
+
     try {
       const paramKey = searchTypes[selectedSearchType].param;
       const url = `printer/application/print-application?${paramKey}=${encodeURIComponent(searchTerm)}`;
-  
+
       const response = await fetchData(url);
-  
+
       if (response.isSuccess) {
         setSearchResult(response.results);
         onSearch(response.results);
         onClose();
       } else {
         if (response.errors && response.errors.length > 0) {
-          setError(response.errors[0].message); 
+          setError(response.errors[0].message);
         } else {
           throw new Error("فشل في استرجاع البيانات");
         }

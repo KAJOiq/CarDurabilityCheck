@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import logo from "../assets/logo.jpg";
-import QRCode from "qrcode"; 
+import QRCode from "qrcode";
 import imgStatic from "../assets/car.jpeg";
 import { PrinterIcon } from "@heroicons/react/24/outline";
 
@@ -8,15 +8,25 @@ const CarForm = ({ searchResults }) => {
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState("");
   const printFrameRef = useRef(null);
 
+  const encryptData = (data) => {
+    return btoa(JSON.stringify(data)); 
+  };
+
+  const decryptData = (encodedData) => {
+    return JSON.parse(atob(encodedData));
+  };
+
   useEffect(() => {
     if (!searchResults) return;
-
-    const qrData = JSON.stringify({
-      ADDID: searchResults.applicationId, 
+  
+    const data = {
+      ADDID: searchResults.applicationId,
       VID: searchResults.vehicleID,
-    });
-
-    QRCode.toDataURL(qrData)
+    };
+  
+    const encodedData = encodeURIComponent(JSON.stringify(data));
+  
+    QRCode.toDataURL(encodedData)
       .then((url) => setQrCodeDataUrl(url))
       .catch((error) => console.error("Error generating QR code:", error));
   }, [searchResults]);
@@ -31,7 +41,7 @@ const CarForm = ({ searchResults }) => {
     const imgStaticBase64 = imgStatic;
     const printFrame = printFrameRef.current;
     if (!printFrame) return;
-    
+
     const doc = printFrame.contentDocument || printFrame.contentWindow.document;
     doc.open();
     doc.write(`
@@ -118,44 +128,37 @@ const CarForm = ({ searchResults }) => {
                 `
             )
             .join("")}
-            
         </div>
       </div>
-      <div class="border border-black grid grid-cols-2 rounded-lg p-2" >
-      <!-- Vehicle Image -->
-        <div class="w-full max-w-100 h-auto p-0 dir="ltr"">
-             <img src="${imgStaticBase64}" class="object-contain w-full h-full rounded-md p-0.5 border border-white" />
-          </div>
-         <div class="border border-white grid grid-rows-2 rounded-lg p-2" >
-          <div class="w-full max-w-100 h-auto p-0" dir="rtl" >
-            ${searchResults.cropedChassisImagePath
-              ? `<img src="http://localhost:5273${searchResults.cropedChassisImagePath}" class="object-contain w-full h-full rounded-md p-0.5 border border-black" />`
-              : "صورة الشاصي"}
-             </div>  
-             <div class="w-full max-w-100 h-auto p-0 dir="rtl"">
+      <div class="border border-black grid grid-cols-2 rounded-lg p-2">
+        <!-- Vehicle Image -->
+        <div class="w-full max-w-100 h-auto p-0" dir="ltr">
+          <img src="${imgStaticBase64}" class="object-contain w-full h-full rounded-md p-0.5 border border-white" />
+        </div>
+        <div class="border border-white grid grid-rows-2 rounded-lg p-2">
+         <div class="w-full max-w-100 h-auto p-0" dir="rtl">
             ${searchResults.cropedCarImagePath
               ? `<img src="http://localhost:5273${searchResults.cropedCarImagePath}" class="object-contain w-full h-full rounded-md p-0.5 border border-black" />`
               : "صورة المركبة"}
           </div>
-         
+          <div class="w-full max-w-100 h-auto p-0" dir="rtl">
+            ${searchResults.cropedChassisImagePath
+              ? `<img src="http://localhost:5273${searchResults.cropedChassisImagePath}" class="object-contain w-full h-full rounded-md p-0.5 border border-black" />`
+              : "صورة الشاصي"}
+          </div>
         </div>
-        <div class="border border-black  rounded-lg p-2 min-h-40" >
-          <span class="font-bold text-md text-center w-1/3">الفاحص : 
-          </span> 
+        <div class="border border-black rounded-lg p-2 min-h-40">
+          <span class="font-bold text-md text-center w-1/3">الفاحص :</span> 
         </div>
-        <div class="border border-black  rounded-lg p-2 min-h-40" >
-          <span class="font-bold text-md text-center w-1/3">ضابط الكشف الفني :
-        </span> 
+        <div class="border border-black rounded-lg p-2 min-h-40">
+          <span class="font-bold text-md text-center w-1/3">ضابط الكشف الفني :</span> 
         </div>
-        </div>
-        
-        </div>
-        
+      </div>
     </body>
     </html>
     `);
     doc.close();
-    
+
     setTimeout(() => {
       printFrame.contentWindow.print();
     }, 500);
@@ -164,14 +167,14 @@ const CarForm = ({ searchResults }) => {
   return (
     <div>
       <button
-          className="group bg-gradient-to-r from-blue-500 to-blue-600 
-                    hover:from-blue-600 hover:to-blue-700 text-white px-5 py-3
-                    rounded-xl shadow-lg hover:shadow-xl transition-all 
-                    flex items-center gap-3 transform hover:scale-105"
-          onClick={handlePrint}
-        >
-          <PrinterIcon className="h-6 w-6 text-white/90 group-hover:text-white" />
-          <span className="text-md font-semibold">طباعة الاستمارة</span>
+        className="group bg-gradient-to-r from-blue-500 to-blue-600 
+                  hover:from-blue-600 hover:to-blue-700 text-white px-5 py-3
+                  rounded-xl shadow-lg hover:shadow-xl transition-all 
+                  flex items-center gap-3 transform hover:scale-105"
+        onClick={handlePrint}
+      >
+        <PrinterIcon className="h-6 w-6 text-white/90 group-hover:text-white" />
+        <span className="text-md font-semibold">طباعة الاستمارة</span>
       </button>
       <iframe ref={printFrameRef} style={{ display: "none" }} />
     </div>
