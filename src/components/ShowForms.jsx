@@ -17,6 +17,9 @@ const ShowForms = () => {
   const [trailerToEdit, setTrailerToEdit] = useState(null); 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const isSuperAdmin = localStorage.getItem("role") === "superadmin";
+  const isAdmin = localStorage.getItem("role") === "admin";
+  const isUser = localStorage.getItem("role") === "user";
 
   const handleSearch = (formData) => {
     setSearchResults(formData);
@@ -90,19 +93,20 @@ const ShowForms = () => {
           <MagnifyingGlassIcon className="h-6 w-6 text-white/90 group-hover:text-white" />
           <span className="text-md font-semibold">البحث عن استمارة لطباعتها</span>
         </button>
-
+        {isUser && 
         <button
           className="group bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 
                     text-white px-4 py-2 rounded-xl shadow-lg hover:shadow-xl transition-all
                     flex items-center gap-3 transform hover:scale-105"
           onClick={() => {
-            setSearchResults(null); // Clear previous form data
+            setSearchResults(null); 
             setIsSearchModalForFormOpen(true);
           }}
         >
           <MagnifyingGlassIcon className="h-6 w-6 text-white/90 group-hover:text-white" />
           <span className="text-md font-semibold">إنشاء استمارة جديدة</span>
         </button>
+        }
       </div>
 
       {/* Modal for searching and printing forms */}
