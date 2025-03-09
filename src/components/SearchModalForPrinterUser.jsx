@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import fetchData from "../utils/fetchData";
 import { MagnifyingGlassIcon, XMarkIcon, ArrowPathIcon, QrCodeIcon } from "@heroicons/react/24/outline";
 
@@ -17,13 +17,22 @@ const SearchModalForPrinterUser = ({ isOpen, onClose, onSearch }) => {
     }
   }, [isOpen]);
 
+  const decryptData = (encodedData) => {
+    try {
+      const decodedData = decodeURIComponent(encodedData); 
+      return JSON.parse(decodedData); 
+    } catch (error) {
+      throw new Error("فشل في تحليل QR Code. يرجى التأكد من البيانات.");
+    }
+  };
+
   const handleSearchFromQR = async () => {
     try {
       const qrData = prompt("الرجاء مسح QR Code");
 
       if (qrData) {
-        const parsedData = JSON.parse(qrData);
-        const applicationId = parsedData.ADDID;
+        const decryptedData = decryptData(qrData);
+        const applicationId = decryptedData.ADDID;
 
         if (applicationId) {
           setSearchTerm(applicationId.toString());
@@ -33,26 +42,30 @@ const SearchModalForPrinterUser = ({ isOpen, onClose, onSearch }) => {
         }
       }
     } catch (error) {
-      setError("فشل في تحليل QR Code. يرجى التأكد من البيانات.");
+      setError(error.message || "فشل في تحليل QR Code. يرجى التأكد من البيانات.");
     }
   };
 
   const handleSearch = async () => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const paramKey = searchTypes[selectedSearchType].param;
       const url = `printer/application/print-application?${paramKey}=${encodeURIComponent(searchTerm)}`;
 
       const response = await fetchData(url);
-      
+
       if (response.isSuccess) {
         setSearchResult(response.results);
         onSearch(response.results);
         onClose();
       } else {
-        throw new Error("فشل في استرجاع البيانات");
+        if (response.errors && response.errors.length > 0) {
+          setError(response.errors[0].message);
+        } else {
+          throw new Error("فشل في استرجاع البيانات");
+        }
       }
     } catch (error) {
       setError(error.message || "فشل البحث، يرجى المحاولة مرة أخرى");
@@ -144,7 +157,7 @@ const SearchModalForPrinterUser = ({ isOpen, onClose, onSearch }) => {
 
         {/* Error Message */}
         {error && (
-          <div className="mb-4 p-3.5 bg-red-50/80 border border-red-200 text-red-700 text-sm rounded-lg flex items-center gap-3 animate-pulse">
+          <div className="text-right mb-4 p-3.5 bg-red-50/80 border border-red-200 text-red-700 text-sm rounded-lg flex items-center gap-3 animate-pulse">
             <XMarkIcon className="w-5 h-5 flex-shrink-0 text-red-500" />
             <span className="flex-1">{error}</span>
           </div>

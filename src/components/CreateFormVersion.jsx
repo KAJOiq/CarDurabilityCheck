@@ -677,7 +677,9 @@ const CreateFormVersion = () => {
         VID: data.vehicleId,
       });
 
-      QRCode.toDataURL(qrData)
+      const encodedData = encodeURIComponent(qrData);
+      
+      QRCode.toDataURL(encodedData)
         .then((qrCodeDataUrl) => {
           const printFrame = document.createElement('iframe');
           printFrame.style.display = 'none';
@@ -835,7 +837,9 @@ const CreateFormVersion = () => {
         VID: data.vehicleId,
       });
 
-      QRCode.toDataURL(qrData)
+      const encodedData = encodeURIComponent(qrData);
+
+      QRCode.toDataURL(encodedData)
         .then((qrCodeDataUrl) => {
           const printFrame = document.createElement('iframe');
           printFrame.style.display = 'none';
@@ -1106,7 +1110,9 @@ const CreateFormVersion = () => {
         VID: data.vehicleId,
       });
 
-      QRCode.toDataURL(qrData)
+      const encodedData = encodeURIComponent(qrData);
+
+      QRCode.toDataURL(encodedData)
         .then((qrCodeDataUrl) => {
           const printFrame = document.createElement('iframe');
           printFrame.style.display = 'none';

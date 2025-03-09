@@ -2,34 +2,44 @@ import React, { useEffect, useState, useRef } from "react";
 import logo from "../assets/logo.jpg";
 import QRCode from "qrcode";
 
-const CertificatesFormForCar = ({ formData, disabled}) => {
+const CertificatesFormForCar = ({ formData, disabled }) => {
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState("");
   const printFrameRef = useRef(null);
 
+  const encryptData = (data) => {
+    return btoa(JSON.stringify(data));
+  };
+
+  const decryptData = (encodedData) => {
+    return JSON.parse(atob(encodedData));
+  };
+
   useEffect(() => {
     const qrData = JSON.stringify({
-        ADDID: formData.applicationId, 
-        VID: formData.vehicleID,
+      ADDID: formData.applicationId,
+      VID: formData.vehicleID,
     });
 
-       QRCode.toDataURL(qrData)
-         .then((url) => setQrCodeDataUrl(url))
-         .catch((error) => console.error("Error generating QR code:", error));
-     }, [formData]);
-   
-     const formatDate = (dateString) => {
-       const date = new Date(dateString);
-       return date.toISOString().split("T")[0];
-     };
-   
-     const handlePrint = () => {
-       if (!formData) return;
-       const printFrame = printFrameRef.current;
-       if (!printFrame) return;
-       
-       const doc = printFrame.contentDocument || printFrame.contentWindow.document;
-       doc.open();
-       doc.write(`
+    const encodedData = encodeURIComponent(JSON.stringify(qrData));
+
+    QRCode.toDataURL(encodedData)
+      .then((url) => setQrCodeDataUrl(url))
+      .catch((error) => console.error("Error generating QR code:", error));
+  }, [formData]);
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toISOString().split("T")[0];
+  };
+
+  const handlePrint = () => {
+    if (!formData) return;
+    const printFrame = printFrameRef.current;
+    if (!printFrame) return;
+
+    const doc = printFrame.contentDocument || printFrame.contentWindow.document;
+    doc.open();
+    doc.write(`
       <!DOCTYPE html>
       <html lang="ar" dir="rtl">
       <head>
@@ -86,8 +96,12 @@ const CertificatesFormForCar = ({ formData, disabled}) => {
 
               <!-- العمود الثاني للقيم المتغيرة -->
               <div class="flex flex-col text-black-800 font-bold text-right">
-                <span>: ${formData.locationName}-${formData.applicationId}</span>
-                <span>: ${formData.governmental ? `حكومي ` : formData.receiptId}</span>
+                <span>: ${formData.locationName}-${
+      formData.applicationId
+    }</span>
+                <span>: ${
+                  formData.governmental ? `حكومي ` : formData.receiptId
+                }</span>
                 <span>: ${formData.agencyName}</span>
                 <span>: ${formatDate(formData.issueDate)}</span>
                 <span>: ${formatDate(formData.expiryDate)}</span>
@@ -103,23 +117,26 @@ const CertificatesFormForCar = ({ formData, disabled}) => {
             <h3 class="bg-gray-200 text-center font-bold py-1">بيانات المركبة</h3>
             <div class="text-md">
               ${[
-                  ["نوع المركبة", formData.carBrand],
-                  ["طراز المركبة", formData.carName],
-                  ["لون المركبة", formData.carColor],
-                  ["رقم المركبة", formData.plateNumber],
-                  ["رقم الشاصي", formData.chassisNumber],
-                  ["الموديل", formData.carModel],
-                  ["نوع المحرك", formData.engineType],
-                  ["عدد السلندر", formData.engineCylindersNumber],
-                  ["عدد الركاب", formData.seatsNumber],
-                  ["الاستخدام", formData.usage],
-                  //["نوع الحمل", formData.category],
-                ]
-                .map(([label, value]) => 
+                ["نوع المركبة", formData.carBrand],
+                ["طراز المركبة", formData.carName],
+                ["لون المركبة", formData.carColor],
+                ["رقم المركبة", formData.plateNumber],
+                ["رقم الشاصي", formData.chassisNumber],
+                ["الموديل", formData.carModel],
+                ["نوع المحرك", formData.engineType],
+                ["عدد السلندر", formData.engineCylindersNumber],
+                ["عدد الركاب", formData.seatsNumber],
+                ["الاستخدام", formData.usage],
+                //["نوع الحمل", formData.category],
+              ]
+                .map(
+                  ([label, value]) =>
                     `
                       <div class="flex justify-between items-center py-0.5 border-black">
                         <span class="font-bold text-center text-md w-1/3">${label} :</span>
-                        <span class="font-bold text-md w-5/6 px-1 border border-black rounded">${value || "---"}</span>
+                        <span class="font-bold text-md w-5/6 px-1 border border-black rounded">${
+                          value || "---"
+                        }</span>
                       </div>
                     `
                 )
@@ -132,14 +149,25 @@ const CertificatesFormForCar = ({ formData, disabled}) => {
             <h3 class="bg-gray-200 text-center font-bold py-1">بيانات الاستمارة</h3>
             <div class="text-md">
               ${[
-                ["اسم المواطن", formData.ownerFirstName + " " + formData.fatherName + " " + formData.grandFatherName + " " + formData.surename],
+                [
+                  "اسم المواطن",
+                  formData.ownerFirstName +
+                    " " +
+                    formData.fatherName +
+                    " " +
+                    formData.grandFatherName +
+                    " " +
+                    formData.surename,
+                ],
                 ["رقم الملصق", formData.stickerNumber],
               ]
                 .map(
                   ([label, value]) => `
                 <div class="flex justify-between items-center py-0.5 border-black">
                   <span class="font-bold text-md text-center w-1/3">${label} :</span>
-                  <span class="font-bold text-md w-5/6 px-1 border border-black rounded">${value || "---"}</span>
+                  <span class="font-bold text-md w-5/6 px-1 border border-black rounded">${
+                    value || "---"
+                  }</span>
                 </div>
               `
                 )
@@ -147,15 +175,19 @@ const CertificatesFormForCar = ({ formData, disabled}) => {
               <!-- Vehicle Image -->
               <div class="flex justify-center mt-4">
                 <div class="w-full max-w-56 h-auto p-0">
-                  ${formData.cropedCarImagePath
-                    ? `<img src="http://localhost:5273${formData.cropedCarImagePath}" class="object-contain w-full h-full rounded-md p-0.5 border border-black" />`
-                    : "صورة المركبة"}
+                  ${
+                    formData.cropedCarImagePath
+                      ? `<img src="http://localhost:5273${formData.cropedCarImagePath}" class="object-contain w-full h-full rounded-md p-0.5 border border-black" />`
+                      : "صورة المركبة"
+                  }
                 </div>
               </div>
               <!-- Sticker Information -->
               <div class="flex justify-between items-center py-2">
                 <span class="font-bold text-md text-center w-1/3">مثبت الملصق :</span>
-                <span class="font-bold text-md w-5/6 px-1">${formData.stickerProvider || "---"}</span>
+                <span class="font-bold text-md w-5/6 px-1">${
+                  formData.stickerProvider || "---"
+                }</span>
               </div>
             </div>
           </div>
@@ -164,12 +196,12 @@ const CertificatesFormForCar = ({ formData, disabled}) => {
       </html>
     `);
     doc.close();
-    
+
     setTimeout(() => {
       printFrame.contentWindow.print();
     }, 500);
   };
-  
+
   return (
     <div>
       <button

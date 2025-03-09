@@ -8,18 +8,28 @@ const TruckForm = ({ searchResults }) => {
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState("");
   const printFrameRef = useRef(null);
 
-    useEffect(() => {
-      if (!searchResults ) return;
-
-      const qrData = JSON.stringify({
-        ADDID: searchResults.applicationId, 
-        VID: searchResults.vehicleID,
-      });
-  
-      QRCode.toDataURL(qrData)
-        .then((url) => setQrCodeDataUrl(url))
-        .catch((error) => console.error("Error generating QR code:", error));
-  }, [searchResults]);
+      const encryptData = (data) => {
+        return btoa(JSON.stringify(data)); 
+      };
+    
+      const decryptData = (encodedData) => {
+        return JSON.parse(atob(encodedData));
+      };
+    
+      useEffect(() => {
+        if (!searchResults) return;
+      
+        const data = {
+          ADDID: searchResults.applicationId,
+          VID: searchResults.vehicleID,
+        };
+      
+        const encodedData = encodeURIComponent(JSON.stringify(data));
+      
+        QRCode.toDataURL(encodedData)
+          .then((url) => setQrCodeDataUrl(url))
+          .catch((error) => console.error("Error generating QR code:", error));
+      }, [searchResults]);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -242,16 +252,17 @@ const TruckForm = ({ searchResults }) => {
           <!-- Vehicle Image -->
             
              <div class="border border-black grid grid-rows-2 rounded-lg p-2" >
-              <div class="w-full max-w-100 h-auto p-0" dir="rtl" >
-                ${searchResults.cropedChassisImagePath
-                  ? `<img src="http://localhost:5273${searchResults.cropedChassisImagePath}" class="object-contain w-full h-full rounded-md p-0.5 border border-black" />`
-                  : "صورة الشاصي"}
-                 </div>  
-                 <div class="w-full max-w-100 h-auto p-0 dir="rtl"">
+              <div class="w-full max-w-100 h-auto p-0 dir="rtl"">
                 ${searchResults.cropedCarImagePath
                   ? `<img src="http://localhost:5273${searchResults.cropedCarImagePath}" class="object-contain w-full h-full rounded-md p-0.5 border border-black" />`
                   : "صورة المركبة"}
               </div>
+                <div class="w-full max-w-100 h-auto p-0" dir="rtl" >
+                ${searchResults.cropedChassisImagePath
+                  ? `<img src="http://localhost:5273${searchResults.cropedChassisImagePath}" class="object-contain w-full h-full rounded-md p-0.5 border border-black" />`
+                  : "صورة الشاصي"}
+                 </div>  
+                
 
             </div>
            

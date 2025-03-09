@@ -6,30 +6,40 @@ const CertificatesFormForTruck = ({ formData, disabled }) => {
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState("");
   const printFrameRef = useRef(null);
 
+  const encryptData = (data) => {
+    return btoa(JSON.stringify(data));
+  };
+
+  const decryptData = (encodedData) => {
+    return JSON.parse(atob(encodedData));
+  };
+
   useEffect(() => {
     const qrData = JSON.stringify({
-        ADDID: formData.applicationId, 
-        VID: formData.vehicleID,
+      ADDID: formData.applicationId,
+      VID: formData.vehicleID,
     });
 
-    QRCode.toDataURL(qrData)
-          .then((url) => setQrCodeDataUrl(url))
-          .catch((error) => console.error("Error generating QR code:", error));
-      }, [formData]);
-    
-      const formatDate = (dateString) => {
-        const date = new Date(dateString);
-        return date.toISOString().split("T")[0];
-      };
-    
-      const handlePrint = () => {
-        if (!formData) return;
-        const printFrame = printFrameRef.current;
-        if (!printFrame) return;
-        
-        const doc = printFrame.contentDocument || printFrame.contentWindow.document;
-        doc.open();
-        doc.write(`
+    const encodedData = encodeURIComponent(JSON.stringify(qrData));
+
+    QRCode.toDataURL(encodedData)
+      .then((url) => setQrCodeDataUrl(url))
+      .catch((error) => console.error("Error generating QR code:", error));
+  }, [formData]);
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toISOString().split("T")[0];
+  };
+
+  const handlePrint = () => {
+    if (!formData) return;
+    const printFrame = printFrameRef.current;
+    if (!printFrame) return;
+
+    const doc = printFrame.contentDocument || printFrame.contentWindow.document;
+    doc.open();
+    doc.write(`
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -87,7 +97,9 @@ const CertificatesFormForTruck = ({ formData, disabled }) => {
         <!-- العمود الثاني للقيم المتغيرة -->
         <div class="flex flex-col text-black-800 font-bold text-right">
           <span>: ${formData.locationName}-${formData.applicationId}</span>
-          <span>: ${formData.governmental ? `حكومي ` : formData.receiptId}</span>
+          <span>: ${
+            formData.governmental ? `حكومي ` : formData.receiptId
+          }</span>
           <span>: ${formData.agencyName}</span>
           <span>: ${formatDate(formData.issueDate)}</span>
           <span>: ${formatDate(formData.expiryDate)}</span>
@@ -106,9 +118,13 @@ const CertificatesFormForTruck = ({ formData, disabled }) => {
           [
             `<div class="flex justify-between w-full py-0.5 border-black">
               <span class="font-bold text-center text-md w-1/3">نوع المركبة</span>
-              <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.carBrand || "---"}</span>
+              <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${
+                formData.carBrand || "---"
+              }</span>
               <span class="font-bold text-center text-md w-1/3">طراز المركبة</span>
-              <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.carName || "---"}</span>
+              <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${
+                formData.carName || "---"
+              }</span>
             </div>`,
             null,
           ],
@@ -116,20 +132,30 @@ const CertificatesFormForTruck = ({ formData, disabled }) => {
           [
             `<div class="flex justify-between w-full py-0.5 border-black">
               <span class="font-bold text-center text-md w-1/3">لون المركبة</span>
-              <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.carColor || "---"}</span>
+              <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${
+                formData.carColor || "---"
+              }</span>
               <span class="font-bold text-center text-md w-1/3">نوع المحرك</span>
-              <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.engineType || "---"}</span>
+              <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${
+                formData.engineType || "---"
+              }</span>
             </div>`,
             null,
           ],
           [
             `<div class="flex justify-between w-full py-0.5 border-black">
               <span class="font-bold text-center text-md w-1/3">الاستخدام</span>
-              <span class="font-bold text-md w-1/2 px-1 border border-black rounded">${formData.usage || "---"}</span>
+              <span class="font-bold text-md w-1/2 px-1 border border-black rounded">${
+                formData.usage || "---"
+              }</span>
               <span class="font-bold text-center text-md w-1/3">الموديل</span>
-              <span class="font-bold text-md w-1/2 px-1 border border-black rounded">${formData.carModel || "---"}</span>
+              <span class="font-bold text-md w-1/2 px-1 border border-black rounded">${
+                formData.carModel || "---"
+              }</span>
               <span class="font-bold text-center text-md w-1/3">عدد السلندر</span>
-              <span class="font-bold text-md w-1/2 px-1 border border-black rounded">${formData.engineCylindersNumber || "---"}</span>
+              <span class="font-bold text-md w-1/2 px-1 border border-black rounded">${
+                formData.engineCylindersNumber || "---"
+              }</span>
             </div>`,
             null,
           ],
@@ -145,24 +171,34 @@ const CertificatesFormForTruck = ({ formData, disabled }) => {
                 [
                   `<div class="flex justify-between w-full py-0.5 border-black">
                     <span class="font-bold text-center text-md w-1/3">نوع الحمل</span>
-                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.trailers[0]?.category || "---"}</span>
+                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${
+                      formData.trailers[0]?.category || "---"
+                    }</span>
                     <span class="font-bold text-center text-md w-1/3">شاصي الحمل</span>
-                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.trailers[0]?.chassisNumber || "---"}</span>
+                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${
+                      formData.trailers[0]?.chassisNumber || "---"
+                    }</span>
                   </div>`,
                   null,
                 ],
                 [
                   `<div class="flex justify-between w-full border-black">
                     <span class="font-bold text-center text-md w-1/3">عدد المحاور</span>
-                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.trailers[0]?.axelsNumber || "---"}</span>
+                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${
+                      formData.trailers[0]?.axelsNumber || "---"
+                    }</span>
                     <span class="font-bold text-center text-md w-1/3">الحمولة</span>
-                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.trailers[0]?.loadWeight || "---"}</span>
+                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${
+                      formData.trailers[0]?.loadWeight || "---"
+                    }</span>
                   </div>`,
                   null,
                 ],
-              ].map(([content]) => content).join('')}
+              ]
+                .map(([content]) => content)
+                .join("")}
             </div>`,
-            null
+            null,
           ],
 
           // بيانات الملحق الثاني
@@ -173,24 +209,34 @@ const CertificatesFormForTruck = ({ formData, disabled }) => {
                 [
                   `<div class="flex justify-between w-full py-0.5 border-black">
                     <span class="font-bold text-center text-md w-1/3">نوع الحمل</span>
-                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.trailers[1]?.category || "---"}</span>
+                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${
+                      formData.trailers[1]?.category || "---"
+                    }</span>
                     <span class="font-bold text-center text-md w-1/3">شاصي الحمل</span>
-                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.trailers[1]?.chassisNumber || "---"}</span>
+                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${
+                      formData.trailers[1]?.chassisNumber || "---"
+                    }</span>
                   </div>`,
                   null,
                 ],
                 [
                   `<div class="flex justify-between w-full border-black">
                     <span class="font-bold text-center text-md w-1/3">عدد المحاور</span>
-                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.trailers[1]?.axelsNumber || "---"}</span>
+                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${
+                      formData.trailers[1]?.axelsNumber || "---"
+                    }</span>
                     <span class="font-bold text-center text-md w-1/3">الحمولة</span>
-                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.trailers[1]?.loadWeight || "---"}</span>
+                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${
+                      formData.trailers[1]?.loadWeight || "---"
+                    }</span>
                   </div>`,
                   null,
                 ],
-              ].map(([content]) => content).join('')}
+              ]
+                .map(([content]) => content)
+                .join("")}
             </div>`,
-            null
+            null,
           ],
 
           // بيانات الملحق الثالث
@@ -201,24 +247,34 @@ const CertificatesFormForTruck = ({ formData, disabled }) => {
                 [
                   `<div class="flex justify-between w-full py-0.5 border-black">
                     <span class="font-bold text-center text-md w-1/3">نوع الحمل</span>
-                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.trailers[2]?.category || "---"}</span>
+                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${
+                      formData.trailers[2]?.category || "---"
+                    }</span>
                     <span class="font-bold text-center text-md w-1/3">شاصي الحمل</span>
-                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.trailers[2]?.chassisNumber || "---"}</span>
+                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${
+                      formData.trailers[2]?.chassisNumber || "---"
+                    }</span>
                   </div>`,
                   null,
                 ],
                 [
                   `<div class="flex justify-between w-full border-black">
                     <span class="font-bold text-center text-md w-1/3">عدد المحاور</span>
-                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.trailers[2]?.axelsNumber || "---"}</span>
+                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${
+                      formData.trailers[2]?.axelsNumber || "---"
+                    }</span>
                     <span class="font-bold text-center text-md w-1/3">الحمولة</span>
-                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${formData.trailers[2]?.loadWeight || "---"}</span>
+                    <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${
+                      formData.trailers[2]?.loadWeight || "---"
+                    }</span>
                   </div>`,
                   null,
                 ],
-              ].map(([content]) => content).join('')}
+              ]
+                .map(([content]) => content)
+                .join("")}
             </div>`,
-            null
+            null,
           ],
         ]
           .map(([label, value]) =>
@@ -226,7 +282,9 @@ const CertificatesFormForTruck = ({ formData, disabled }) => {
               ? `
                 <div class="flex justify-between items-center py-0.5 border-black">
                   <span class="font-bold text-center text-md w-1/3">${label} :</span>
-                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${value || "---"}</span>
+                  <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${
+                    value || "---"
+                  }</span>
                 </div>
               `
               : label
@@ -240,14 +298,25 @@ const CertificatesFormForTruck = ({ formData, disabled }) => {
       <h3 class="bg-gray-200 text-center font-bold">بيانات الاستمارة</h3>
       <div class="text-sm">
         ${[
-          ["اسم المواطن", formData.ownerFirstName + " " + formData.fatherName + " " + formData.grandFatherName + " " + formData.surename],
+          [
+            "اسم المواطن",
+            formData.ownerFirstName +
+              " " +
+              formData.fatherName +
+              " " +
+              formData.grandFatherName +
+              " " +
+              formData.surename,
+          ],
           ["رقم الملصق", formData.stickerNumber],
         ]
           .map(
             ([label, value]) => `
           <div class="flex justify-between items-center py-0.5 border-black">
             <span class="font-bold text-center text-md w-1/3">${label}</span>
-            <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${value || "---"}</span>
+            <span class="font-bold text-md w-3/4 px-1 border border-black rounded">${
+              value || "---"
+            }</span>
           </div>
         `
           )
@@ -265,7 +334,9 @@ const CertificatesFormForTruck = ({ formData, disabled }) => {
         <!-- Sticker Information -->
         <div class="flex justify-between items-center py-0.5">
           <span class="font-bold text-center text-md w-1/3">مثبت الملصق :</span>
-          <span class="font-semibold text-sm w-2/3 px-1 rounded">${formData.stickerProvider || "---"}</span>
+          <span class="font-semibold text-sm w-2/3 px-1 rounded">${
+            formData.stickerProvider || "---"
+          }</span>
         </div>
       </div>
     </div>
@@ -274,13 +345,12 @@ const CertificatesFormForTruck = ({ formData, disabled }) => {
 </html>
     `);
     doc.close();
-    
+
     setTimeout(() => {
       printFrame.contentWindow.print();
     }, 500);
   };
 
-  
   return (
     <div>
       <button
