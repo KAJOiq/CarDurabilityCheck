@@ -672,29 +672,7 @@ const CreateFormVersion = () => {
 
       const qrData = JSON.stringify({
         ADDID: data.applicationId,
-        ISSD: data.issueDate,
-        TFPN: data.TrafficPoliceApplicationId,
-        RID: data.ReceiptId,
-        CON: data.CarOwnerName,
-        IG: data.Governmental,
-        CN: data.ChassisNumber,
-        PN: data.PlateNumber,
-        CYC: data.EngineCylindersNumber,
-        VAXN: data.VehicleAxlesNumber,
-        COM: data.CarModel,
-        SEAN: data.SeatsNumber,
-        VN: data.CarNameId,
-        VC: data.CarColorId,
-        VB: data.CarBrandId,
-        VT: data.VehicleType,
-        USE: data.Usage,
-        AGN: data.agency,
-        LN: data.location,
         VID: data.vehicleId,
-        ENT: data.EngineType,
-        IIC: data.isInspectionCertified,
-        SN: data.stickerNumber,
-        SP: data.stickerProvider,
       });
 
       QRCode.toDataURL(qrData)
@@ -851,30 +829,8 @@ const CreateFormVersion = () => {
       const imgStaticBase64 = imgStaticTruck;
 
       const qrData = JSON.stringify({
-        ADDID: data.applicationId,
-        ISSD: data.issueDate,
-        TFPN: data.TrafficPoliceApplicationId,
-        RID: data.ReceiptId,
-        CON: data.CarOwnerName,
-        IG: data.Governmental,
-        CN: data.ChassisNumber,
-        PN: data.PlateNumber,
-        CYC: data.EngineCylindersNumber,
-        VAXN: data.VehicleAxlesNumber,
-        COM: data.CarModel,
-        SEAN: data.SeatsNumber,
-        VN: data.CarNameId,
-        VC: data.CarColorId,
-        VB: data.CarBrandId,
-        VT: data.VehicleType,
-        USE: data.Usage,
-        AGN: data.agency,
-        LN: data.location,
+        ADDID: data.applicationId,  
         VID: data.vehicleId,
-        ENT: data.EngineType,
-        IIC: data.isInspectionCertified,
-        SN: data.stickerNumber,
-        SP: data.stickerProvider,
       });
 
       QRCode.toDataURL(qrData)
@@ -1145,29 +1101,7 @@ const CreateFormVersion = () => {
 
       const qrData = JSON.stringify({
         ADDID: data.applicationId,
-        ISSD: data.issueDate,
-        TFPN: data.TrafficPoliceApplicationId,
-        RID: data.ReceiptId,
-        CON: data.CarOwnerName,
-        IG: data.Governmental,
-        CN: data.ChassisNumber,
-        PN: data.PlateNumber,
-        CYC: data.EngineCylindersNumber,
-        VAXN: data.VehicleAxlesNumber,
-        COM: data.CarModel,
-        SEAN: data.SeatsNumber,
-        VN: data.CarNameId,
-        VC: data.CarColorId,
-        VB: data.CarBrandId,
-        VT: data.VehicleType,
-        USE: data.Usage,
-        AGN: data.agency,
-        LN: data.location,
         VID: data.vehicleId,
-        ENT: data.EngineType,
-        IIC: data.isInspectionCertified,
-        SN: data.stickerNumber,
-        SP: data.stickerProvider,
       });
 
       QRCode.toDataURL(qrData)

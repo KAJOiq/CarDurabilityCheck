@@ -9,30 +9,7 @@ const CertificatesFormForTruck = ({ formData, disabled }) => {
   useEffect(() => {
     const qrData = JSON.stringify({
         ADDID: formData.applicationId, 
-        ISSD: formData.issueDate, 
-        EXD: formData.expiryDate, 
-        TFPN: formData.trafficPoliceApplicationId,
-        RID: formData.receiptId, 
-        CON: formData.carOwnerName, 
-        IG: formData.governmental, 
-        CN: formData.chassisNumber, 
-        PN: formData.plateNumber, 
-        CYC: formData.engineCylindersNumber, 
-        VAXN: formData.vehicleAxlesNumber,
-        COM: formData.carModel,  
-        SEAN: formData.seatsNumber,
-        VN: formData.carName,
-        VC: formData.carColor,
-        VB: formData.carBrand,
-        VT: formData.vehicleType, 
-        USE: formData.usage,
-        AGN: formData.agencyName, 
-        LN: formData.locationName,
         VID: formData.vehicleID,
-        ENT: formData.engineType, 
-        IIC: formData.isInspectionCertified,
-        SN: formData.stickerNumber,
-        SP: formData.stickerProvider,
     });
 
     QRCode.toDataURL(qrData)
