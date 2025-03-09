@@ -331,7 +331,7 @@ const CameraComponentForChassis = ({ setPhoto }) => {
             <Cropper
               src={imageSrc}
               style={{ height: "100%", width: "100%" }}
-              aspectRatio={7/3}
+              aspectRatio={9/3}
               guides={false}
               ref={cropperRef}
               viewMode={1}
@@ -343,6 +343,19 @@ const CameraComponentForChassis = ({ setPhoto }) => {
               cropBoxResizable={false}
               cropBoxMovable={true}
               dragMode={"none"} 
+              ready={() => {
+                const cropper = cropperRef.current?.cropper;
+                if (cropper) {
+                  const width = 600; 
+                  cropper.setCropBoxData({
+                    width: width,
+                    height: width * (3 / 4),
+                    left: (cropper.getContainerData().width - width) / 2, 
+                    top: (cropper.getContainerData().height - width * (3 / 4)) / 2,
+                  });
+                }
+              }}
+              
             />
           </div>
           <button
