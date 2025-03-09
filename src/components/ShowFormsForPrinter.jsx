@@ -150,6 +150,19 @@ const ShowFormsForPrinter = () => {
                 </div>
               </div>
             )}
+
+            {searchResults.receiptImagePath && (
+              <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">صورة وصل القبض</h3>
+                <div className="aspect-video bg-gray-100 rounded-xl overflow-hidden">
+                  <img
+                    src={`http://localhost:5273${searchResults.receiptImagePath}`}
+                    alt="Chassis"
+                    className="w-full h-full object-cover transform hover:scale-105 transition-transform"
+                  />
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
