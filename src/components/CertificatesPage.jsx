@@ -16,6 +16,10 @@ const CertificatesPage = () => {
   const [showQrScanner, setShowQrScanner] = useState(false);
   const inputRef = useRef(null);
 
+  const isSuperAdmin = localStorage.getItem("role") === "superadmin";
+  const isAdmin = localStorage.getItem("role") === "admin";
+  const isChecker = localStorage.getItem("role") === "checker"
+
   const handleSearch = (e) => {
     e.preventDefault();
     setApplicationId(searchInput);
@@ -136,7 +140,7 @@ const CertificatesPage = () => {
                 <MagnifyingGlassIcon className="h-8 w-8 text-blue-600" />
                 {formData.applicationId}
               </h2>
-
+              {isChecker &&
               <CertifyButton 
                 formData={formData} 
                 disabled={formData.isInspectionCertified}
@@ -145,9 +149,9 @@ const CertificatesPage = () => {
                   formData.isInspectionCertified ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
                 }`}
               />
-
+              }
               <div className={`transition ${formData.isInspectionCertified ? "" : "opacity-50 cursor-not-allowed"}`}>
-                {formData.vehicleType === "سيارة" &&
+                {isChecker && formData.vehicleType === "سيارة" &&
                  <CertificatesFormForCar 
                     formData={formData} 
                     disabled={!formData.isInspectionCertified}
@@ -156,7 +160,7 @@ const CertificatesPage = () => {
                     }`}
                 />}
 
-                {formData.vehicleType === "شاحنة" &&
+                {isChecker && formData.vehicleType === "شاحنة" &&
                  <CertificatesFormForTruck 
                     formData={formData} 
                     disabled={!formData.isInspectionCertified}
@@ -165,7 +169,7 @@ const CertificatesPage = () => {
                     }`}
                 />}
 
-                {formData.vehicleType === "دراجة" && 
+                {isChecker && formData.vehicleType === "دراجة" && 
                 <CertificatesFormForBike 
                     formData={formData} 
                     disabled={!formData.isInspectionCertified}

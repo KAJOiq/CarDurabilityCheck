@@ -17,8 +17,6 @@ const ShowForms = () => {
   const [trailerToEdit, setTrailerToEdit] = useState(null); 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const isSuperAdmin = localStorage.getItem("role") === "superadmin";
-  const isAdmin = localStorage.getItem("role") === "admin";
   const isUser = localStorage.getItem("role") === "user";
 
   const handleSearch = (formData) => {
