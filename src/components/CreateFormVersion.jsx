@@ -13,7 +13,9 @@ import {
 } from "@heroicons/react/24/outline";
 import InputField from "./InputField";
 import CheckboxField from "./CheckboxField";
-import CameraComponent from "./CameraComponent";
+import CameraComponentForCar from "./CameraComponentForCar";
+import CameraComponentForChassis from "./CameraComponentForChassis"
+import CameraComponentForReceiptId from "./CameraComponentForReceiptId"
 import { useNavigate, useLocation } from "react-router-dom";
 import fetchData from "../utils/fetchData";
 import DropDownListTemplate from "./DropDownListTemplate";
@@ -1909,7 +1911,7 @@ const CreateFormVersion = () => {
               <div className="space-y-4">
                 <div className="bg-gray-100 p-4 rounded-lg">
                   <h3 className="text-lg font-semibold mb-2 text-gray-700">صورة مقدمة السيارة</h3>
-                  <CameraComponent setPhoto={handleCarImage} />
+                  <CameraComponentForCar setPhoto={handleCarImage} />
                 </div>
               </div>
             )}
@@ -1918,7 +1920,7 @@ const CreateFormVersion = () => {
               <div className="space-y-4">
                 <div className="bg-gray-100 p-4 rounded-lg">
                   <h3 className="text-lg font-semibold mb-2 text-gray-700">صورة الشاصي</h3>
-                  <CameraComponent setPhoto={handleChassisImage} />
+                  <CameraComponentForChassis setPhoto={handleChassisImage} />
                 </div>
               </div>
             )}
@@ -1928,7 +1930,7 @@ const CreateFormVersion = () => {
                 {!formData.Governmental && (
                   <div className="bg-gray-100 p-4 rounded-lg">
                     <h3 className="text-lg font-semibold mb-2 text-gray-700">صورة وصل القبض</h3>
-                    <CameraComponent setPhoto={handleReceiptIdImage} />
+                    <CameraComponentForReceiptId setPhoto={handleReceiptIdImage} />
                   </div>
                 )}
               </div>
