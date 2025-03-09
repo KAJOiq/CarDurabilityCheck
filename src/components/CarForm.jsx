@@ -13,29 +13,7 @@ const CarForm = ({ searchResults }) => {
 
     const qrData = JSON.stringify({
       ADDID: searchResults.applicationId, 
-      ISSD: searchResults.issueDate, 
-      TFPN: searchResults.trafficPoliceApplicationId,
-      RID: searchResults.receiptId, 
-      CON: searchResults.carOwnerName, 
-      IG: searchResults.governmental, 
-      CN: searchResults.chassisNumber, 
-      PN: searchResults.plateNumber, 
-      CYC: searchResults.engineCylindersNumber, 
-      VAXN: searchResults.vehicleAxlesNumber,
-      COM: searchResults.carModel,  
-      SEAN: searchResults.seatsNumber,
-      VN: searchResults.carName,
-      VC: searchResults.carColor,
-      VB: searchResults.carBrand,
-      VT: searchResults.vehicleType, 
-      USE: searchResults.usage,
-      AGN: searchResults.agency, 
-      LN: searchResults.location,
       VID: searchResults.vehicleID,
-      ENT: searchResults.engineType, 
-      IIC: searchResults.isInspectionCertified,
-      SN: searchResults.stickerNumber,
-      SP: searchResults.stickerProvider,
     });
 
     QRCode.toDataURL(qrData)
