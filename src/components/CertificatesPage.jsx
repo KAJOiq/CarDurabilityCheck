@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import fetchData from "../utils/fetchData";
 import { MagnifyingGlassIcon, CheckBadgeIcon } from "@heroicons/react/24/outline";
 import CertificatesFormForCar from "./CertificatesFormForCar";  
@@ -13,6 +13,8 @@ const CertificatesPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
+  const [showQrScanner, setShowQrScanner] = useState(false);
+  const inputRef = useRef(null);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -59,6 +61,20 @@ const CertificatesPage = () => {
     return date.toISOString().split("T")[0];
   };
 
+  const handleScan = (data) => {
+    if (data) {
+      setSearchInput(data);
+      setApplicationId(data);
+      setShowQrScanner(false);
+    }
+  };
+
+  useEffect(() => {
+    if (showQrScanner && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [showQrScanner]);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-6" dir="rtl">
       <div className="max-w-4xl mx-auto space-y-8">
@@ -78,8 +94,27 @@ const CertificatesPage = () => {
               <MagnifyingGlassIcon className="h-6 w-6 transform group-hover:scale-110 transition-transform" />
               بحث
             </button>
+            <button
+              type="button"
+              onClick={() => setShowQrScanner(!showQrScanner)}
+              className="bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 px-8 py-4 text-white font-semibold transition-all flex items-center gap-3"
+            >
+              {showQrScanner ? "إخفاء الماسح" : "البحث من خلال مسح الكود ضوئيًا"}
+            </button>
           </div>
         </form>
+
+        {showQrScanner && (
+          <div className="flex justify-center">
+            <input
+              type="text"
+              ref={inputRef}
+              onChange={(e) => handleScan(e.target.value)}
+              placeholder="امسح QR Code هنا"
+              className="flex-1 p-4 text-lg border-2 border-green-500 focus:ring-2 focus:ring-green-500 rounded-xl bg-white/95 text-right"
+            />
+          </div>
+        )}
 
         {loading && (
           <div className="text-center p-8 space-y-4">
@@ -102,7 +137,7 @@ const CertificatesPage = () => {
                 {formData.applicationId}
               </h2>
 
-                <CertifyButton 
+              <CertifyButton 
                 formData={formData} 
                 disabled={formData.isInspectionCertified}
                 onCertificationSuccess={fetchCertificate}
@@ -142,50 +177,50 @@ const CertificatesPage = () => {
             </div>
 
             <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-right">
-            {Object.entries({
-                "رقم استمارة المرور": formData.trafficPoliceApplicationId,
-                "رقم وصل القبض": formData.governmental ? `حكومي ` : formData.receiptId,
-                "اسم المواطن": formData.ownerFirstName + " " + formData.fatherName + " " + formData.grandFatherName + " " + formData.surename,
-                "نوع الاستمارة": formData.vehicleType,
-                "حكومي؟": formData.governmental ? "نعم" : "لا",
-                "الاستخدام": formData.usage,
-                "نوع المركبة": formData.carBrand,
-                "طراز المركبة": formData.carName,
-                "لون المركبة": formData.carColor,
-                "الموديل": formData.carModel,
-                "رقم اللوحة": formData.plateNumber,
-                "رقم الشاصي": formData.chassisNumber,
-                "نوع المحرك": formData.engineType,
-                "عدد السلندر": formData.engineCylindersNumber,
-                "عدد الركاب": formData.seatsNumber,
-                "تاريخ الإصدار": formatDate(formData.issueDate),
-                "المديرية" : formData.agencyName,
-                "الموقع": formData.locationName,
-                "هل صدرت لها شهادة ؟" : formData.isInspectionCertified ? "نعم" : "لا",
-                "رقم الملصق" : formData.stickerNumber,
-                "مثبت الملصق" : formData.stickerProvider,
-                "صورة السيارة": formData.cropedCarImagePath,
-              }).map(([label, value]) =>
-                label === "صورة السيارة" ? (
-                  <div key={label} className="col-span-2">
-                    <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
-                      <h3 className="font-semibold text-gray-600 mb-3">{label}</h3>
-                      <div className="flex justify-center">
-                        <img
-                          src={`http://localhost:5273${formData.cropedCarImagePath}`}
-                          alt="Car Image"
-                          className="w-64 h-48 object-contain rounded-lg shadow-md border-2 border-gray-200"
-                        />
+              {Object.entries({
+                  "رقم استمارة المرور": formData.trafficPoliceApplicationId,
+                  "رقم وصل القبض": formData.governmental ? `حكومي ` : formData.receiptId,
+                  "اسم المواطن": formData.ownerFirstName + " " + formData.fatherName + " " + formData.grandFatherName + " " + formData.surename,
+                  "نوع الاستمارة": formData.vehicleType,
+                  "حكومي؟": formData.governmental ? "نعم" : "لا",
+                  "الاستخدام": formData.usage,
+                  "نوع المركبة": formData.carBrand,
+                  "طراز المركبة": formData.carName,
+                  "لون المركبة": formData.carColor,
+                  "الموديل": formData.carModel,
+                  "رقم اللوحة": formData.plateNumber,
+                  "رقم الشاصي": formData.chassisNumber,
+                  "نوع المحرك": formData.engineType,
+                  "عدد السلندر": formData.engineCylindersNumber,
+                  "عدد الركاب": formData.seatsNumber,
+                  "تاريخ الإصدار": formatDate(formData.issueDate),
+                  "المديرية" : formData.agencyName,
+                  "الموقع": formData.locationName,
+                  "هل صدرت لها شهادة ؟" : formData.isInspectionCertified ? "نعم" : "لا",
+                  "رقم الملصق" : formData.stickerNumber,
+                  "مثبت الملصق" : formData.stickerProvider,
+                  "صورة السيارة": formData.cropedCarImagePath,
+                }).map(([label, value]) =>
+                  label === "صورة السيارة" ? (
+                    <div key={label} className="col-span-2">
+                      <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                        <h3 className="font-semibold text-gray-600 mb-3">{label}</h3>
+                        <div className="flex justify-center">
+                          <img
+                            src={`http://localhost:5273${formData.cropedCarImagePath}`}
+                            alt="Car Image"
+                            className="w-64 h-48 object-contain rounded-lg shadow-md border-2 border-gray-200"
+                          />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ) : (
-                  <div key={label} className="flex justify-between items-center bg-gray-50 p-3 rounded-lg border border-gray-200">
-                    <span className="font-semibold text-gray-600">{label}:</span>
-                    <span className="text-gray-800">{value || "---"}</span>
-                  </div>
-                )
-              )}
+                  ) : (
+                    <div key={label} className="flex justify-between items-center bg-gray-50 p-3 rounded-lg border border-gray-200">
+                      <span className="font-semibold text-gray-600">{label}:</span>
+                      <span className="text-gray-800">{value || "---"}</span>
+                    </div>
+                  )
+                )}
             </div>
             {formData.trailers?.length > 0 && (
                   <div className="bg-gradient-to-br from-slate-50 to-blue-50 rounded-2xl p-6 shadow-lg">
@@ -214,7 +249,6 @@ const CertificatesPage = () => {
                   </div>
                 )}
           </div>
-          
         )}
 
         {successMessage && (
