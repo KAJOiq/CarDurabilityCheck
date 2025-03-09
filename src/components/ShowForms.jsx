@@ -116,12 +116,13 @@ const ShowForms = () => {
         onSearch={handleSearch}
       />
 
-      {/* Modal for creating new forms */}
-      <SearchModalForForm
-        isOpen={isSearchModalForFormOpen}
-        onClose={() => setIsSearchModalForFormOpen(false)}
-        onSearch={handleSearch}
-      />
+      {isUser && (
+        <SearchModalForForm
+          isOpen={isSearchModalForFormOpen}
+          onClose={() => setIsSearchModalForFormOpen(false)}
+          onSearch={handleSearch}
+        />
+      )}
 
       {/* Display the search results */}
       {searchResults && (
@@ -130,6 +131,7 @@ const ShowForms = () => {
             <h2 className="text-md font-bold text-gray-800 mb-6 border-b-2 border-blue-200 pb-4">
               تفاصيل الاستمارة
             </h2>
+            {isUser &&
             <div className="mt-4 py-4" dir="rtl">
               {searchResults?.vehicleType === "سيارة" && (
                 <div className="flex items-center gap-4">
@@ -147,6 +149,7 @@ const ShowForms = () => {
                 </div>
               )}
             </div>
+            }
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {Object.entries({
                 "رقم الاستمارة": searchResults.applicationId,
@@ -173,7 +176,7 @@ const ShowForms = () => {
                 <div key={label} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 relative">
                   <span className="block text-sm font-medium text-gray-500 mb-1">{label}</span>
                   <span className="block text-md font-semibold text-gray-800">{value}</span>
-                  {label !== "رقم الاستمارة" && label !== "تاريخ الإصدار" && label !== "المديرية" && label !== "الموقع" && (
+                  {isUser && label !== "رقم الاستمارة" && label !== "تاريخ الإصدار" && label !== "المديرية" && label !== "الموقع" && (
                     <button
                       onClick={() => handleEditField(label)}
                       className="absolute top-2 left-2 p-1 rounded-full hover:bg-gray-100 text-gray-600 transition-colors"
@@ -250,6 +253,7 @@ const ShowForms = () => {
           </div>
 
           {/* Edit Modal */}
+          {isUser &&
           <EditFormModal
             isOpen={isEditModalOpen}
             onClose={(reload) => {
@@ -262,6 +266,7 @@ const ShowForms = () => {
             fieldToEdit={fieldToEdit}
             trailerToEdit={trailerToEdit} 
           />
+          }
         </div>
       )}
     </div>
