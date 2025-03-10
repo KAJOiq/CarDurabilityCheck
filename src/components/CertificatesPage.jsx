@@ -5,6 +5,7 @@ import CertificatesFormForCar from "./CertificatesFormForCar";
 import CertificatesFormForTruck from "./CertificatesFormForTruck";
 import CertificatesFormForBike from "./CertificatesFormForBike";
 import CertifyButton from "./CertifyButton";
+import QrCodeIcon from "@heroicons/react/24/outline/QrCodeIcon"; 
 
 const CertificatesPage = () => {
   const [searchInput, setSearchInput] = useState("");
@@ -18,7 +19,16 @@ const CertificatesPage = () => {
 
   const isSuperAdmin = localStorage.getItem("role") === "superadmin";
   const isAdmin = localStorage.getItem("role") === "admin";
-  const isChecker = localStorage.getItem("role") === "checker"
+  const isChecker = localStorage.getItem("role") === "checker";
+
+  const decryptData = (encodedData) => {
+    try {
+      const decodedData = decodeURIComponent(encodedData); 
+      return JSON.parse(decodedData);
+    } catch (error) {
+      throw new Error("فشل في تحليل QR Code. يرجى التأكد من البيانات.");
+    }
+  };
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -67,9 +77,20 @@ const CertificatesPage = () => {
 
   const handleScan = (data) => {
     if (data) {
-      setSearchInput(data);
-      setApplicationId(data);
-      setShowQrScanner(false);
+      try {
+        const decryptedData = decryptData(data);
+        const applicationId = decryptedData.ADDID;
+
+        if (applicationId) {
+          setSearchInput(applicationId);
+          setApplicationId(applicationId);
+          setShowQrScanner(false);
+        } else {
+          throw new Error("بيانات QR Code غير صالحة");
+        }
+      } catch (error) {
+        setError(error.message || "فشل في تحليل QR Code. يرجى التأكد من البيانات.");
+      }
     }
   };
 
@@ -101,21 +122,26 @@ const CertificatesPage = () => {
             <button
               type="button"
               onClick={() => setShowQrScanner(!showQrScanner)}
-              className="bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 px-8 py-4 text-white font-semibold transition-all flex items-center gap-3"
+              className="px-7 py-3.5 bg-gradient-to-r from-green-600 to-emerald-500 text-white rounded-xl font-medium
+                        hover:from-green-700 hover:to-emerald-600 transition-all shadow-md
+                        flex items-center gap-2.5"
             >
-              {showQrScanner ? "إخفاء الماسح" : "البحث من خلال مسح الكود ضوئيًا"}
+              <QrCodeIcon className="w-5 h-5 text-white/90" />
+              <span>{showQrScanner ? "إخفاء الماسح" : "البحث من خلال مسح الكود ضوئيًا"}</span>
             </button>
           </div>
         </form>
 
         {showQrScanner && (
-          <div className="flex justify-center">
+          <div className="flex justify-center mt-4">
             <input
               type="text"
               ref={inputRef}
               onChange={(e) => handleScan(e.target.value)}
               placeholder="امسح QR Code هنا"
-              className="flex-1 p-4 text-lg border-2 border-green-500 focus:ring-2 focus:ring-green-500 rounded-xl bg-white/95 text-right"
+              className="w-full max-w-md p-4 text-lg border-2 border-green-500 
+                        focus:ring-2 focus:ring-green-500 rounded-xl bg-white/95 text-right
+                        shadow-sm transition-all"
             />
           </div>
         )}
@@ -140,7 +166,7 @@ const CertificatesPage = () => {
                 <MagnifyingGlassIcon className="h-8 w-8 text-blue-600" />
                 {formData.applicationId}
               </h2>
-              {isChecker &&
+              {isChecker && (
                 <CertifyButton
                   formData={formData}
                   disabled={formData.isInspectionCertified}
@@ -148,31 +174,28 @@ const CertificatesPage = () => {
                   className={`px-4 py-2 rounded-lg font-semibold text-white transition ${formData.isInspectionCertified ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
                     }`}
                 />
-              }
+              )}
               <div className={`transition ${formData.isInspectionCertified ? "" : "opacity-50 cursor-not-allowed"}`}>
-                {isChecker && formData.vehicleType === "سيارة" &&
+                {isChecker && formData.vehicleType === "سيارة" && (
                   <CertificatesFormForCar
                     formData={formData}
                     disabled={!formData.isInspectionCertified}
-                    className={`px-4 py-2 rounded-lg font-semibold text-white transition ${formData.isInspectionCertified ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
-                      }`}
-                  />}
+                  />
+                )}
 
-                {isChecker && formData.vehicleType === "شاحنة" &&
+                {isChecker && formData.vehicleType === "شاحنة" && (
                   <CertificatesFormForTruck
                     formData={formData}
                     disabled={!formData.isInspectionCertified}
-                    className={`px-4 py-2 rounded-lg font-semibold text-white transition ${formData.isInspectionCertified ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
-                      }`}
-                  />}
+                  />
+                )}
 
-                {isChecker && formData.vehicleType === "دراجة" &&
+                {isChecker && formData.vehicleType === "دراجة" && (
                   <CertificatesFormForBike
                     formData={formData}
                     disabled={!formData.isInspectionCertified}
-                    className={`px-4 py-2 rounded-lg font-semibold text-white transition ${formData.isInspectionCertified ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
-                      }`}
-                  />}
+                  />
+                )}
               </div>
             </div>
 
@@ -203,7 +226,7 @@ const CertificatesPage = () => {
                 "صورة الشاصي": formData.cropedChassisImagePath,
                 "صورة وصل القبض": formData.receiptImagePath,
               }).map(([label, value]) =>
-                value && (label.includes("صورة")) ? (
+                value && label.includes("صورة") ? (
                   <div key={label} className="col-span-2">
                     <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
                       <h3 className="font-semibold text-gray-600 mb-3">{label}</h3>
