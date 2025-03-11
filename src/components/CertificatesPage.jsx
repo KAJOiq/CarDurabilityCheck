@@ -97,20 +97,26 @@ const CertificatesPage = () => {
 
   const startSerialReader = async () => {
     try {
-      const port = await navigator.serial.requestPort();
+      const ports = await navigator.serial.getPorts();
+      let port = ports.length > 0 ? ports[0] : null;
+  
+      if (!port) {
+        port = await navigator.serial.requestPort();
+      }
+  
       await port.open({ baudRate: 9600 });
       const reader = port.readable.getReader();
       const decoder = new TextDecoder();
-
+  
       portRef.current = port; 
-
+  
       while (true) {
         const { value, done } = await reader.read();
         if (done) {
           reader.releaseLock();
           break;
         }
-
+  
         const qrData = decoder.decode(value);
         handleScan(qrData); 
       }
