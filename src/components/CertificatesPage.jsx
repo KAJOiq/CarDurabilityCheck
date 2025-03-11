@@ -16,6 +16,7 @@ const CertificatesPage = () => {
   const [successMessage, setSuccessMessage] = useState("");
   const [showQrScanner, setShowQrScanner] = useState(false);
   const inputRef = useRef(null);
+  const portRef = useRef(null); 
 
   const isSuperAdmin = localStorage.getItem("role") === "superadmin";
   const isAdmin = localStorage.getItem("role") === "admin";
@@ -94,9 +95,41 @@ const CertificatesPage = () => {
     }
   };
 
+  const startSerialReader = async () => {
+    try {
+      const ports = await navigator.serial.getPorts();
+      let port = ports.length > 0 ? ports[0] : null;
+  
+      if (!port) {
+        port = await navigator.serial.requestPort();
+      }
+  
+      await port.open({ baudRate: 9600 });
+      const reader = port.readable.getReader();
+      const decoder = new TextDecoder();
+  
+      portRef.current = port; 
+  
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) {
+          reader.releaseLock();
+          break;
+        }
+  
+        const qrData = decoder.decode(value);
+        handleScan(qrData); 
+      }
+    } catch (error) {
+      console.error("Error reading from serial port:", error);
+      setError("فشل في قراءة بيانات QR Code من المنفذ التسلسلي.");
+    }
+  };
+
   useEffect(() => {
     if (showQrScanner && inputRef.current) {
       inputRef.current.focus();
+      startSerialReader(); 
     }
   }, [showQrScanner]);
 
