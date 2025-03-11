@@ -97,6 +97,11 @@ const CertificatesPage = () => {
 
   const startSerialReader = async () => {
     try {
+      if (portRef.current && portRef.current.readable) {
+        console.warn("The serial port is already open.");
+        return;
+      }
+
       const ports = await navigator.serial.getPorts();
       let port = ports.length > 0 ? ports[0] : null;
   
@@ -154,10 +159,17 @@ const CertificatesPage = () => {
             </button>
             <button
               type="button"
-              onClick={() => setShowQrScanner(!showQrScanner)}
+              onClick={() => {
+                setShowQrScanner(!showQrScanner);
+                setSearchInput("");
+                setApplicationId(null);
+                setFormData(null);
+                setError(null);
+                setSuccessMessage("");
+              }}
               className="px-7 py-3.5 bg-gradient-to-r from-green-600 to-emerald-500 text-white rounded-xl font-medium
-                        hover:from-green-700 hover:to-emerald-600 transition-all shadow-md
-                        flex items-center gap-2.5"
+                          hover:from-green-700 hover:to-emerald-600 transition-all shadow-md
+                          flex items-center gap-2.5"
             >
               <QrCodeIcon className="w-5 h-5 text-white/90" />
               <span>{showQrScanner ? "إخفاء الماسح" : "البحث من خلال مسح الكود ضوئيًا"}</span>
