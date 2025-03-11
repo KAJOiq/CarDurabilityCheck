@@ -9,7 +9,11 @@ const SearchModalForPrinterUser = ({ isOpen, onClose, onSearch }) => {
   const [error, setError] = React.useState(null);
   const [searchResult, setSearchResult] = React.useState(null);
 
+  const isPortOpening = useRef(false); 
+  const [scannedData, setScannedData] = useState(null);
+  const [showQrScanner, setShowQrScanner] = useState(false);
   const inputRef = useRef(null);
+  const portRef = useRef(null); 
 
   useEffect(() => {
     if (isOpen && inputRef.current) {
@@ -26,25 +30,87 @@ const SearchModalForPrinterUser = ({ isOpen, onClose, onSearch }) => {
     }
   };
 
-  const handleSearchFromQR = async () => {
+  const handleScan = (data) => {
+    if (!data) return;
+  
     try {
-      const qrData = prompt("الرجاء مسح QR Code");
-
-      if (qrData) {
-        const decryptedData = decryptData(qrData);
-        const applicationId = decryptedData.ADDID;
-
-        if (applicationId) {
-          setSearchTerm(applicationId.toString());
-          await handleSearch();
-        } else {
-          throw new Error("بيانات QR Code غير صالحة");
-        }
+      const decryptedData = decryptData(data);
+      const applicationId = decryptedData.ADDID;
+  
+      if (applicationId) {
+        setSearchTerm(applicationId);
+        setScannedData(applicationId);
+        setShowQrScanner(false);
+        
+        handleSearch();
+      } else {
+        throw new Error("بيانات QR Code غير صالحة");
       }
     } catch (error) {
       setError(error.message || "فشل في تحليل QR Code. يرجى التأكد من البيانات.");
     }
   };
+
+  const startSerialReader = async () => {
+    try {
+      if (portRef.current && portRef.current.readable) {
+        console.warn("The serial port is already open.");
+        return;
+      }
+  
+      if (isPortOpening.current) {
+        console.warn("Serial port is already in the process of opening.");
+        return;
+      }
+  
+      isPortOpening.current = true;
+  
+      const ports = await navigator.serial.getPorts();
+      let port = ports.length > 0 ? ports[0] : null;
+  
+      if (!port) {
+        port = await navigator.serial.requestPort();
+      }
+  
+      await port.open({ baudRate: 9600 });
+      portRef.current = port; 
+      const reader = port.readable.getReader();
+      const decoder = new TextDecoder();
+  
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) {
+          reader.releaseLock();
+          break;
+        }
+  
+        const qrData = decoder.decode(value).trim();
+        if (qrData) {
+          handleScan(qrData);
+        }
+      }
+    } catch (error) {
+      console.error("Error reading from serial port:", error);
+      setError("فشل في قراءة بيانات QR Code من المنفذ التسلسلي.");
+    } finally {
+      isPortOpening.current = false;
+    }
+  };
+
+  const handleSearchFromQR = () => {
+    if (!showQrScanner) {
+      setShowQrScanner(true);
+      startSerialReader();
+    }
+  };
+  
+
+  useEffect(() => {
+    if (showQrScanner && inputRef.current) {
+      inputRef.current.focus();
+      startSerialReader(); 
+    }
+  }, [showQrScanner]);
 
   const handleSearch = async () => {
     setIsLoading(true);
