@@ -14,6 +14,7 @@ const SearchModalForPrinterUser = ({ isOpen, onClose, onSearch }) => {
   const [showQrScanner, setShowQrScanner] = useState(false);
   const inputRef = useRef(null);
   const portRef = useRef(null); 
+  const qrScannerRef = useRef(null);
 
   useEffect(() => {
     if (isOpen && inputRef.current) {
@@ -103,7 +104,6 @@ const SearchModalForPrinterUser = ({ isOpen, onClose, onSearch }) => {
       startSerialReader();
     }
   };
-  
 
   useEffect(() => {
     if (showQrScanner && inputRef.current) {
@@ -270,6 +270,31 @@ const SearchModalForPrinterUser = ({ isOpen, onClose, onSearch }) => {
             )}
           </button>
         </div>
+
+        {/* QR Scanner Section */}
+        {showQrScanner && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center p-4 z-[1001]">
+            <div className="bg-gradient-to-br from-white to-gray-50 p-6 rounded-2xl w-full max-w-md shadow-2xl border border-gray-200/70">
+              <div className="flex justify-between items-center border-b border-gray-200">
+                <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+                  مسح QR Code
+                </h2>
+                <button 
+                  onClick={() => setShowQrScanner(false)}
+                  className="p-2 hover:bg-red-50 rounded-xl transition-colors group"
+                >
+                  <XMarkIcon className="w-7 h-7 text-gray-500 group-hover:text-red-500 transition-colors" />
+                </button>
+              </div>
+              <div className="relative">
+                <video ref={qrScannerRef} className="w-full h-auto rounded-lg"></video>
+              </div>
+              <div className="mt-4 text-center">
+                <p className="text-gray-600">قم بتوجيه القارئ نحو الرمز QR Code لمسح</p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
