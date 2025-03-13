@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import logo from "../../assets/logo.jpg";
-import imgStatic from "../assets/truck.png";
+import imgStatic from "../../assets/truck.png";
 import QRCode from "qrcode"; 
 import { PrinterIcon } from "@heroicons/react/24/outline";
 

@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import fetchData from "../../utils/fetchData";
 import { MagnifyingGlassIcon, CheckBadgeIcon } from "@heroicons/react/24/outline";
-import CertificatesFormForCar from "./CertificatesFormForCar";
-import CertificatesFormForTruck from "./CertificatesFormForTruck";
-import CertificatesFormForBike from "./CertificatesFormForBike";
+import CertificatesFormForCar from "../PrintedForms/CertificatesFormForCar";
+import CertificatesFormForTruck from "../PrintedForms/CertificatesFormForTruck";
+import CertificatesFormForBike from "../PrintedForms/CertificatesFormForBike";
 import CertifyButton from "./CertifyButton";
 import QrCodeIcon from "@heroicons/react/24/outline/QrCodeIcon"; 
 

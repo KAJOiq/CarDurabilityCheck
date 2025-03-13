@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import logo from "../assets/logo.jpg";
+import logo from "../../assets/logo.jpg";
 import QRCode from "qrcode"; 
-import imgStatic from "../assets/car.jpeg";
+import imgStatic from "../../assets/car.jpeg";
 import { PrinterIcon } from "@heroicons/react/24/outline";
 
 const CarForm = ({ searchResults }) => {

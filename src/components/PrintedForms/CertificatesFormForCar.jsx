@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import logo from "../assets/logo.jpg";
+import logo from "../../assets/logo.jpg";
 import QRCode from "qrcode";
 
 const CertificatesFormForCar = ({ formData, disabled }) => {

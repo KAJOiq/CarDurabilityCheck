@@ -18,13 +18,13 @@ import CameraComponentForChassis from "../CameraComponents/CameraComponentForCha
 import CameraComponentForReceiptId from "../CameraComponents/CameraComponentForReceiptId"
 import { useNavigate, useLocation } from "react-router-dom";
 import fetchData from "../../utils/fetchData";
-import DropDownListTemplate from "./DropDownListTemplate";
+import DropDownListTemplate from "../DropdownList/DropDownListTemplate";
 import Select from 'react-select';
-import logo from "../assets/logo.jpg";
+import logo from "../../assets/logo.jpg";
 import QRCode from "qrcode"; 
-import imgStaticCar from "../assets/car.jpeg";
-import imgStaticTruck from "../assets/truck.png";
-import imgStaticBike from "../assets/bike.png";
+import imgStaticCar from "../../assets/car.jpeg";
+import imgStaticTruck from "../../assets/truck.png";
+import imgStaticBike from "../../assets/bike.png";
 
 const ReviewData = ({ formData }) => {
   return (

@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Dialog } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import InputField from "../WebSettings/InputField";
-import DropDownListTemplate from "./DropDownListTemplate";
+import DropDownListTemplate from "../DropdownList/DropDownListTemplate";
 import Select from "react-select";
-import fetchData from "../utils/fetchData";
+import fetchData from "../../utils/fetchData";
 
 const FIELD_MAPPING = {
   "رقم الاستمارة": "applicationId",

@@ -10,20 +10,20 @@ import {
   LinkIcon,
   CameraIcon
 } from "@heroicons/react/24/outline";
-import InputField from "../InputField";
-import CheckboxField from "../CheckboxField";
-import CameraComponentForCar from "./CameraComponentForCar";
-import CameraComponentForChassis from "./CameraComponentForChassis"
-import CameraComponentForReceiptId from "./CameraComponentForReceiptId"
+import InputField from "../WebSettings/InputField";
+import CheckboxField from "../WebSettings/CheckboxField";
+import CameraComponentForCar from "../CameraComponents/CameraComponentForCar";
+import CameraComponentForChassis from "../CameraComponents/CameraComponentForChassis"
+import CameraComponentForReceiptId from "../CameraComponents/CameraComponentForReceiptId"
 import { useNavigate, useLocation } from "react-router-dom";
-import DropDownListTemplate from "./DropDownListTemplate";
+import DropDownListTemplate from "../DropdownList/DropDownListTemplate";
 import fetchData from "../../utils/fetchData";
 import Select from 'react-select';
-import logo from "../assets/logo.jpg";
+import logo from "../../assets/logo.jpg";
 import QRCode from "qrcode"; 
-import imgStaticCar from "../assets/car.jpeg";
-import imgStaticTruck from "../assets/truck.png";
-import imgStaticBike from "../assets/bike.png";
+import imgStaticCar from "../../assets/car.jpeg";
+import imgStaticTruck from "../../assets/truck.png";
+import imgStaticBike from "../../assets/bike.png";
 
 const ReviewData = ({ formData }) => {
   return (

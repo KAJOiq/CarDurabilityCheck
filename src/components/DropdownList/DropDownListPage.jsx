@@ -5,11 +5,11 @@ import AddColorPopup from "./AddColorPopup";
 import AddAgencyPopup from "./AddAgencyPopup";
 import AddLocationPopup from "./AddLocationPopup";
 import AddCharecterPopup from "./AddCharecterPopup";
-import UpdateVehicleBrandPopup from "../UpdateVehicleBrandPopup";
-import UpdateVehicleNamePopup from "../UpdateVehicleNamePopup";
-import UpdateColorPopup from "../UpdateColorPopup";
-import UpdateAgencyPopup from "../UpdateAgencyPopup";
-import UpdateLocationPopup from "../UpdateLocationPopup";
+import UpdateVehicleBrandPopup from "./UpdateVehicleBrandPopup";
+import UpdateVehicleNamePopup from "./UpdateVehicleNamePopup";
+import UpdateColorPopup from "./UpdateColorPopup";
+import UpdateAgencyPopup from "./UpdateAgencyPopup";
+import UpdateLocationPopup from "./UpdateLocationPopup";
 import Select from "react-select";
 import { MagnifyingGlassIcon, ChevronLeftIcon, ChevronRightIcon, PlusCircleIcon, XCircleIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
 
