@@ -22,7 +22,7 @@ const UpdateUsers = ({ userId, closeModal, refreshUsers }) => {
     setSuccessMessage(null);
 
     try {
-      const response = await fetchData(`Users/update-user-password?UserId=${userId}`, {
+      const response = await fetchData(`auth/update-user-password?UserId=${userId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

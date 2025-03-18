@@ -17,7 +17,7 @@ const EnableUsers = ({ userId, onEnable, isEnabled }) => {
     setErrorMessage(null);
 
     try {
-      const response = await fetchData(`Users/${userId}/enable-user-account`, {
+      const response = await fetchData(`auth/${userId}/enable-user-account`, {
         method: "PATCH",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,

@@ -39,7 +39,7 @@ const ShowUsers = () => {
           pageSize: pageSize.toString(),
         }).toString();
 
-        const response = await fetchData(`Users/find-system-users?${queryParams}`);
+        const response = await fetchData(`auth/find-system-users?${queryParams}`);
         if (response.isSuccess) {
           setUsers(response.results?.result || []);
           setTotalPages(Math.ceil(response.results?.totalCount / pageSize));
@@ -90,7 +90,7 @@ const ShowUsers = () => {
         pageSize: pageSize.toString(),
       }).toString();
 
-      const response = await fetchData(`Users/find-system-users?${queryParams}`);
+      const response = await fetchData(`auth/find-system-users?${queryParams}`);
       if (response.isSuccess) {
         setUsers(response.results?.result || []);
         setTotalPages(Math.ceil(response.results?.totalCount / pageSize));

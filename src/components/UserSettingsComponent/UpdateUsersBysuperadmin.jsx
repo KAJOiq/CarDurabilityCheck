@@ -96,7 +96,7 @@ const UpdateUsersBysuperadmin = ({ userId, closeModal, refreshUsers }) => {
     setSuccessMessage(null);
 
     try {
-      const response = await fetchData(`Users/update-user-account?UserId=${userId}`, {
+      const response = await fetchData(`auth/update-user-account?UserId=${userId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

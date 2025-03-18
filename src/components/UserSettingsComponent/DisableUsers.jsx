@@ -17,7 +17,7 @@ const DisableUsers = ({ userId, onDisable, isDisabled }) => {
     setErrorMessage(null);
 
     try {
-      const response = await fetchData(`Users/${userId}/disable-user-account`, {
+      const response = await fetchData(`auth/${userId}/disable-user-account`, {
         method: "PATCH",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,

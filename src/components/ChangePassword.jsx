@@ -21,7 +21,7 @@ const ChangePassword = () => {
       const formData = new FormData();
       formData.append("Password", password);
 
-      const response = await fetchData("Users/change-password", {
+      const response = await fetchData("auth/change-password", {
         method: "PATCH",
         body: formData,
       });

@@ -56,7 +56,7 @@ const Login = ({ onLogin }) => {
 
     try {
       const data = await FetchData(
-        "Users/login",
+        "auth/login",
         {
           method: "POST",
           body: JSON.stringify({ userName, password, profileName }), // Send PC Name

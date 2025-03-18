@@ -100,7 +100,7 @@ const AddUsers = ({ setShowAddUser, setUsers, refreshUsers }) => {
     setSuccessMessage("");
 
     try {
-      const response = await fetchData("Users/Register-new-user", {
+      const response = await fetchData("auth/Register-new-user", {
         method: "POST",
         body: JSON.stringify(newUser),
       });
