@@ -6,8 +6,8 @@ const fetchData = async (url, options = {}, headers = {}) => {
       ...(isFormData ? {} : { "Content-Type": "application/json" }),
       ...headers,
     };
-  
-    const response = await fetch(`http://localhost:5273/api/${url}`, {
+    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+    const response = await fetch(`${apiBaseUrl}${url}`, {
       ...options,
       headers: defaultHeaders,
     });
