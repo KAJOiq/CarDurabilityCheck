@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import logo from "../../assets/logo.jpg";
 import QRCode from "qrcode"; 
 import imgStatic from "../../assets/car.jpeg";
 import { PrinterIcon } from "@heroicons/react/24/outline";
 
-const CarForm = ({ searchResults }) => {
+const BikeForm = ({ searchResults }) => {
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState("");
   const printFrameRef = useRef(null);
 
@@ -131,35 +131,35 @@ const CarForm = ({ searchResults }) => {
             
         </div>
       </div>
-      <div class="border border-black grid grid-cols-2 rounded-lg p-2" >
-      <!-- Vehicle Image -->
-        <div class="w-full max-w-100 h-auto p-0 dir="ltr"">
-             <img src="${imgStaticBase64}" class="object-contain w-full h-full rounded-md p-0.5 border border-white" />
+            <div class="border border-black grid grid-cols-3 rounded-lg p-1">
+        <!-- Vehicle Image Enlarged -->
+          <div class="border border-white grid grid-cols-1 col-span-2 rounded-lg p-4 flex items-center justify-center">
+            <div class="max-w-full h-auto p-0" dir="ltr">
+              <img src="${imgStaticBase64}" class="object-contain w-full h-full rounded-md p-0.5 border border-white" />
+            </div>
           </div>
-         <div class="border border-white grid grid-rows-2 rounded-lg p-2" >
-             <div class="w-full max-w-100 h-auto p-0 dir="rtl"">
+        <div class="border border-white grid grid-rows-5 rounded-lg p-2">
+        <div class="w-full max-w-56 h-auto p-0" dir="rtl">
             ${searchResults.cropedCarImagePath
               ? `<img src="http://localhost:5273${searchResults.cropedCarImagePath}" class="object-contain w-full h-full rounded-md p-0.5 border border-black" />`
               : "صورة المركبة"}
           </div>
-         <div class="w-full max-w-100 h-auto p-0" dir="rtl" >
+          <div class="w-full max-w-56 h-auto p-0" dir="rtl">
             ${searchResults.cropedChassisImagePath
               ? `<img src="http://localhost:5273${searchResults.cropedChassisImagePath}" class="object-contain w-full h-full rounded-md p-0.5 border border-black" />`
               : "صورة الشاصي"}
-             </div>  
+          </div>
+            <div class="border border-black rounded-lg p-2 min-h-35">
+            <span class="font-bold text-md text-center w-1/3">الفاحص الأول :</span> 
+          </div>
+          <div class="border border-black rounded-lg p-2 min-h-35">
+            <span class="font-bold text-md text-center w-1/3">الفاحص الثاني :</span> 
+          </div>
+          <div class="border border-black rounded-lg p-2 min-h-35">
+            <span class="font-bold text-md text-center w-1/3">ضابط الكشف الفني :</span> 
+          </div>
         </div>
-        <div class="border border-black  rounded-lg p-2 min-h-40" >
-          <span class="font-bold text-md text-center w-1/3">الفاحص : 
-          </span> 
-        </div>
-        <div class="border border-black  rounded-lg p-2 min-h-40" >
-          <span class="font-bold text-md text-center w-1/3">ضابط الكشف الفني :
-        </span> 
-        </div>
-        </div>
-        
-        </div>
-        
+      </div>
     </body>
     </html>
     `);
@@ -187,4 +187,4 @@ const CarForm = ({ searchResults }) => {
   );
 };
 
-export default CarForm;
+export default BikeForm;
