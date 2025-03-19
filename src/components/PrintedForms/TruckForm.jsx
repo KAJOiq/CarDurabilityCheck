@@ -268,15 +268,15 @@ const TruckForm = ({ searchResults }) => {
            
 
           </div>
-    <div class="border border-black rounded-lg p-2 w-full mt-4 mx-auto">
-    <div class="h-auto p-0 w-full">
-        <img src="${imgStaticBase64}" 
-             class="w-full h-auto object-scale-down mx-auto" 
-             style="max-width: 90% !important;
-                    display: block !important;
-                    margin: 0 auto !important;" />
-    </div>
-</div>
+        <div class="border border-black rounded-lg p-2 w-full mt-4 mx-auto">
+         <div class="h-auto p-0 w-full">
+            <img src="${imgStaticBase64}" 
+                class="w-full h-auto object-scale-down mx-auto" 
+                style="max-width: 90% !important;
+                        display: block !important;
+                        margin: 0 auto !important;" />
+            </div>
+          </div>
         </body>
         </html>
     `);
